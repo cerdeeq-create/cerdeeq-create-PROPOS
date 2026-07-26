@@ -1,0 +1,8 @@
+{
+  "name": "pos-shop",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
