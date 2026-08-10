@@ -4,5 +4,11 @@
   "workspaces": [
     "frontend",
     "backend"
-  ]
+  ],
+  "scripts": {
+    "start": "node backend/src/index.js"
+  },
+  "engines": {
+    "node": "20.x"
+  }
 }

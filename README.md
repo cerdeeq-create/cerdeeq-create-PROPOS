@@ -1,35 +1,45 @@
 # Noor Collection POS (Docker)
 
-This repository contains a simple POS app (frontend + backend). Use Docker and Docker Compose to run both services without installing Node.js locally.
+This repository contains a simple POS app (frontend + backend) that can be run locally or hosted on a server with Docker.
 
-Run with Docker Compose:
+## Run with Docker Compose
 
 ```bash
-docker-compose build
-docker-compose up
+docker compose up --build
 ```
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:4000
+
+## Hosted / LAN access
+
+For a machine that should be reachable from another laptop or device on the same network, use:
+
+```bash
+docker compose -f docker-compose.hosted.yml up --build -d
+```
+
+Then open the host machine IP address on port 3000, for example:
+
+- http://192.168.1.50:3000
 
 Seeded users:
 - Admin: `admin` / `admin123`
 - Cashier: `cashier` / `12345`
 
 Notes:
-- The frontend `REACT_APP_API_URL` is configured at build-time via Docker Compose to point at the backend.
+- The frontend now proxies API requests through the same host, so the app can be opened from a remote device without needing a separate backend URL.
 - Backend SQLite data is persisted in `backend/data` via a bind mount.
-# POS Shop
 
-## Overview
-A simple POS system for small shops using React frontend, Node.js/Express backend, and SQLite.
+## Local development
 
-## Setup
-1. Install [Node.js](https://nodejs.org/) if not already installed.
-2. Open a terminal in `C:\POS project`.
-3. Run `npm install`.
-4. Start the backend: `npm run --workspace backend dev`.
-5. Start the frontend: `npm run --workspace frontend start`.
+If you prefer to run without Docker:
+
+```bash
+npm install
+npm run --workspace backend dev
+npm run --workspace frontend start
+```
 
 ## Backend API
 - `GET /api/products`
@@ -38,9 +48,10 @@ A simple POS system for small shops using React frontend, Node.js/Express backen
 - `DELETE /api/products/:id`
 - `POST /api/sales`
 - `GET /api/reports/sales`
+- `GET /api/service-transactions`
+- `POST /api/service-transactions`
 
 ## Notes
 - The database file is stored in `backend/data/pos.sqlite`.
-- Open the frontend at `http://localhost:3000`.
 - Use a barcode scanner connected as a keyboard to scan SKU codes into the search field.
 - After completing a sale, click Print Receipt to print the receipt view.

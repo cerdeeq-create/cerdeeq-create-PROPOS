@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: pos-shop
+    env: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install --include=dev && npm run build --workspace frontend
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: FRONTEND_BUILD_PATH
+        value: frontend/build

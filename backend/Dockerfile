@@ -3,7 +3,7 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN npm install --production
+RUN apk add --no-cache python3 make g++ && npm install --production && apk del python3 make g++
 
 COPY . .
 

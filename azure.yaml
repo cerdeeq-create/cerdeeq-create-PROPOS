@@ -1,0 +1,7 @@
+name: pos-shop
+services:
+  web:
+    project: .
+    host: appservice
+    language: js
+    dist: .
