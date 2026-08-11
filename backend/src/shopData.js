@@ -1,6 +1,6 @@
-function ensureStarterProducts(db) {
-  const productCount = db.prepare('SELECT COUNT(*) AS count FROM products').get();
-  if (productCount.count > 0) {
+async function ensureStarterProducts(db) {
+  const { rows } = await db.query('SELECT COUNT(*) AS count FROM products');
+  if (Number(rows[0].count) > 0) {
     return;
   }
 
@@ -10,10 +10,13 @@ function ensureStarterProducts(db) {
     { sku: 'SKU-003', name: 'Sugar 1kg', price: 1800, costPrice: 1500, stock: 25 },
   ];
 
-  const stmt = db.prepare('INSERT INTO products (sku, name, price, costPrice, stock) VALUES (?, ?, ?, ?, ?)');
-  starterProducts.forEach((product) => {
-    stmt.run(product.sku, product.name, product.price, product.costPrice, product.stock);
-  });
+  for (const product of starterProducts) {
+    await db.query(
+      'INSERT INTO products (sku, name, price, "costPrice", stock) VALUES ($1, $2, $3, $4, $5)',
+      [product.sku, product.name, product.price, product.costPrice, product.stock]
+    );
+  }
 }
 
 module.exports = { ensureStarterProducts };
+

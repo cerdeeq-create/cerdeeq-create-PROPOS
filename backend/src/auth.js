@@ -1,11 +1,12 @@
 const bcrypt = require('bcryptjs');
 
-function ensureDefaultUsers(db) {
-  const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get();
-  if (userCount.count === 0) {
-    db.prepare('INSERT INTO users (username, password, role, fullName) VALUES (?, ?, ?, ?)').run('admin', bcrypt.hashSync('admin123', 10), 'admin', 'Admin');
-    db.prepare('INSERT INTO users (username, password, role, fullName) VALUES (?, ?, ?, ?)').run('cashier', bcrypt.hashSync('12345', 10), 'cashier', 'Cashier');
+async function ensureDefaultUsers(db) {
+  const { rows } = await db.query('SELECT COUNT(*) AS count FROM users');
+  if (Number(rows[0].count) === 0) {
+    await db.query('INSERT INTO users (username, password, role, "fullName") VALUES ($1, $2, $3, $4)', ['admin', bcrypt.hashSync('admin123', 10), 'admin', 'Admin']);
+    await db.query('INSERT INTO users (username, password, role, "fullName") VALUES ($1, $2, $3, $4)', ['cashier', bcrypt.hashSync('12345', 10), 'cashier', 'Cashier']);
   }
 }
 
 module.exports = { ensureDefaultUsers };
+
