@@ -6,7 +6,8 @@
     "backend"
   ],
   "scripts": {
-    "start": "node backend/src/index.js"
+    "start": "node backend/src/index.js",
+    "postinstall": "npm run build --workspace frontend"
   },
   "engines": {
     "node": "20.x"
