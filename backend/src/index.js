@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const fs = require('node:fs');
 const path = require('path');
-const { DatabaseSync } = require('node:sqlite');
+const { pool } = require('./db');
 const { ensureDefaultUsers } = require('./auth');
 const { ensureStarterProducts } = require('./shopData');
 const { validateProductPayload, validateSalePayload, validatePurchaseOrderPayload, validateReceivingPayload, validateServiceTransactionPayload } = require('./validation');
@@ -12,7 +12,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'pos_jwt_secret';
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.PORT || 4000);
 const FRONTEND_BUILD_PATH = process.env.FRONTEND_BUILD_PATH || path.resolve(__dirname, '..', '..', 'frontend', 'build');
-const db = new DatabaseSync(path.resolve(__dirname, '..', 'data', 'pos.sqlite'));
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
@@ -40,25 +39,25 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'GET' && pathname === '/api/products') {
-      const products = db.prepare('SELECT * FROM products ORDER BY name').all();
-      return sendJson(res, 200, products);
+      const { rows } = await pool.query('SELECT * FROM products ORDER BY name');
+      return sendJson(res, 200, rows);
     }
 
     if (req.method === 'GET' && pathname === '/api/stock-movements') {
-      const movements = db.prepare('SELECT * FROM stock_movements ORDER BY createdAt DESC LIMIT 50').all();
-      return sendJson(res, 200, movements);
+      const { rows } = await pool.query('SELECT * FROM stock_movements ORDER BY "createdAt" DESC LIMIT 50');
+      return sendJson(res, 200, rows);
     }
 
     if (req.method === 'GET' && pathname === '/api/receiving-history') {
-      const history = db.prepare('SELECT * FROM receiving_history ORDER BY date DESC LIMIT 20').all();
-      return sendJson(res, 200, history);
+      const { rows } = await pool.query('SELECT * FROM receiving_history ORDER BY date DESC LIMIT 20');
+      return sendJson(res, 200, rows);
     }
 
     if (req.method === 'GET' && pathname === '/api/service-transactions') {
       const user = await requireAuth(req, res);
       if (!user) return;
-      const transactions = db.prepare('SELECT * FROM service_transactions ORDER BY createdAt DESC LIMIT 50').all();
-      return sendJson(res, 200, transactions);
+      const { rows } = await pool.query('SELECT * FROM service_transactions ORDER BY "createdAt" DESC LIMIT 50');
+      return sendJson(res, 200, rows);
     }
 
     if (req.method === 'POST' && pathname === '/api/service-transactions') {
@@ -71,25 +70,27 @@ const server = http.createServer(async (req, res) => {
       }
 
       const now = new Date().toISOString();
-      const stmt = db.prepare('INSERT INTO service_transactions (serviceType, beneficiary, phoneNumber, amount, reference, createdAt, createdBy) VALUES (?, ?, ?, ?, ?, ?, ?)');
-      const result = stmt.run(
-        String(body.serviceType || '').trim().toLowerCase(),
-        String(body.beneficiary || '').trim(),
-        String(body.phoneNumber || '').trim(),
-        Number(body.amount) || 0,
-        String(body.reference || '').trim() || `svc-${Date.now()}`,
-        now,
-        user.username || 'Unknown'
+      const result = await pool.query(
+        'INSERT INTO service_transactions ("serviceType", beneficiary, "phoneNumber", amount, reference, "createdAt", "createdBy") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+        [
+          String(body.serviceType || '').trim().toLowerCase(),
+          String(body.beneficiary || '').trim(),
+          String(body.phoneNumber || '').trim(),
+          Number(body.amount) || 0,
+          String(body.reference || '').trim() || `svc-${Date.now()}`,
+          now,
+          user.username || 'Unknown',
+        ]
       );
-      return sendJson(res, 201, { id: result.lastInsertRowid, ...body, createdAt: now, createdBy: user.username || 'Unknown' });
+      return sendJson(res, 201, { id: result.rows[0].id, ...body, createdAt: now, createdBy: user.username || 'Unknown' });
     }
 
     if (req.method === 'GET' && pathname === '/api/purchase-orders') {
       const user = await requireAuth(req, res);
       if (!user) return;
       if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
-      const orders = db.prepare('SELECT * FROM purchase_orders ORDER BY createdAt DESC').all();
-      return sendJson(res, 200, orders);
+      const { rows } = await pool.query('SELECT * FROM purchase_orders ORDER BY "createdAt" DESC');
+      return sendJson(res, 200, rows);
     }
 
     if (req.method === 'PUT' && pathname.startsWith('/api/purchase-orders/')) {
@@ -100,12 +101,12 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req);
       const { status } = body;
       const nextStatus = status === 'approved' || status === 'completed' ? status : 'pending';
-      const result = db.prepare('UPDATE purchase_orders SET status = ?, updatedAt = ? WHERE id = ?').run(nextStatus, new Date().toISOString(), id);
-      if (result.changes === 0) {
+      const result = await pool.query('UPDATE purchase_orders SET status = $1, "updatedAt" = $2 WHERE id = $3', [nextStatus, new Date().toISOString(), id]);
+      if (result.rowCount === 0) {
         return sendJson(res, 404, { error: 'Purchase order not found' });
       }
-      const updatedOrder = db.prepare('SELECT * FROM purchase_orders WHERE id = ?').get(id);
-      return sendJson(res, 200, updatedOrder);
+      const updatedOrder = await pool.query('SELECT * FROM purchase_orders WHERE id = $1', [id]);
+      return sendJson(res, 200, updatedOrder.rows[0]);
     }
 
     if (req.method === 'POST' && pathname === '/api/purchase-orders') {
@@ -119,9 +120,11 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 400, { error: validation.error });
       }
       const now = new Date().toISOString();
-      const stmt = db.prepare('INSERT INTO purchase_orders (supplier, storeAccount, date, itemsJson, totalAmount, createdAt, updatedAt, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-      const result = stmt.run(supplier || 'Supplier not specified', storeAccount || 'Main Store', date || now, JSON.stringify(items), Number(totalAmount) || 0, now, now, 'pending');
-      return sendJson(res, 201, { id: result.lastInsertRowid, supplier, storeAccount, date, totalAmount: Number(totalAmount) || 0, items, createdAt: now, updatedAt: now, itemsJson: JSON.stringify(items), status: 'pending' });
+      const result = await pool.query(
+        'INSERT INTO purchase_orders (supplier, "storeAccount", date, "itemsJson", "totalAmount", "createdAt", "updatedAt", status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+        [supplier || 'Supplier not specified', storeAccount || 'Main Store', date || now, JSON.stringify(items), Number(totalAmount) || 0, now, now, 'pending']
+      );
+      return sendJson(res, 201, { id: result.rows[0].id, supplier, storeAccount, date, totalAmount: Number(totalAmount) || 0, items, createdAt: now, updatedAt: now, itemsJson: JSON.stringify(items), status: 'pending' });
     }
 
     if (req.method === 'POST' && pathname === '/api/receiving-history') {
@@ -134,13 +137,17 @@ const server = http.createServer(async (req, res) => {
       if (!validation.ok) {
         return sendJson(res, 400, { error: validation.error });
       }
-      const stmt = db.prepare('INSERT INTO receiving_history (supplier, storeAccount, date, itemsJson, totalAmount, purchaseOrderId) VALUES (?, ?, ?, ?, ?, ?)');
-      const result = stmt.run(supplier || 'Supplier not specified', storeAccount || 'Main Store', date || new Date().toISOString(), JSON.stringify(items), Number(totalAmount) || 0, purchaseOrderId || null);
-      const movementStmt = db.prepare('INSERT INTO stock_movements (productId, productName, movementType, quantity, createdAt, note) VALUES (?, ?, ?, ?, ?, ?)');
-      items.forEach((item) => {
-        movementStmt.run(0, item.name, 'receiving', Math.abs(Number(item.quantity) || 0), new Date().toISOString(), `Received from ${supplier || 'supplier'}`);
-      });
-      return sendJson(res, 201, { id: result.lastInsertRowid, supplier, storeAccount, date, totalAmount: Number(totalAmount) || 0, items });
+      const result = await pool.query(
+        'INSERT INTO receiving_history (supplier, "storeAccount", date, "itemsJson", "totalAmount", "purchaseOrderId") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+        [supplier || 'Supplier not specified', storeAccount || 'Main Store', date || new Date().toISOString(), JSON.stringify(items), Number(totalAmount) || 0, purchaseOrderId || null]
+      );
+      for (const item of items) {
+        await pool.query(
+          'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
+          [0, item.name, 'receiving', Math.abs(Number(item.quantity) || 0), new Date().toISOString(), `Received from ${supplier || 'supplier'}`]
+        );
+      }
+      return sendJson(res, 201, { id: result.rows[0].id, supplier, storeAccount, date, totalAmount: Number(totalAmount) || 0, items });
     }
 
     if (req.method === 'POST' && pathname === '/api/products') {
@@ -153,17 +160,19 @@ const server = http.createServer(async (req, res) => {
       if (!validation.ok) {
         return sendJson(res, 400, { error: validation.error });
       }
-      const stmt = db.prepare('INSERT INTO products (sku, name, price, costPrice, stock) VALUES (?, ?, ?, ?, ?)');
-      const result = stmt.run(sku, name, price, Number(costPrice) || 0, stock);
-      return sendJson(res, 201, { id: result.lastInsertRowid, sku, name, price, costPrice: Number(costPrice) || 0, stock });
+      const result = await pool.query(
+        'INSERT INTO products (sku, name, price, "costPrice", stock) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [sku, name, price, Number(costPrice) || 0, stock]
+      );
+      return sendJson(res, 201, { id: result.rows[0].id, sku, name, price, costPrice: Number(costPrice) || 0, stock });
     }
 
     if (req.method === 'GET' && pathname === '/api/users') {
       const user = await requireAuth(req, res);
       if (!user) return;
       if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
-      const users = db.prepare('SELECT id, username, fullName, role FROM users ORDER BY username').all();
-      return sendJson(res, 200, users);
+      const { rows } = await pool.query('SELECT id, username, "fullName", role FROM users ORDER BY username');
+      return sendJson(res, 200, rows);
     }
 
     if (req.method === 'POST' && pathname === '/api/users') {
@@ -178,8 +187,8 @@ const server = http.createServer(async (req, res) => {
       const userRole = role === 'admin' ? 'admin' : 'cashier';
       const safeFullName = (fullName || '').trim() || username;
       const hashedPassword = hashPassword(password);
-      const result = db.prepare('INSERT INTO users (username, password, role, fullName) VALUES (?, ?, ?, ?)').run(username, hashedPassword, userRole, safeFullName);
-      return sendJson(res, 201, { id: result.lastInsertRowid, username, fullName: safeFullName, role: userRole });
+      const result = await pool.query('INSERT INTO users (username, password, role, "fullName") VALUES ($1, $2, $3, $4) RETURNING id', [username, hashedPassword, userRole, safeFullName]);
+      return sendJson(res, 201, { id: result.rows[0].id, username, fullName: safeFullName, role: userRole });
     }
 
     if (req.method === 'PUT' && pathname.startsWith('/api/users/')) {
@@ -196,15 +205,16 @@ const server = http.createServer(async (req, res) => {
       const safeFullName = (fullName || '').trim() || username;
       const updates = [];
       const values = [];
-      updates.push('username = ?'); values.push(username);
-      updates.push('role = ?'); values.push(userRole);
-      updates.push('fullName = ?'); values.push(safeFullName);
+      let idx = 1;
+      updates.push(`username = $${idx++}`); values.push(username);
+      updates.push(`role = $${idx++}`); values.push(userRole);
+      updates.push(`"fullName" = $${idx++}`); values.push(safeFullName);
       if (password) {
-        updates.push('password = ?'); values.push(hashPassword(password));
+        updates.push(`password = $${idx++}`); values.push(hashPassword(password));
       }
       values.push(id);
-      const result = db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...values);
-      if (result.changes === 0) {
+      const result = await pool.query(`UPDATE users SET ${updates.join(', ')} WHERE id = $${idx}`, values);
+      if (result.rowCount === 0) {
         return sendJson(res, 404, { error: 'User not found' });
       }
       return sendJson(res, 200, { id: Number(id), username, fullName: safeFullName, role: userRole });
@@ -215,9 +225,9 @@ const server = http.createServer(async (req, res) => {
       if (!user) return;
       if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
       const id = pathname.split('/').pop();
-      db.prepare('DELETE FROM refresh_tokens WHERE userId = ?').run(id);
-      const result = db.prepare('DELETE FROM users WHERE id = ?').run(id);
-      if (result.changes === 0) {
+      await pool.query('DELETE FROM refresh_tokens WHERE "userId" = $1', [id]);
+      const result = await pool.query('DELETE FROM users WHERE id = $1', [id]);
+      if (result.rowCount === 0) {
         return sendJson(res, 404, { error: 'User not found' });
       }
       return sendJson(res, 204, null);
@@ -226,13 +236,14 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && pathname === '/api/login') {
       const body = await readJsonBody(req);
       const { username, password } = body;
-      const user = db.prepare('SELECT id, username, password, role FROM users WHERE username = ?').get(username);
+      const { rows } = await pool.query('SELECT id, username, password, role FROM users WHERE username = $1', [username]);
+      const user = rows[0];
       if (!user || !verifyPassword(password, user.password)) {
         return sendJson(res, 401, { error: 'Invalid username or password' });
       }
       const token = signToken({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, '15m');
       const refreshToken = signToken({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, '7d');
-      saveRefreshToken(refreshToken, user.id);
+      await saveRefreshToken(refreshToken, user.id);
       return sendJson(res, 200, { id: user.id, username: user.username, role: user.role, token, refreshToken });
     }
 
@@ -242,24 +253,25 @@ const server = http.createServer(async (req, res) => {
       if (!refreshToken) {
         return sendJson(res, 400, { error: 'Refresh token required' });
       }
-      const storedToken = findValidRefreshToken(refreshToken);
+      const storedToken = await findValidRefreshToken(refreshToken);
       if (!storedToken) {
         return sendJson(res, 403, { error: 'Invalid refresh token' });
       }
       const payload = verifyToken(refreshToken, JWT_SECRET);
       if (!payload) {
-        deleteRefreshToken(refreshToken);
+        await deleteRefreshToken(refreshToken);
         return sendJson(res, 403, { error: 'Invalid refresh token' });
       }
-      const user = db.prepare('SELECT id, username, role FROM users WHERE id = ?').get(payload.id);
+      const { rows } = await pool.query('SELECT id, username, role FROM users WHERE id = $1', [payload.id]);
+      const user = rows[0];
       if (!user) {
-        deleteRefreshToken(refreshToken);
+        await deleteRefreshToken(refreshToken);
         return sendJson(res, 403, { error: 'Invalid refresh token' });
       }
-      deleteRefreshToken(refreshToken);
+      await deleteRefreshToken(refreshToken);
       const token = signToken({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, '15m');
       const newRefreshToken = signToken({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, '7d');
-      saveRefreshToken(newRefreshToken, user.id);
+      await saveRefreshToken(newRefreshToken, user.id);
       return sendJson(res, 200, { token, refreshToken: newRefreshToken });
     }
 
@@ -267,7 +279,7 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req);
       const { refreshToken } = body;
       if (refreshToken) {
-        deleteRefreshToken(refreshToken);
+        await deleteRefreshToken(refreshToken);
       }
       return sendJson(res, 204, null);
     }
@@ -283,8 +295,8 @@ const server = http.createServer(async (req, res) => {
       if (!validation.ok) {
         return sendJson(res, 400, { error: validation.error });
       }
-      const result = db.prepare('UPDATE products SET sku = ?, name = ?, price = ?, costPrice = ?, stock = ? WHERE id = ?').run(sku, name, price, Number(costPrice) || 0, stock, id);
-      if (result.changes === 0) {
+      const result = await pool.query('UPDATE products SET sku = $1, name = $2, price = $3, "costPrice" = $4, stock = $5 WHERE id = $6', [sku, name, price, Number(costPrice) || 0, stock, id]);
+      if (result.rowCount === 0) {
         return sendJson(res, 404, { error: 'Product not found' });
       }
       return sendJson(res, 200, { id: Number(id), sku, name, price, costPrice: Number(costPrice) || 0, stock });
@@ -295,9 +307,9 @@ const server = http.createServer(async (req, res) => {
       if (!user) return;
       if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
       const id = pathname.split('/').pop();
-      db.prepare('DELETE FROM sale_items WHERE productId = ?').run(id);
-      const result = db.prepare('DELETE FROM products WHERE id = ?').run(id);
-      if (result.changes === 0) {
+      await pool.query('DELETE FROM sale_items WHERE "productId" = $1', [id]);
+      const result = await pool.query('DELETE FROM products WHERE id = $1', [id]);
+      if (result.rowCount === 0) {
         return sendJson(res, 404, { error: 'Product not found' });
       }
       return sendJson(res, 204, null);
@@ -308,8 +320,8 @@ const server = http.createServer(async (req, res) => {
       if (!user) return;
       const body = await readJsonBody(req);
       const { items, paymentMethod, discountType = 'none', discountValue = '0' } = body;
-      const productRows = db.prepare('SELECT id, stock FROM products').all();
-      const validation = validateSalePayload({ items, paymentMethod, discountType, discountValue }, productRows);
+      const productRowsResult = await pool.query('SELECT id, stock FROM products');
+      const validation = validateSalePayload({ items, paymentMethod, discountType, discountValue }, productRowsResult.rows);
       if (!validation.ok) {
         return sendJson(res, 400, { error: validation.error });
       }
@@ -324,36 +336,49 @@ const server = http.createServer(async (req, res) => {
       const total = Math.max(0, subtotal - discountAmount);
       const costTotal = items.reduce((sum, item) => sum + (Number(item.costPrice) || 0) * item.quantity, 0);
       const profit = total - costTotal;
-      db.exec('BEGIN');
+      const client = await pool.connect();
       try {
-        const resultSale = db.prepare('INSERT INTO sales (datetime, total, profit, paymentMethod, cashierName) VALUES (?, ?, ?, ?, ?)').run(new Date().toISOString(), total, profit, paymentMethod, user.username || 'Unknown');
-        const saleId = resultSale.lastInsertRowid;
-        const stmtItem = db.prepare('INSERT INTO sale_items (saleId, productId, quantity, price, costPrice) VALUES (?, ?, ?, ?, ?)');
-        const stmtUpdateStock = db.prepare('UPDATE products SET stock = stock - ? WHERE id = ?');
-        const stmtMovement = db.prepare('INSERT INTO stock_movements (productId, productName, movementType, quantity, createdAt, note) VALUES (?, ?, ?, ?, ?, ?)');
+        await client.query('BEGIN');
+        const saleResult = await client.query(
+          'INSERT INTO sales (datetime, total, profit, "paymentMethod", "cashierName") VALUES ($1, $2, $3, $4, $5) RETURNING id',
+          [new Date().toISOString(), total, profit, paymentMethod, user.username || 'Unknown']
+        );
+        const saleId = saleResult.rows[0].id;
         for (const item of items) {
-          stmtItem.run(saleId, item.productId, item.quantity, item.price, Number(item.costPrice) || 0);
-          stmtUpdateStock.run(item.quantity, item.productId);
-          stmtMovement.run(item.productId, item.name, 'sale', -Math.abs(Number(item.quantity) || 0), new Date().toISOString(), `Sale #${saleId}`);
+          await client.query(
+            'INSERT INTO sale_items ("saleId", "productId", quantity, price, "costPrice") VALUES ($1, $2, $3, $4, $5)',
+            [saleId, item.productId, item.quantity, item.price, Number(item.costPrice) || 0]
+          );
+          await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [item.quantity, item.productId]);
+          await client.query(
+            'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
+            [item.productId, item.name, 'sale', -Math.abs(Number(item.quantity) || 0), new Date().toISOString(), `Sale #${saleId}`]
+          );
         }
-        db.exec('COMMIT');
+        await client.query('COMMIT');
         return sendJson(res, 201, { saleId, subtotal, discountAmount, total, profit, paymentMethod, items });
       } catch (error) {
-        db.exec('ROLLBACK');
+        await client.query('ROLLBACK');
         return sendJson(res, 400, { error: error.message });
+      } finally {
+        client.release();
       }
     }
 
     if (req.method === 'GET' && pathname === '/api/reports/sales') {
-      const sales = db.prepare('SELECT * FROM sales ORDER BY datetime DESC').all();
-      const salesWithItems = sales.map((sale) => {
-        const items = db.prepare('SELECT si.*, p.name, p.sku, CASE WHEN si.costPrice IS NOT NULL AND si.costPrice <> 0 THEN si.costPrice ELSE p.costPrice END AS costPrice FROM sale_items si JOIN products p ON si.productId = p.id WHERE si.saleId = ?').all(sale.id);
+      const salesResult = await pool.query('SELECT * FROM sales ORDER BY datetime DESC');
+      const salesWithItems = await Promise.all(salesResult.rows.map(async (sale) => {
+        const itemsResult = await pool.query(
+          'SELECT si.*, p.name, p.sku, CASE WHEN si."costPrice" IS NOT NULL AND si."costPrice" <> 0 THEN si."costPrice" ELSE p."costPrice" END AS "costPrice" FROM sale_items si JOIN products p ON si."productId" = p.id WHERE si."saleId" = $1',
+          [sale.id]
+        );
+        const items = itemsResult.rows;
         const calculatedProfit = items.reduce((sum, item) => {
           const unitProfit = (Number(item.price) || 0) - (Number(item.costPrice) || 0);
           return sum + unitProfit * (Number(item.quantity) || 0);
         }, 0);
         return { ...sale, profit: Number(calculatedProfit) || 0, items };
-      });
+      }));
       return sendJson(res, 200, salesWithItems);
     }
 
@@ -363,132 +388,96 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-function initDatabase() {
-  db.prepare(`CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+async function initDatabase() {
+  await pool.query(`CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
     sku TEXT UNIQUE,
     name TEXT NOT NULL,
-    price REAL NOT NULL,
-    costPrice REAL NOT NULL DEFAULT 0,
+    price DOUBLE PRECISION NOT NULL,
+    "costPrice" DOUBLE PRECISION NOT NULL DEFAULT 0,
     stock INTEGER NOT NULL DEFAULT 0
-  )`).run();
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'cashier',
-    fullName TEXT NOT NULL DEFAULT ''
-  )`).run();
+    "fullName" TEXT NOT NULL DEFAULT ''
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS sales (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE IF NOT EXISTS sales (
+    id SERIAL PRIMARY KEY,
     datetime TEXT NOT NULL,
-    total REAL NOT NULL,
-    profit REAL NOT NULL DEFAULT 0,
-    paymentMethod TEXT NOT NULL,
-    cashierName TEXT NOT NULL DEFAULT 'Unknown'
-  )`).run();
+    total DOUBLE PRECISION NOT NULL,
+    profit DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "paymentMethod" TEXT NOT NULL,
+    "cashierName" TEXT NOT NULL DEFAULT 'Unknown'
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS sale_items (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    saleId INTEGER NOT NULL,
-    productId INTEGER NOT NULL,
+  await pool.query(`CREATE TABLE IF NOT EXISTS sale_items (
+    id SERIAL PRIMARY KEY,
+    "saleId" INTEGER NOT NULL REFERENCES sales(id),
+    "productId" INTEGER NOT NULL REFERENCES products(id),
     quantity INTEGER NOT NULL,
-    price REAL NOT NULL,
-    costPrice REAL NOT NULL DEFAULT 0,
-    FOREIGN KEY(saleId) REFERENCES sales(id),
-    FOREIGN KEY(productId) REFERENCES products(id)
-  )`).run();
+    price DOUBLE PRECISION NOT NULL,
+    "costPrice" DOUBLE PRECISION NOT NULL DEFAULT 0
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS refresh_tokens (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id SERIAL PRIMARY KEY,
     token TEXT UNIQUE NOT NULL,
-    userId INTEGER NOT NULL,
-    expiresAt TEXT NOT NULL,
-    FOREIGN KEY(userId) REFERENCES users(id)
-  )`).run();
+    "userId" INTEGER NOT NULL REFERENCES users(id),
+    "expiresAt" TEXT NOT NULL
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS stock_movements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    productId INTEGER NOT NULL DEFAULT 0,
-    productName TEXT NOT NULL,
-    movementType TEXT NOT NULL,
+  await pool.query(`CREATE TABLE IF NOT EXISTS stock_movements (
+    id SERIAL PRIMARY KEY,
+    "productId" INTEGER NOT NULL DEFAULT 0,
+    "productName" TEXT NOT NULL,
+    "movementType" TEXT NOT NULL,
     quantity INTEGER NOT NULL,
-    createdAt TEXT NOT NULL,
+    "createdAt" TEXT NOT NULL,
     note TEXT NOT NULL DEFAULT ''
-  )`).run();
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS receiving_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE IF NOT EXISTS receiving_history (
+    id SERIAL PRIMARY KEY,
     supplier TEXT NOT NULL DEFAULT 'Supplier not specified',
-    storeAccount TEXT NOT NULL DEFAULT 'Main Store',
+    "storeAccount" TEXT NOT NULL DEFAULT 'Main Store',
     date TEXT NOT NULL,
-    itemsJson TEXT NOT NULL,
-    totalAmount REAL NOT NULL DEFAULT 0,
-    purchaseOrderId INTEGER
-  )`).run();
+    "itemsJson" TEXT NOT NULL,
+    "totalAmount" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "purchaseOrderId" INTEGER
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS purchase_orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE IF NOT EXISTS purchase_orders (
+    id SERIAL PRIMARY KEY,
     supplier TEXT NOT NULL DEFAULT 'Supplier not specified',
-    storeAccount TEXT NOT NULL DEFAULT 'Main Store',
+    "storeAccount" TEXT NOT NULL DEFAULT 'Main Store',
     date TEXT NOT NULL,
-    itemsJson TEXT NOT NULL,
-    totalAmount REAL NOT NULL DEFAULT 0,
-    createdAt TEXT NOT NULL,
-    updatedAt TEXT NOT NULL,
+    "itemsJson" TEXT NOT NULL,
+    "totalAmount" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "createdAt" TEXT NOT NULL,
+    "updatedAt" TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending'
-  )`).run();
+  )`);
 
-  db.prepare(`CREATE TABLE IF NOT EXISTS service_transactions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    serviceType TEXT NOT NULL,
+  await pool.query(`CREATE TABLE IF NOT EXISTS service_transactions (
+    id SERIAL PRIMARY KEY,
+    "serviceType" TEXT NOT NULL,
     beneficiary TEXT NOT NULL,
-    phoneNumber TEXT NOT NULL,
-    amount REAL NOT NULL DEFAULT 0,
+    "phoneNumber" TEXT NOT NULL,
+    amount DOUBLE PRECISION NOT NULL DEFAULT 0,
     reference TEXT NOT NULL DEFAULT '',
-    createdAt TEXT NOT NULL,
-    createdBy TEXT NOT NULL DEFAULT 'Unknown'
-  )`).run();
+    "createdAt" TEXT NOT NULL,
+    "createdBy" TEXT NOT NULL DEFAULT 'Unknown'
+  )`);
 
-  db.prepare('DELETE FROM refresh_tokens WHERE expiresAt < ?').run(new Date().toISOString());
+  await pool.query('DELETE FROM refresh_tokens WHERE "expiresAt" < $1', [new Date().toISOString()]);
 
-  const userColumns = db.prepare('PRAGMA table_info(users)').all();
-  if (!userColumns.some((col) => col.name === 'fullName')) {
-    db.prepare('ALTER TABLE users ADD COLUMN fullName TEXT NOT NULL DEFAULT ""').run();
-  }
-
-  ensureDefaultUsers(db);
-  ensureStarterProducts(db);
-
-  const productColumns = db.prepare('PRAGMA table_info(products)').all();
-  if (!productColumns.some((col) => col.name === 'costPrice')) {
-    db.prepare('ALTER TABLE products ADD COLUMN costPrice REAL NOT NULL DEFAULT 0').run();
-  }
-
-  const salesColumns = db.prepare('PRAGMA table_info(sales)').all();
-  if (!salesColumns.some((col) => col.name === 'cashierName')) {
-    db.prepare('ALTER TABLE sales ADD COLUMN cashierName TEXT NOT NULL DEFAULT "Unknown"').run();
-  }
-  if (!salesColumns.some((col) => col.name === 'profit')) {
-    db.prepare('ALTER TABLE sales ADD COLUMN profit REAL NOT NULL DEFAULT 0').run();
-  }
-
-  const purchaseOrderColumns = db.prepare('PRAGMA table_info(purchase_orders)').all();
-  if (!purchaseOrderColumns.some((col) => col.name === 'updatedAt')) {
-    db.prepare('ALTER TABLE purchase_orders ADD COLUMN updatedAt TEXT NOT NULL DEFAULT ""').run();
-  }
-
-  const receivingHistoryColumns = db.prepare('PRAGMA table_info(receiving_history)').all();
-  if (!receivingHistoryColumns.some((col) => col.name === 'purchaseOrderId')) {
-    db.prepare('ALTER TABLE receiving_history ADD COLUMN purchaseOrderId INTEGER').run();
-  }
-
-  const saleItemColumns = db.prepare('PRAGMA table_info(sale_items)').all();
-  if (!saleItemColumns.some((col) => col.name === 'costPrice')) {
-    db.prepare('ALTER TABLE sale_items ADD COLUMN costPrice REAL NOT NULL DEFAULT 0').run();
-  }
+  await ensureDefaultUsers(pool);
+  await ensureStarterProducts(pool);
 }
 
 function hashPassword(password) {
@@ -517,22 +506,23 @@ function verifyPassword(password, storedValue) {
   }
 }
 
-function saveRefreshToken(token, userId) {
+async function saveRefreshToken(token, userId) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-  db.prepare('INSERT INTO refresh_tokens (token, userId, expiresAt) VALUES (?, ?, ?)').run(token, userId, expiresAt);
+  await pool.query('INSERT INTO refresh_tokens (token, "userId", "expiresAt") VALUES ($1, $2, $3)', [token, userId, expiresAt]);
 }
 
-function deleteRefreshToken(token) {
-  db.prepare('DELETE FROM refresh_tokens WHERE token = ?').run(token);
+async function deleteRefreshToken(token) {
+  await pool.query('DELETE FROM refresh_tokens WHERE token = $1', [token]);
 }
 
-function findValidRefreshToken(token) {
-  const tokenRow = db.prepare('SELECT * FROM refresh_tokens WHERE token = ?').get(token);
+async function findValidRefreshToken(token) {
+  const { rows } = await pool.query('SELECT * FROM refresh_tokens WHERE token = $1', [token]);
+  const tokenRow = rows[0];
   if (!tokenRow) {
     return null;
   }
   if (new Date(tokenRow.expiresAt) < new Date()) {
-    deleteRefreshToken(token);
+    await deleteRefreshToken(token);
     return null;
   }
   return tokenRow;
@@ -617,11 +607,16 @@ async function requireAuth(req, res) {
   return user;
 }
 
-initDatabase();
-
-server.listen(PORT, HOST, () => {
-  console.log(`POS backend listening on http://${HOST}:${PORT}`);
-});
+initDatabase()
+  .then(() => {
+    server.listen(PORT, HOST, () => {
+      console.log(`POS backend listening on http://${HOST}:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Failed to initialize database', error);
+    process.exit(1);
+  });
 
 function tryServeFrontend(req, res, pathname) {
   if (!fs.existsSync(FRONTEND_BUILD_PATH)) {

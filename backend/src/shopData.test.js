@@ -1,28 +1,25 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const { DatabaseSync } = require('node:sqlite');
+const { newDb } = require('pg-mem');
 const { ensureStarterProducts } = require('./shopData');
 
-test('ensureStarterProducts seeds basic inventory when the products table is empty', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pos-shop-data-'));
-  const dbPath = path.join(tempDir, 'pos.sqlite');
-  const db = new DatabaseSync(dbPath);
+test('ensureStarterProducts seeds basic inventory when the products table is empty', async () => {
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
 
-  db.prepare(`CREATE TABLE products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
     sku TEXT UNIQUE,
     name TEXT NOT NULL,
-    price REAL NOT NULL,
-    costPrice REAL NOT NULL DEFAULT 0,
+    price DOUBLE PRECISION NOT NULL,
+    "costPrice" DOUBLE PRECISION NOT NULL DEFAULT 0,
     stock INTEGER NOT NULL DEFAULT 0
-  )`).run();
+  )`);
 
-  ensureStarterProducts(db);
+  await ensureStarterProducts(pool);
 
-  const rows = db.prepare('SELECT sku, name, price, costPrice, stock FROM products ORDER BY id').all();
+  const { rows } = await pool.query('SELECT sku, name, price, "costPrice", stock FROM products ORDER BY id');
   assert.equal(rows.length, 3);
   assert.deepEqual(rows[0], {
     sku: 'SKU-001',
@@ -32,3 +29,4 @@ test('ensureStarterProducts seeds basic inventory when the products table is emp
     stock: 20,
   });
 });
+

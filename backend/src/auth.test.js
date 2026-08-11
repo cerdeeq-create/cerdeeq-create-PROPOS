@@ -1,32 +1,30 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const { DatabaseSync } = require('node:sqlite');
+const { newDb } = require('pg-mem');
 const { ensureDefaultUsers } = require('./auth');
 
-test('ensureDefaultUsers creates admin and cashier accounts when the users table is empty', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pos-auth-'));
-  const dbPath = path.join(tempDir, 'pos.sqlite');
-  const db = new DatabaseSync(dbPath);
+test('ensureDefaultUsers creates admin and cashier accounts when the users table is empty', async () => {
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
 
-  db.prepare(`CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+  await pool.query(`CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'cashier',
-    fullName TEXT NOT NULL DEFAULT ''
-  )`).run();
+    "fullName" TEXT NOT NULL DEFAULT ''
+  )`);
 
-  ensureDefaultUsers(db);
+  await ensureDefaultUsers(pool);
 
-  const rows = db.prepare('SELECT username, role FROM users ORDER BY id').all().map((row) => ({ ...row }));
+  const { rows } = await pool.query('SELECT username, role FROM users ORDER BY id');
   assert.deepEqual(rows, [
     { username: 'admin', role: 'admin' },
     { username: 'cashier', role: 'cashier' },
   ]);
 
-  const adminRow = db.prepare('SELECT password FROM users WHERE username = ?').get('admin');
-  assert.match(adminRow.password, /^\$2[aby]\$/);
+  const adminResult = await pool.query('SELECT password FROM users WHERE username = $1', ['admin']);
+  assert.match(adminResult.rows[0].password, /^\$2[aby]\$/);
 });
+
