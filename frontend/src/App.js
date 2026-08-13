@@ -1239,8 +1239,8 @@ function App() {
             >
               Login
             </button>
-            <div style={{ marginTop: 6, textAlign: 'center', fontSize: 11, letterSpacing: '0.08em', color: '#C6A15B', fontWeight: 700, textTransform: 'uppercase' }}>
-              CREATED BY AB CREATIVES | 08147621844
+            <div style={{ marginTop: 6, textAlign: 'center', fontSize: 11, letterSpacing: '0.08em', color: '#8A8177', fontWeight: 700, textTransform: 'uppercase' }}>
+              POWERD BY PRO CREATIVES | 08147621844
             </div>
           </form>
         </div>
