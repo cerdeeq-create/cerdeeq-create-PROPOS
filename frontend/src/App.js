@@ -43,6 +43,7 @@ function App() {
   const [productStatusFilter, setProductStatusFilter] = useState('all');
   const [reorderQuantity, setReorderQuantity] = useState({});
   const [cartAddedMessage, setCartAddedMessage] = useState('');
+  const [showStockMovementHistory, setShowStockMovementHistory] = useState(false);
   const [reportStartDate, setReportStartDate] = useState('');
   const [reportEndDate, setReportEndDate] = useState('');
   const [showSalesHistory, setShowSalesHistory] = useState(false);
@@ -1927,28 +1928,36 @@ function App() {
 
                     <div style={{ display: 'grid', gap: 20, marginBottom: 20 }}>
               <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
                   <h3 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 24, color: '#2B2118' }}>Stock movement</h3>
-                  <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Recent activity</div>
+                  <button
+                    type="button"
+                    onClick={() => setShowStockMovementHistory((current) => !current)}
+                    style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 12px', background: '#FFFDF8', color: '#C6A15B', cursor: 'pointer', fontWeight: 700 }}
+                  >
+                    {showStockMovementHistory ? 'Hide History' : 'View History'}
+                  </button>
                 </div>
-                <div style={{ display: 'grid', gap: 8 }}>
-                  {stockMovements.length === 0 ? (
-                    <div style={{ color: '#8A8177' }}>No stock movements recorded yet.</div>
-                  ) : (
-                    stockMovements.map((movement) => (
-                      <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
-                        <div>
-                          <div style={{ fontWeight: 700, color: '#2B2118' }}>{movement.productName}</div>
-                          <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{movement.note}</div>
+                {showStockMovementHistory && (
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    {stockMovements.length === 0 ? (
+                      <div style={{ color: '#8A8177' }}>No stock movements recorded yet.</div>
+                    ) : (
+                      stockMovements.map((movement) => (
+                        <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
+                          <div>
+                            <div style={{ fontWeight: 700, color: '#2B2118' }}>{movement.productName}</div>
+                            <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{movement.note}</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontWeight: 700, color: movement.quantity > 0 ? '#15803d' : '#b42318' }}>{movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity}</div>
+                            <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{new Date(movement.createdAt).toLocaleString()}</div>
+                          </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontWeight: 700, color: movement.quantity > 0 ? '#15803d' : '#b42318' }}>{movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity}</div>
-                          <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{new Date(movement.createdAt).toLocaleString()}</div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
 
               <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
