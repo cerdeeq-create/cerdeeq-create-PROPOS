@@ -1313,6 +1313,9 @@ function App() {
             </div>
             <div style={{ width: '60%', height: 1, background: 'linear-gradient(90deg, transparent 0%, #C6A15B 50%, transparent 100%)' }} />
           </div>
+          <div style={{ padding: '0 8px', marginBottom: 6, fontFamily: "'Manrope', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(198, 161, 91, 0.7)' }}>
+            Menu
+          </div>
           {navItems.map((item) => {
             const isActive = activeView === item.key;
             return (
@@ -1320,16 +1323,21 @@ function App() {
                 key={item.key}
                 onClick={() => item.key === 'logout' ? logout() : setActiveView(item.key)}
                 style={{
-                  background: isActive ? 'rgba(245, 239, 231, 0.16)' : 'transparent',
-                  color: '#FFFDF8',
-                  border: isActive ? '1px solid rgba(244, 232, 205, 0.38)' : '1px solid transparent',
-                  borderRadius: 12,
-                  padding: '12px 14px',
+                  background: isActive ? 'rgba(198, 161, 91, 0.14)' : 'transparent',
+                  color: isActive ? '#F0E9D8' : 'rgba(255, 253, 248, 0.72)',
+                  border: 'none',
+                  borderLeft: isActive ? '3px solid #C6A15B' : '3px solid transparent',
+                  borderRadius: 8,
+                  padding: '12px 16px',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  fontWeight: 700,
-                  fontSize: 14,
-                  boxShadow: isActive ? '0 4px 10px rgba(0, 0, 0, 0.16)' : 'none',
+                  fontFamily: "'Manrope', sans-serif",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  boxShadow: 'none',
+                  transition: 'background 0.15s ease, color 0.15s ease',
                 }}
               >
                 {item.label}
@@ -1340,16 +1348,19 @@ function App() {
             onClick={logout}
             style={{
               marginTop: 'auto',
-              background: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
-              color: '#FFFDF8',
-              border: 'none',
-              borderRadius: 12,
-              padding: '12px 14px',
+              background: 'transparent',
+              color: 'rgba(255, 253, 248, 0.72)',
+              border: '1px solid rgba(198, 161, 91, 0.35)',
+              borderRadius: 8,
+              padding: '12px 16px',
               textAlign: 'left',
               cursor: 'pointer',
-              fontWeight: 700,
-              fontSize: 14,
-              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+              fontFamily: "'Manrope', sans-serif",
+              fontWeight: 600,
+              fontSize: 13,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              boxShadow: 'none',
             }}
           >
             Logout
