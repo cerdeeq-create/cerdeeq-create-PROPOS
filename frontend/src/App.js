@@ -2047,7 +2047,8 @@ function App() {
                 </thead>
                 <tbody>
                   {displayedProducts.map((product) => (
-                    <tr key={product.id} style={{ background: product.stock <= 5 ? '#FFFDF8' : '#FFFDF8', borderTop: '1px solid #F0E9D8' }}>
+                    <React.Fragment key={product.id}>
+                    <tr style={{ background: product.stock <= 5 ? '#FFFDF8' : '#FFFDF8', borderTop: '1px solid #F0E9D8' }}>
                       <td style={{ padding: '12px 14px', color: '#292521' }}>{product.sku}</td>
                       <td style={{ padding: '12px 14px', color: '#2B2118', fontWeight: 700 }}>{product.name}</td>
                       <td style={{ padding: '12px 14px', color: '#292521', fontWeight: 600 }}>{formatMoney(product.price)}</td>
@@ -2085,6 +2086,12 @@ function App() {
                                   </button>
                                 </div>
                               )}
+                              <button
+                                onClick={() => (editingProductId === product.id ? cancelEditProduct() : startEditProduct(product))}
+                                style={{ background: editingProductId === product.id ? '#2B2118' : '#F0E9D8', color: editingProductId === product.id ? '#FFFDF8' : '#2B2118', border: '1px solid #E5DCCB', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}
+                              >
+                                {editingProductId === product.id ? 'Close' : 'Edit'}
+                              </button>
                               <button onClick={() => deleteProduct(product.id)} style={{ background: '#f7dede', color: '#660000', border: '1px solid #e3b1b1', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
                                 Delete
                               </button>
@@ -2093,6 +2100,46 @@ function App() {
                         </div>
                       </td>
                     </tr>
+                    {editingProductId === product.id && (
+                      <tr>
+                        <td colSpan={5} style={{ padding: '16px', background: '#F7F3EA', borderTop: '1px solid #E5DCCB' }}>
+                          <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', maxWidth: 780 }}>
+                            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
+                              Name
+                              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} />
+                            </label>
+                            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
+                              Category / SKU
+                              <input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} />
+                            </label>
+                            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
+                              Selling price
+                              <input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} />
+                            </label>
+                            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
+                              Cost price
+                              <input type="number" step="0.01" value={form.costPrice} onChange={(e) => setForm({ ...form, costPrice: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} />
+                            </label>
+                            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
+                              Stock
+                              <input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} />
+                            </label>
+                          </div>
+                          {productFormMessage && (
+                            <div style={{ marginTop: 10, color: '#b42318', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{productFormMessage}</div>
+                          )}
+                          <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                            <button type="button" onClick={() => saveProduct({ preventDefault: () => {} })} style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '9px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                              Save Changes
+                            </button>
+                            <button type="button" onClick={cancelEditProduct} style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '9px 14px', cursor: 'pointer' }}>
+                              Cancel
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
