@@ -42,6 +42,7 @@ function App() {
   const [productSort, setProductSort] = useState('name');
   const [productStatusFilter, setProductStatusFilter] = useState('all');
   const [reorderQuantity, setReorderQuantity] = useState({});
+  const [cartAddedMessage, setCartAddedMessage] = useState('');
   const [reportStartDate, setReportStartDate] = useState('');
   const [reportEndDate, setReportEndDate] = useState('');
   const [showSalesHistory, setShowSalesHistory] = useState(false);
@@ -361,6 +362,10 @@ function App() {
       }
       return [...current, { productId: product.id, name: product.name, price: product.price, costPrice: product.costPrice || 0, quantity: 1 }];
     });
+
+    setCartAddedMessage(`${product.name} added to cart. Go to Sales to check out.`);
+    window.clearTimeout(addToCart.timeoutId);
+    addToCart.timeoutId = window.setTimeout(() => setCartAddedMessage(''), 2500);
   };
 
   const scanBySku = () => {
@@ -1854,6 +1859,10 @@ function App() {
               <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 30, color: '#2B2118' }}>Inventory</h2>
               <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Stock & receiving</div>
             </div>
+
+            {cartAddedMessage && (
+              <div style={{ marginBottom: 16, color: '#15803d', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '10px 14px', fontSize: 13, fontWeight: 600 }}>{cartAddedMessage}</div>
+            )}
 
             <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: 18 }}>
               <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: '12px 14px' }}>
