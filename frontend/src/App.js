@@ -153,11 +153,11 @@ function App() {
         <meta charset="utf-8" />
         <title>${escapeHtml(title)}</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 24px; color: #0B1F3A; }
+          body { font-family: Arial, sans-serif; margin: 24px; color: #2B2118; }
           h1 { font-size: 20px; margin-bottom: 12px; }
           table { width: 100%; border-collapse: collapse; font-size: 12px; }
-          th, td { border: 1px solid #D7E3F5; padding: 7px; text-align: left; }
-          th { background: #EAF1FB; }
+          th, td { border: 1px solid #E5DCCB; padding: 7px; text-align: left; }
+          th { background: #F0E9D8; }
         </style>
       </head>
       <body>
@@ -555,14 +555,14 @@ function App() {
         <head>
           <title>${settings.shopName} Receiving Receipt</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 18px; color: #0B1F3A; background: #FFFFFF; }
-            .header { text-align: center; border-bottom: 1px solid #0B1F3A; padding-bottom: 8px; margin-bottom: 10px; }
+            body { font-family: Arial, sans-serif; margin: 0; padding: 18px; color: #2B2118; background: #FFFDF8; }
+            .header { text-align: center; border-bottom: 1px solid #2B2118; padding-bottom: 8px; margin-bottom: 10px; }
             .title { font-size: 20px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
             .meta { font-size: 11px; line-height: 1.6; margin-bottom: 10px; }
             table { width: 100%; border-collapse: collapse; font-size: 11px; }
-            th, td { padding: 5px 0; text-align: left; border-bottom: 1px solid #EAF1FB; }
+            th, td { padding: 5px 0; text-align: left; border-bottom: 1px solid #F0E9D8; }
             th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { text-align: right; }
-            .totals { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #0B1F3A; font-size: 12px; }
+            .totals { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #2B2118; font-size: 12px; }
             .row { display: flex; justify-content: space-between; margin-bottom: 4px; }
             .grand { font-weight: 700; }
           </style>
@@ -1191,53 +1191,55 @@ function App() {
 
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #F4F8FD 0%, #EAF1FB 100%)', padding: 20 }}>
-        <div style={{ width: '100%', maxWidth: 440, background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.12)', padding: 32 }}>
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', padding: 20 }}>
+        <div style={{ width: '100%', maxWidth: 440, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.12)', padding: 32 }}>
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div style={{ fontSize: 24, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>NOOR COLLECTION</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 34, color: '#2B2118', lineHeight: 1 }}>NOOR</div>
+            <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 13, letterSpacing: '0.32em', textTransform: 'uppercase', color: '#C6A15B', marginTop: 6 }}>Collection</div>
+            <div style={{ width: 64, height: 1, background: 'linear-gradient(90deg, transparent 0%, #C6A15B 50%, transparent 100%)', margin: '12px auto 0' }} />
           </div>
 
           <form onSubmit={login} style={{ display: 'grid', gap: 16 }}>
-            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
               Username
               <input
                 type="text"
                 value={loginForm.username}
                 onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A', fontSize: 15 }}
+                style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15 }}
                 placeholder="Enter username"
               />
             </label>
 
-            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
               Password
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <input
                   type={showLoginPassword ? 'text' : 'password'}
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A', fontSize: 15 }}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15 }}
                   placeholder="Enter password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowLoginPassword((prev) => !prev)}
-                  style={{ padding: '11px 12px', minWidth: 74, border: '1px solid #D7E3F5', borderRadius: 10, background: '#EAF1FB', color: '#0B1F3A', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ padding: '11px 12px', minWidth: 74, border: '1px solid #E5DCCB', borderRadius: 10, background: '#F0E9D8', color: '#2B2118', fontWeight: 700, cursor: 'pointer' }}
                 >
                   {showLoginPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
             </label>
 
-            {loginError && <div style={{ color: '#b42318', background: '#FFFFFF1f2', border: '1px solid #fbcfe0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{loginError}</div>}
+            {loginError && <div style={{ color: '#b42318', background: '#fff1f2', border: '1px solid #fbcfe0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{loginError}</div>}
 
             <button
               type="submit"
-              style={{ marginTop: 4, background: 'linear-gradient(180deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 12, padding: '14px 16px', fontWeight: 700, fontSize: 15, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
+              style={{ marginTop: 4, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 12, padding: '14px 16px', fontWeight: 700, fontSize: 15, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
             >
               Login
             </button>
-            <div style={{ marginTop: 6, textAlign: 'center', fontSize: 11, letterSpacing: '0.08em', color: '#1456D9', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div style={{ marginTop: 6, textAlign: 'center', fontSize: 11, letterSpacing: '0.08em', color: '#C6A15B', fontWeight: 700, textTransform: 'uppercase' }}>
               CREATED BY AB CREATIVES | 08147621844
             </div>
           </form>
@@ -1273,7 +1275,7 @@ function App() {
         display: none !important;
       }
       body {
-        background: #FFFFFF !important;
+        background: #FFFDF8 !important;
       }
       .receipt-print {
         display: block !important;
@@ -1284,7 +1286,7 @@ function App() {
         padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
-        background: #FFFFFF !important;
+        background: #FFFDF8 !important;
       }
       .receipt-print * {
         visibility: visible !important;
@@ -1295,16 +1297,21 @@ function App() {
   return (
     <>
       <style>{printReceiptCss}</style>
-      <div className="no-print" style={{ display: 'flex', minHeight: '100vh', background: '#F4F8FD' }}>
-        <aside style={{ width: 250, background: 'linear-gradient(180deg, #0B1F3A 0%, #14335E 100%)', color: '#FFFFFF', padding: '24px 18px', display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '4px 0 20px rgba(17, 19, 24, 0.16)' }}>
-          <div style={{ marginBottom: 22, padding: '16px 12px', borderRadius: 16, background: 'rgba(245, 239, 231, 0.12)', border: '1px solid rgba(244, 232, 205, 0.18)', display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: 92, height: 92, borderRadius: 28, background: 'linear-gradient(135deg, #F4F8FD 0%, #F4B942 48%, #0B1F3A 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 24px rgba(0, 0, 0, 0.22)', border: '2px solid rgba(255, 255, 255, 0.24)' }}>
+      <div className="no-print" style={{ display: 'flex', minHeight: '100vh', background: '#F7F3EA' }}>
+        <aside style={{ width: 250, background: 'linear-gradient(180deg, #2B2118 0%, #4A3426 100%)', color: '#FFFDF8', padding: '24px 18px', display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '4px 0 20px rgba(17, 19, 24, 0.16)' }}>
+          <div style={{ marginBottom: 22, padding: '16px 12px 18px', borderRadius: 16, background: 'rgba(245, 239, 231, 0.12)', border: '1px solid rgba(244, 232, 205, 0.18)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <div style={{ width: 92, height: 92, borderRadius: 28, background: 'linear-gradient(135deg, #F7F3EA 0%, #C6A15B 48%, #2B2118 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 24px rgba(0, 0, 0, 0.22)', border: '2px solid rgba(255, 255, 255, 0.24)' }}>
               <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="7" y="7" width="50" height="50" rx="18" fill="#0B1F3A" />
-                <path d="M20 18H29L40 32L29 46H20L31 32L20 18Z" fill="#FFFFFFFFF" />
-                <path d="M33 18H42L31 32L42 46H33L24 32L33 18Z" fill="#F4B942" />
+                <rect x="7" y="7" width="50" height="50" rx="18" fill="#2B2118" />
+                <path d="M20 18H29L40 32L29 46H20L31 32L20 18Z" fill="#FFFDF8" />
+                <path d="M33 18H42L31 32L42 46H33L24 32L33 18Z" fill="#C6A15B" />
               </svg>
             </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 26, color: '#FFFDF8', lineHeight: 1 }}>NOOR</div>
+              <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 12, letterSpacing: '0.32em', color: '#C6A15B', marginTop: 4 }}>COLLECTION</div>
+            </div>
+            <div style={{ width: '60%', height: 1, background: 'linear-gradient(90deg, transparent 0%, #C6A15B 50%, transparent 100%)' }} />
           </div>
           {navItems.map((item) => {
             const isActive = activeView === item.key;
@@ -1314,7 +1321,7 @@ function App() {
                 onClick={() => item.key === 'logout' ? logout() : setActiveView(item.key)}
                 style={{
                   background: isActive ? 'rgba(245, 239, 231, 0.16)' : 'transparent',
-                  color: '#FFFFFF',
+                  color: '#FFFDF8',
                   border: isActive ? '1px solid rgba(244, 232, 205, 0.38)' : '1px solid transparent',
                   borderRadius: 12,
                   padding: '12px 14px',
@@ -1334,7 +1341,7 @@ function App() {
             style={{
               marginTop: 'auto',
               background: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
-              color: '#FFFFFF',
+              color: '#FFFDF8',
               border: 'none',
               borderRadius: 12,
               padding: '12px 14px',
@@ -1349,68 +1356,68 @@ function App() {
           </button>
         </aside>
         <div style={{ flex: 1, padding: 20, maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 24, padding: '18px 22px', background: 'linear-gradient(135deg, #0B1F3A 0%, #14335E 100%)', border: '1px solid #D7E3F5', borderRadius: 14, boxShadow: '0 8px 18px rgba(17, 19, 24, 0.18), inset 0 -2px 0 rgba(244, 232, 205, 0.18)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 24, padding: '18px 22px', background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', border: '1px solid #E5DCCB', borderRadius: 14, boxShadow: '0 8px 18px rgba(17, 19, 24, 0.18), inset 0 -2px 0 rgba(244, 232, 205, 0.18)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-              <div style={{ width: 4, height: 34, borderRadius: 999, background: 'linear-gradient(180deg, #EAF1FB 0%, #1456D9 100%)', boxShadow: '0 0 10px rgba(244, 232, 205, 0.35)' }} />
-              <div style={{ padding: '12px 18px', borderRadius: 999, background: '#EAF1FB', color: '#0B1F3A', fontSize: 14, letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 800, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.16)', border: '1px solid rgba(184, 148, 77, 0.35)' }}>{settings.shopName}</div>
+              <div style={{ width: 4, height: 34, borderRadius: 999, background: 'linear-gradient(180deg, #F0E9D8 0%, #C6A15B 100%)', boxShadow: '0 0 10px rgba(244, 232, 205, 0.35)' }} />
+              <div style={{ padding: '12px 18px', borderRadius: 999, background: '#F0E9D8', color: '#2B2118', fontSize: 14, letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 800, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.16)', border: '1px solid rgba(184, 148, 77, 0.35)' }}>{settings.shopName}</div>
             </div>
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-              <div style={{ minWidth: 220, padding: '12px 18px', borderRadius: 999, background: 'rgba(245, 239, 231, 0.12)', color: '#FFFFFFFFF', border: '1px solid rgba(244, 232, 205, 0.24)', textAlign: 'center', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
+              <div style={{ minWidth: 220, padding: '12px 18px', borderRadius: 999, background: 'rgba(245, 239, 231, 0.12)', color: '#FFFDF8', border: '1px solid rgba(244, 232, 205, 0.24)', textAlign: 'center', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
                 <div style={{ fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', opacity: 0.8, marginBottom: 4 }}>Welcome</div>
                 <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'Courier New, monospace', letterSpacing: '0.08em' }}>
                   {currentTime.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 18px', borderRadius: 999, background: '#EAF1FB', color: '#0B1F3A', fontSize: 14, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.16)', border: '1px solid rgba(184, 148, 77, 0.35)', minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 18px', borderRadius: 999, background: '#F0E9D8', color: '#2B2118', fontSize: 14, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.16)', border: '1px solid rgba(184, 148, 77, 0.35)', minWidth: 0 }}>
               <span style={{ fontSize: 16 }}>👤</span>
               {user?.fullName || user?.username || 'Account holder'}
             </div>
           </div>
       {activeView === 'settings' && (
-        <section style={{ marginBottom: 20, background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #D7E3F5', paddingBottom: 12 }}>
-            <h2 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 30 }}>Settings</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>System preferences</div>
+        <section style={{ marginBottom: 20, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 30 }}>Settings</h2>
+            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>System preferences</div>
           </div>
 
           <form onSubmit={saveSettings} style={{ display: 'grid', gap: 16 }}>
             <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Shop name
                 <input
                   value={settings.shopName}
                   onChange={(e) => updateSetting('shopName', e.target.value)}
-                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                 />
               </label>
-              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Currency symbol
                 <input
                   value={settings.currencySymbol}
                   onChange={(e) => updateSetting('currencySymbol', e.target.value)}
-                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                 />
               </label>
-              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Default store account
                 <input
                   value={settings.defaultStoreAccount}
                   onChange={(e) => updateSetting('defaultStoreAccount', e.target.value)}
-                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                 />
               </label>
-              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Receipt footer
                 <input
                   value={settings.receiptFooter}
                   onChange={(e) => updateSetting('receiptFooter', e.target.value)}
-                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                 />
               </label>
             </div>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: '14px 16px', color: '#10233F', fontWeight: 600 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: '14px 16px', color: '#292521', fontWeight: 600 }}>
               <input
                 type="checkbox"
                 checked={settings.autoPrintReceipts}
@@ -1421,7 +1428,7 @@ function App() {
 
             {settingsMessage && <div style={{ color: '#1d6438', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{settingsMessage}</div>}
 
-            <button type="submit" style={{ justifySelf: 'start', background: 'linear-gradient(180deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, cursor: 'pointer' }}>
+            <button type="submit" style={{ justifySelf: 'start', background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, cursor: 'pointer' }}>
               Save settings
             </button>
           </form>
@@ -1429,127 +1436,127 @@ function App() {
       )}
 
       {user.role === 'admin' && activeView === 'staffs' && (
-        <section style={{ marginBottom: 20, background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #D7E3F5', paddingBottom: 12 }}>
-            <h2 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 30 }}>Cashier Management</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Staff Register</div>
+        <section style={{ marginBottom: 20, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 30 }}>Cashier Management</h2>
+            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Staff Register</div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 20 }}>
-            <form onSubmit={createUser} style={{ display: 'grid', gap: 14, background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+            <form onSubmit={createUser} style={{ display: 'grid', gap: 14, background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Cashier full name
                 <input
                   type="text"
                   value={newUserForm.fullName}
                   onChange={(e) => setNewUserForm({ ...newUserForm, fullName: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                   placeholder="e.g. Sarah Johnson"
                   required
                 />
               </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Username
                 <input
                   type="text"
                   value={newUserForm.username}
                   onChange={(e) => setNewUserForm({ ...newUserForm, username: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                   placeholder="cashier username"
                   required
                 />
               </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Password
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <input
                     type={showCreatePassword ? 'text' : 'password'}
                     value={newUserForm.password}
                     onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-                    style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                    style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                     placeholder="Create password"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowCreatePassword((prev) => !prev)}
-                    style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#EAF1FB', color: '#0B1F3A', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#F0E9D8', color: '#2B2118', fontWeight: 700, cursor: 'pointer' }}
                   >
                     {showCreatePassword ? 'Hide' : 'Show'}
                   </button>
                 </div>
               </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Role
                 <select
                   value={newUserForm.role}
                   onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                 >
                   <option value="cashier">Cashier</option>
                   <option value="admin">Admin</option>
                 </select>
               </label>
-              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
+              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
                 Create Cashier
               </button>
             </form>
 
-            <div style={{ background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
-              <h3 style={{ margin: '0 0 14px', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 24 }}>Cashier accounts</h3>
+            <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+              <h3 style={{ margin: '0 0 14px', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 24 }}>Cashier accounts</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
                 {userList.map((u) => {
                   const isEditing = editingUserId === u.id;
                   return (
-                    <li key={u.id} style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 10, padding: '12px 14px', color: '#10233F', display: 'grid', gap: 10 }}>
+                    <li key={u.id} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 10, padding: '12px 14px', color: '#292521', display: 'grid', gap: 10 }}>
                       {isEditing ? (
                         <form onSubmit={saveEditedUser} style={{ display: 'grid', gap: 10 }}>
-                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#10233F', fontWeight: 600 }}>
+                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
                             Full name
                             <input
                               type="text"
                               value={editingUserForm.fullName}
                               onChange={(e) => setEditingUserForm({ ...editingUserForm, fullName: e.target.value })}
-                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #D7E3F5', borderRadius: 8, background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #E5DCCB', borderRadius: 8, background: '#FFFDF8', color: '#2B2118' }}
                               required
                             />
                           </label>
-                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#10233F', fontWeight: 600 }}>
+                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
                             Username
                             <input
                               type="text"
                               value={editingUserForm.username}
                               onChange={(e) => setEditingUserForm({ ...editingUserForm, username: e.target.value })}
-                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #D7E3F5', borderRadius: 8, background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #E5DCCB', borderRadius: 8, background: '#FFFDF8', color: '#2B2118' }}
                               required
                             />
                           </label>
-                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#10233F', fontWeight: 600 }}>
+                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
                             New password
                             <input
                               type="password"
                               value={editingUserForm.password}
                               onChange={(e) => setEditingUserForm({ ...editingUserForm, password: e.target.value })}
-                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #D7E3F5', borderRadius: 8, background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #E5DCCB', borderRadius: 8, background: '#FFFDF8', color: '#2B2118' }}
                               placeholder="Leave blank to keep current"
                             />
                           </label>
-                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#10233F', fontWeight: 600 }}>
+                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
                             Role
                             <select
                               value={editingUserForm.role}
                               onChange={(e) => setEditingUserForm({ ...editingUserForm, role: e.target.value })}
-                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #D7E3F5', borderRadius: 8, background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                              style={{ width: '100%', padding: '9px 10px', border: '1px solid #E5DCCB', borderRadius: 8, background: '#FFFDF8', color: '#2B2118' }}
                             >
                               <option value="cashier">Cashier</option>
                               <option value="admin">Admin</option>
                             </select>
                           </label>
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                            <button type="submit" style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #1456D9', background: '#1456D9', color: '#FFFFFFFFF', fontWeight: 700, cursor: 'pointer' }}>
+                            <button type="submit" style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #C6A15B', background: '#C6A15B', color: '#FFFDF8', fontWeight: 700, cursor: 'pointer' }}>
                               Save
                             </button>
-                            <button type="button" onClick={cancelEditingUser} style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #D7E3F5', background: '#EAF1FB', color: '#0B1F3A', fontWeight: 700, cursor: 'pointer' }}>
+                            <button type="button" onClick={cancelEditingUser} style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #E5DCCB', background: '#F0E9D8', color: '#2B2118', fontWeight: 700, cursor: 'pointer' }}>
                               Cancel
                             </button>
                           </div>
@@ -1559,13 +1566,13 @@ function App() {
                           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
                             <div>
                               <div style={{ fontWeight: 700, fontSize: 14 }}>{u.fullName || u.username}</div>
-                              <div style={{ color: '#5B6B82', fontSize: 12, marginTop: 2 }}>{u.username}</div>
+                              <div style={{ color: '#8A8177', fontSize: 12, marginTop: 2 }}>{u.username}</div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                              <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', background: u.role === 'admin' ? '#0B1F3A' : '#1456D9', color: '#FFFFFFFFF', borderRadius: 999, padding: '5px 8px', fontWeight: 700 }}>
+                              <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', background: u.role === 'admin' ? '#2B2118' : '#C6A15B', color: '#FFFDF8', borderRadius: 999, padding: '5px 8px', fontWeight: 700 }}>
                                 {u.role}
                               </span>
-                              <button type="button" onClick={() => startEditingUser(u)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #D7E3F5', background: '#EAF1FB', color: '#0B1F3A', fontWeight: 700, cursor: 'pointer' }}>
+                              <button type="button" onClick={() => startEditingUser(u)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #E5DCCB', background: '#F0E9D8', color: '#2B2118', fontWeight: 700, cursor: 'pointer' }}>
                                 Edit
                               </button>
                               <button type="button" onClick={() => deleteUser(u.id)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #ef4444', background: '#fef2f2', color: '#b91c1c', fontWeight: 700, cursor: 'pointer' }}>
@@ -1585,51 +1592,51 @@ function App() {
       )}
 
       {user.role === 'admin' && activeView === 'customers' && (
-        <section style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #D7E3F5', paddingBottom: 12 }}>
-            <h2 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 30 }}>Customers</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Register</div>
+        <section style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 30 }}>Customers</h2>
+            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Register</div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 20 }}>
-            <form onSubmit={handleCreateCustomer} style={{ display: 'grid', gap: 14, background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+            <form onSubmit={handleCreateCustomer} style={{ display: 'grid', gap: 14, background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Customer name
                 <input
                   type="text"
                   value={newCustomerForm.name}
                   onChange={(e) => setNewCustomerForm({ ...newCustomerForm, name: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                   placeholder="e.g. Grace Okafor"
                   required
                 />
               </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Phone number
                 <input
                   type="tel"
                   value={newCustomerForm.phone}
                   onChange={(e) => setNewCustomerForm({ ...newCustomerForm, phone: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                   placeholder="e.g. +234 812 345 6789"
                   required
                 />
               </label>
-              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
+              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
                 Save Customer
               </button>
             </form>
 
-            <div style={{ background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
-              <h3 style={{ margin: '0 0 14px', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 24 }}>Customer list</h3>
+            <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+              <h3 style={{ margin: '0 0 14px', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 24 }}>Customer list</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
                 {customers.length === 0 ? (
-                  <li style={{ color: '#5B6B82' }}>No customer registered yet.</li>
+                  <li style={{ color: '#8A8177' }}>No customer registered yet.</li>
                 ) : (
                   customers.map((customer) => (
-                    <li key={customer.id} style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 10, padding: '12px 14px', color: '#10233F' }}>
+                    <li key={customer.id} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 10, padding: '12px 14px', color: '#292521' }}>
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{customer.name}</div>
-                      <div style={{ color: '#5B6B82', fontSize: 12, marginTop: 2 }}>{customer.phone}</div>
+                      <div style={{ color: '#8A8177', fontSize: 12, marginTop: 2 }}>{customer.phone}</div>
                     </li>
                   ))
                 )}
@@ -1640,51 +1647,51 @@ function App() {
       )}
 
       {user.role === 'admin' && activeView === 'suppliers' && (
-        <section style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #D7E3F5', paddingBottom: 12 }}>
-            <h2 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 30 }}>Suppliers</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Register</div>
+        <section style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 30 }}>Suppliers</h2>
+            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Register</div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 20 }}>
-            <form onSubmit={handleCreateSupplier} style={{ display: 'grid', gap: 14, background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+            <form onSubmit={handleCreateSupplier} style={{ display: 'grid', gap: 14, background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Supplier name
                 <input
                   type="text"
                   value={newSupplierForm.name}
                   onChange={(e) => setNewSupplierForm({ ...newSupplierForm, name: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                   placeholder="e.g. Modern Textile Hub"
                   required
                 />
               </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                 Phone number
                 <input
                   type="tel"
                   value={newSupplierForm.phone}
                   onChange={(e) => setNewSupplierForm({ ...newSupplierForm, phone: e.target.value })}
-                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #D7E3F5', borderRadius: 10, background: '#FFFFFFFFF', color: '#0B1F3A', fontSize: 14 }}
+                  style={{ width: '100%', padding: '11px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118', fontSize: 14 }}
                   placeholder="e.g. +234 803 456 7890"
                   required
                 />
               </label>
-              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
+              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
                 Save Supplier
               </button>
             </form>
 
-            <div style={{ background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
-              <h3 style={{ margin: '0 0 14px', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 24 }}>Supplier list</h3>
+            <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+              <h3 style={{ margin: '0 0 14px', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 24 }}>Supplier list</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
                 {suppliers.length === 0 ? (
-                  <li style={{ color: '#5B6B82' }}>No supplier registered yet.</li>
+                  <li style={{ color: '#8A8177' }}>No supplier registered yet.</li>
                 ) : (
                   suppliers.map((supplier) => (
-                    <li key={supplier.id} style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 10, padding: '12px 14px', color: '#10233F' }}>
+                    <li key={supplier.id} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 10, padding: '12px 14px', color: '#292521' }}>
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{supplier.name}</div>
-                      <div style={{ color: '#5B6B82', fontSize: 12, marginTop: 2 }}>{supplier.phone}</div>
+                      <div style={{ color: '#8A8177', fontSize: 12, marginTop: 2 }}>{supplier.phone}</div>
                     </li>
                   ))
                 )}
@@ -1695,11 +1702,11 @@ function App() {
       )}
       {activeView === 'dashboard' && (
       <div style={{ display: 'grid', gap: 20 }}>
-        <section style={{ background: 'linear-gradient(135deg, #FFFFFFFFF 0%, #F4F8FD 100%)', border: '1px solid #D7E3F5', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+        <section style={{ background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Inventory Alerts</div>
-              <h2 style={{ margin: '6px 0 0', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 28 }}>Low stock watch</h2>
+              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Inventory Alerts</div>
+              <h2 style={{ margin: '6px 0 0', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 28 }}>Low stock watch</h2>
             </div>
             <div style={{ padding: '8px 12px', borderRadius: 999, background: lowStockProducts.length > 0 ? '#fef2f2' : '#f0fdf4', color: lowStockProducts.length > 0 ? '#b42318' : '#15803d', fontSize: 12, fontWeight: 700 }}>
               {lowStockProducts.length > 0 ? `${lowStockProducts.length} item${lowStockProducts.length === 1 ? '' : 's'} needs attention` : 'All stocked well'}
@@ -1710,10 +1717,10 @@ function App() {
           ) : (
             <div style={{ display: 'grid', gap: 10 }}>
               {lowStockProducts.map((product) => (
-                <div key={product.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 12, padding: '12px 14px' }}>
+                <div key={product.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: '12px 14px' }}>
                   <div>
-                    <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{product.name}</div>
-                    <div style={{ color: '#5B6B82', fontSize: 12, marginTop: 2 }}>{product.sku}</div>
+                    <div style={{ fontWeight: 700, color: '#2B2118' }}>{product.name}</div>
+                    <div style={{ color: '#8A8177', fontSize: 12, marginTop: 2 }}>{product.sku}</div>
                   </div>
                   <div style={{ color: '#b42318', fontWeight: 700 }}>{product.stock} left</div>
                 </div>
@@ -1722,62 +1729,62 @@ function App() {
           )}
         </section>
 
-        <section style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+        <section style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Sales Dashboard</div>
-              <h2 style={{ margin: '6px 0 0', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 28 }}>Performance overview</h2>
+              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Sales Dashboard</div>
+              <h2 style={{ margin: '6px 0 0', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 28 }}>Performance overview</h2>
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-              <label style={{ display: 'flex', flexDirection: 'column', fontSize: 12, color: '#5B6B82', gap: 4 }}>
+              <label style={{ display: 'flex', flexDirection: 'column', fontSize: 12, color: '#8A8177', gap: 4 }}>
                 <span>From</span>
-                <input type="date" value={reportStartDate} onChange={(e) => setReportStartDate(e.target.value)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
+                <input type="date" value={reportStartDate} onChange={(e) => setReportStartDate(e.target.value)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
               </label>
-              <label style={{ display: 'flex', flexDirection: 'column', fontSize: 12, color: '#5B6B82', gap: 4 }}>
+              <label style={{ display: 'flex', flexDirection: 'column', fontSize: 12, color: '#8A8177', gap: 4 }}>
                 <span>To</span>
-                <input type="date" value={reportEndDate} onChange={(e) => setReportEndDate(e.target.value)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
+                <input type="date" value={reportEndDate} onChange={(e) => setReportEndDate(e.target.value)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
               </label>
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-            <div style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #14335E 100%)', color: '#FFFFFFFFF', borderRadius: 14, padding: 16, border: '1px solid #16345C' }}>
+            <div style={{ background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', color: '#FFFDF8', borderRadius: 14, padding: 16, border: '1px solid #A9823A' }}>
               <div style={{ color: 'rgba(255,255,255,0.76)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue</div>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{formatMoney(salesSummary.totalRevenue)}</div>
             </div>
-            <div style={{ background: 'linear-gradient(135deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', borderRadius: 14, padding: 16, border: '1px solid #0D3FA6' }}>
+            <div style={{ background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', borderRadius: 14, padding: 16, border: '1px solid #A9823A' }}>
               <div style={{ color: 'rgba(255,255,255,0.82)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Profit</div>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{formatMoney(salesSummary.totalProfit)}</div>
             </div>
-            <div style={{ background: 'linear-gradient(135deg, #F4F8FD 0%, #EAF1FB 100%)', borderRadius: 14, padding: 16, border: '1px solid #D7E3F5' }}>
-              <div style={{ color: '#5B6B82', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Sales</div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#0B1F3A' }}>{salesSummary.salesCount}</div>
+            <div style={{ background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', borderRadius: 14, padding: 16, border: '1px solid #E5DCCB' }}>
+              <div style={{ color: '#8A8177', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Sales</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{salesSummary.salesCount}</div>
             </div>
-            <div style={{ background: 'linear-gradient(135deg, #F4F8FD 0%, #EAF1FB 100%)', borderRadius: 14, padding: 16, border: '1px solid #D7E3F5' }}>
-              <div style={{ color: '#5B6B82', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Items Sold</div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#0B1F3A' }}>{salesSummary.totalItems}</div>
+            <div style={{ background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', borderRadius: 14, padding: 16, border: '1px solid #E5DCCB' }}>
+              <div style={{ color: '#8A8177', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Items Sold</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{salesSummary.totalItems}</div>
             </div>
           </div>
 
           <div style={{ marginTop: 20, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
-            <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 14, padding: 16 }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: 18, color: '#0B1F3A' }}>Payment Methods</h3>
+            <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16 }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: 18, color: '#2B2118' }}>Payment Methods</h3>
               {paymentMethodEntries.length === 0 ? (
-                <div style={{ color: '#5B6B82' }}>No payment data yet.</div>
+                <div style={{ color: '#8A8177' }}>No payment data yet.</div>
               ) : (
                 <div style={{ display: 'grid', gap: 10 }}>
                   {paymentMethodEntries.map(([method, count]) => (
                     <div key={method}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: '#10233F', fontSize: 13 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: '#292521', fontSize: 13 }}>
                         <span>{method}</span>
                         <span style={{ fontWeight: 700 }}>{count} sale{count === 1 ? '' : 's'}</span>
                       </div>
-                      <div style={{ height: 10, background: '#EAF1FB', borderRadius: 999 }}>
+                      <div style={{ height: 10, background: '#F0E9D8', borderRadius: 999 }}>
                         <div
                           style={{
                             height: '100%',
                             width: `${Math.min(100, (count / Math.max(1, salesSummary.salesCount)) * 100)}%`,
-                            background: 'linear-gradient(90deg, #1456D9 0%, #0B1F3A 100%)',
+                            background: 'linear-gradient(90deg, #C6A15B 0%, #2B2118 100%)',
                             borderRadius: 999,
                           }}
                         />
@@ -1788,38 +1795,38 @@ function App() {
               )}
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 14, padding: 16 }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: 18, color: '#0B1F3A' }}>Top Products</h3>
+            <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16 }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: 18, color: '#2B2118' }}>Top Products</h3>
               {topProducts.length === 0 ? (
-                <div style={{ color: '#5B6B82' }}>No product sales yet.</div>
+                <div style={{ color: '#8A8177' }}>No product sales yet.</div>
               ) : (
                 <div style={{ display: 'grid', gap: 8 }}>
                   {topProducts.map(([name, quantity]) => (
-                    <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 10, background: '#F4F8FD' }}>
-                      <span style={{ fontWeight: 700, color: '#0B1F3A' }}>{name}</span>
-                      <span style={{ color: '#1456D9', fontWeight: 700 }}>×{quantity}</span>
+                    <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 10, background: '#F7F3EA' }}>
+                      <span style={{ fontWeight: 700, color: '#2B2118' }}>{name}</span>
+                      <span style={{ color: '#C6A15B', fontWeight: 700 }}>×{quantity}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 14, padding: 16 }}>
+            <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <h3 style={{ margin: 0, fontSize: 18, color: '#0B1F3A' }}>Supplier activity</h3>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Procurement</div>
+                <h3 style={{ margin: 0, fontSize: 18, color: '#2B2118' }}>Supplier activity</h3>
+                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Procurement</div>
               </div>
               {purchaseOrderSummary.length === 0 && receivingSupplierSummary.length === 0 ? (
-                <div style={{ color: '#5B6B82' }}>No supplier activity yet.</div>
+                <div style={{ color: '#8A8177' }}>No supplier activity yet.</div>
               ) : (
                 <div style={{ display: 'grid', gap: 10 }}>
                   {[...purchaseOrderSummary, ...receivingSupplierSummary].slice(0, 5).map((entry, index) => (
-                    <div key={`${entry.supplier}-${index}`} style={{ padding: '10px 12px', borderRadius: 10, background: '#F4F8FD' }}>
+                    <div key={`${entry.supplier}-${index}`} style={{ padding: '10px 12px', borderRadius: 10, background: '#F7F3EA' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
-                        <span style={{ fontWeight: 700, color: '#0B1F3A' }}>{entry.supplier}</span>
-                        <span style={{ fontWeight: 700, color: '#1456D9' }}>{formatMoney(entry.totalAmount || 0)}</span>
+                        <span style={{ fontWeight: 700, color: '#2B2118' }}>{entry.supplier}</span>
+                        <span style={{ fontWeight: 700, color: '#C6A15B' }}>{formatMoney(entry.totalAmount || 0)}</span>
                       </div>
-                      <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 4 }}>
+                      <div style={{ fontSize: 12, color: '#8A8177', marginTop: 4 }}>
                         {entry.ordersCount ? `${entry.ordersCount} purchase order${entry.ordersCount === 1 ? '' : 's'}` : `${entry.receiptsCount || 0} receipt${entry.receiptsCount === 1 ? '' : 's'}`}
                       </div>
                     </div>
@@ -1833,41 +1840,41 @@ function App() {
       )}
       {activeView === 'inventory' && (
         <div style={{ display: 'grid', gap: 20, gridTemplateColumns: '1fr' }}>
-          <section style={{ background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 22, boxShadow: '0 8px 20px rgba(27, 22, 18, 0.06)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16, borderBottom: '1px solid #D7E3F5', paddingBottom: 12 }}>
-              <h2 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', fontSize: 30, color: '#0B1F3A' }}>Inventory</h2>
-              <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Stock & receiving</div>
+          <section style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 22, boxShadow: '0 8px 20px rgba(27, 22, 18, 0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+              <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 30, color: '#2B2118' }}>Inventory</h2>
+              <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Stock & receiving</div>
             </div>
 
             <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: 18 }}>
-              <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 12, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Low stock</div>
+              <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Low stock</div>
                 <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#b42318' }}>{inventorySummary.lowStockCount}</div>
               </div>
-              <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 12, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Out of stock</div>
-                <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#0B1F3A' }}>{inventorySummary.outOfStockCount}</div>
+              <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Out of stock</div>
+                <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{inventorySummary.outOfStockCount}</div>
               </div>
-              <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 12, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Healthy stock</div>
+              <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Healthy stock</div>
                 <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#15803d' }}>{inventorySummary.healthyCount}</div>
               </div>
             </div>
 
             <div style={{ marginBottom: 14, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#292521', fontWeight: 600 }}>
                 Search products:
                 <input
                   type="text"
                   value={productFilter}
                   onChange={(e) => setProductFilter(e.target.value)}
                   placeholder="Search by SKU or name"
-                  style={{ padding: '10px 12px', minWidth: 220, borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                  style={{ padding: '10px 12px', minWidth: 220, borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                 />
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#10233F', fontWeight: 600 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#292521', fontWeight: 600 }}>
                 Sort by:
-                <select value={productSort} onChange={(e) => setProductSort(e.target.value)} style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}>
+                <select value={productSort} onChange={(e) => setProductSort(e.target.value)} style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}>
                   <option value="name">Name</option>
                   <option value="price">Price</option>
                   <option value="stock">Stock</option>
@@ -1886,9 +1893,9 @@ function App() {
                     onClick={() => setProductStatusFilter(status)}
                     style={{
                       borderRadius: 999,
-                      border: selected ? '1px solid #0B1F3A' : '1px solid #D7E3F5',
-                      background: selected ? '#0B1F3A' : '#FFFFFF',
-                      color: selected ? '#FFFFFFFFF' : '#0B1F3A',
+                      border: selected ? '1px solid #2B2118' : '1px solid #E5DCCB',
+                      background: selected ? '#2B2118' : '#FFFDF8',
+                      color: selected ? '#FFFDF8' : '#2B2118',
                       padding: '8px 12px',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -1901,16 +1908,16 @@ function App() {
             </div>
 
             {user.role === 'admin' && (
-              <div style={{ marginBottom: 20, background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
+              <div style={{ marginBottom: 20, background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <h3 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', fontSize: 24, color: '#0B1F3A' }}>
+                  <h3 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 24, color: '#2B2118' }}>
                     {editingProductId ? 'Edit Product' : 'Add New Product'}
                   </h3>
                   {editingProductId && (
                     <button
                       type="button"
                       onClick={cancelEditProduct}
-                      style={{ background: 'transparent', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '8px 12px', cursor: 'pointer' }}
+                      style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '8px 12px', cursor: 'pointer' }}
                     >
                       Cancel
                     </button>
@@ -1919,28 +1926,28 @@ function App() {
 
                 <form onSubmit={saveProduct} style={{ display: 'grid', gap: 12, maxWidth: 760 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                       Product name
                       <input
                         required
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                       />
                     </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                       Category / SKU
                       <input
                         required
                         value={form.sku}
                         onChange={(e) => setForm({ ...form, sku: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                       />
                     </label>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                       Selling price
                       <input
                         required
@@ -1948,10 +1955,10 @@ function App() {
                         step="0.01"
                         value={form.price}
                         onChange={(e) => setForm({ ...form, price: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                       />
                     </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                       Cost price
                       <input
                         required
@@ -1959,36 +1966,36 @@ function App() {
                         step="0.01"
                         value={form.costPrice}
                         onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                       />
                     </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                       Stock
                       <input
                         required
                         type="number"
                         value={form.stock}
                         onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                       />
                     </label>
                   </div>
 
                   {productFormMessage && (
-                    <div style={{ color: '#b42318', background: '#FFFFFF1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{productFormMessage}</div>
+                    <div style={{ color: '#b42318', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{productFormMessage}</div>
                   )}
 
                   <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     <button
                       type="submit"
-                      style={{ background: '#0B1F3A', color: '#FFFFFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}
+                      style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}
                     >
                       {editingProductId ? 'Update Product' : 'Save Product'}
                     </button>
                     <button
                       type="button"
                       onClick={cancelEditProduct}
-                      style={{ background: 'transparent', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}
+                      style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}
                     >
                       Clear
                     </button>
@@ -1998,24 +2005,24 @@ function App() {
             )}
 
                     <div style={{ display: 'grid', gap: 20, marginBottom: 20 }}>
-              <div style={{ background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
+              <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <h3 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', fontSize: 24, color: '#0B1F3A' }}>Stock movement</h3>
-                  <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Recent activity</div>
+                  <h3 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 24, color: '#2B2118' }}>Stock movement</h3>
+                  <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Recent activity</div>
                 </div>
                 <div style={{ display: 'grid', gap: 8 }}>
                   {stockMovements.length === 0 ? (
-                    <div style={{ color: '#5B6B82' }}>No stock movements recorded yet.</div>
+                    <div style={{ color: '#8A8177' }}>No stock movements recorded yet.</div>
                   ) : (
                     stockMovements.map((movement) => (
-                      <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#FFFFFFFFF', border: '1px solid #D7E3F5' }}>
+                      <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
                         <div>
-                          <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{movement.productName}</div>
-                          <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{movement.note}</div>
+                          <div style={{ fontWeight: 700, color: '#2B2118' }}>{movement.productName}</div>
+                          <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{movement.note}</div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
                           <div style={{ fontWeight: 700, color: movement.quantity > 0 ? '#15803d' : '#b42318' }}>{movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity}</div>
-                          <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{new Date(movement.createdAt).toLocaleString()}</div>
+                          <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{new Date(movement.createdAt).toLocaleString()}</div>
                         </div>
                       </div>
                     ))
@@ -2023,39 +2030,39 @@ function App() {
                 </div>
               </div>
 
-              <div style={{ background: '#F4F8FD', border: '1px solid #D7E3F5', borderRadius: 14, padding: 18 }}>
+              <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
-                  <h3 style={{ margin: 0, fontFamily: 'Montserrat, sans-serif', fontSize: 24, color: '#0B1F3A' }}>Receiving history</h3>
-                  <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Supplier records</div>
+                  <h3 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 24, color: '#2B2118' }}>Receiving history</h3>
+                  <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Supplier records</div>
                 </div>
                 <div style={{ display: 'grid', gap: 10, marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <button
                       type="button"
                       onClick={handleExportReceivingHistory}
-                      style={{ background: '#0B1F3A', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '10px 12px', fontWeight: 700, cursor: 'pointer' }}
+                      style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '10px 12px', fontWeight: 700, cursor: 'pointer' }}
                     >
                       Export PDF
                     </button>
                   </div>
                   <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
                     {receivingSupplierSummary.map((summary) => (
-                      <div key={summary.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFFFFFFF', border: '1px solid #D7E3F5' }}>
-                        <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>{summary.supplier}</div>
-                        <div style={{ marginTop: 6, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(summary.totalAmount)}</div>
-                        <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{summary.receiptsCount} receipt{summary.receiptsCount === 1 ? '' : 's'} • {summary.totalItems} item{summary.totalItems === 1 ? '' : 's'}</div>
+                      <div key={summary.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
+                        <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>{summary.supplier}</div>
+                        <div style={{ marginTop: 6, fontWeight: 700, color: '#2B2118' }}>{formatMoney(summary.totalAmount)}</div>
+                        <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{summary.receiptsCount} receipt{summary.receiptsCount === 1 ? '' : 's'} • {summary.totalItems} item{summary.totalItems === 1 ? '' : 's'}</div>
                       </div>
                     ))}
                   </div>
                   <div style={{ display: 'grid', gap: 8 }}>
                     {receivingSpendTrend.map((entry) => (
                       <div key={entry.supplier}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: '#10233F', fontSize: 13 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: '#292521', fontSize: 13 }}>
                           <span>{entry.supplier}</span>
                           <span style={{ fontWeight: 700 }}>{entry.share}%</span>
                         </div>
-                        <div style={{ height: 10, background: '#EAF1FB', borderRadius: 999 }}>
-                          <div style={{ height: '100%', width: `${Math.max(8, entry.share)}%`, background: 'linear-gradient(90deg, #1456D9 0%, #0B1F3A 100%)', borderRadius: 999 }} />
+                        <div style={{ height: 10, background: '#F0E9D8', borderRadius: 999 }}>
+                          <div style={{ height: '100%', width: `${Math.max(8, entry.share)}%`, background: 'linear-gradient(90deg, #C6A15B 0%, #2B2118 100%)', borderRadius: 999 }} />
                         </div>
                       </div>
                     ))}
@@ -2066,43 +2073,43 @@ function App() {
                       value={receivingHistoryFilter}
                       onChange={(e) => setReceivingHistoryFilter(e.target.value)}
                       placeholder="Filter by supplier"
-                      style={{ minWidth: 220, padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ minWidth: 220, padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     />
                     <input
                       type="date"
                       value={receivingHistoryStartDate}
                       onChange={(e) => setReceivingHistoryStartDate(e.target.value)}
-                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     />
                     <input
                       type="date"
                       value={receivingHistoryEndDate}
                       onChange={(e) => setReceivingHistoryEndDate(e.target.value)}
-                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     />
                   </div>
                 </div>
                 <div style={{ display: 'grid', gap: 8 }}>
                   {filteredReceivingHistory.length === 0 ? (
-                    <div style={{ color: '#5B6B82' }}>No receiving history yet.</div>
+                    <div style={{ color: '#8A8177' }}>No receiving history yet.</div>
                   ) : (
                     filteredReceivingHistory.map((entry) => {
                       const items = JSON.parse(entry.itemsJson || '[]');
                       return (
-                        <div key={entry.id} style={{ padding: '12px 14px', borderRadius: 10, background: '#FFFFFFFFF', border: '1px solid #D7E3F5' }}>
+                        <div key={entry.id} style={{ padding: '12px 14px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                             <div>
-                              <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{entry.supplier}</div>
-                              <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{entry.storeAccount}</div>
+                              <div style={{ fontWeight: 700, color: '#2B2118' }}>{entry.supplier}</div>
+                              <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{entry.storeAccount}</div>
                             </div>
-                            <div style={{ textAlign: 'right', color: '#5B6B82', fontSize: 12 }}>
+                            <div style={{ textAlign: 'right', color: '#8A8177', fontSize: 12 }}>
                               <div>{new Date(entry.date).toLocaleString()}</div>
-                              <div style={{ marginTop: 2, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(entry.totalAmount)}</div>
+                              <div style={{ marginTop: 2, fontWeight: 700, color: '#2B2118' }}>{formatMoney(entry.totalAmount)}</div>
                             </div>
                           </div>
                           <div style={{ marginTop: 8, display: 'grid', gap: 4 }}>
                             {items.slice(0, 4).map((item) => (
-                              <div key={`${entry.id}-${item.name}`} style={{ fontSize: 12, color: '#10233F' }}>
+                              <div key={`${entry.id}-${item.name}`} style={{ fontSize: 12, color: '#292521' }}>
                                 • {item.name} ×{item.quantity}
                               </div>
                             ))}
@@ -2115,30 +2122,30 @@ function App() {
               </div>
             </div>
 
-            <div style={{ overflow: 'hidden', border: '1px solid #D7E3F5', borderRadius: 14 }}>
+            <div style={{ overflow: 'hidden', border: '1px solid #E5DCCB', borderRadius: 14 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#EAF1FB' }}>
-                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#10233F', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Category</th>
-                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#10233F', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Name</th>
-                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#10233F', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Price</th>
-                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#10233F', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Stock</th>
-                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#10233F', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Actions</th>
+                  <tr style={{ background: '#F0E9D8' }}>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#292521', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Category</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#292521', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Name</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#292521', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Price</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#292521', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Stock</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', color: '#292521', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedProducts.map((product) => (
-                    <tr key={product.id} style={{ background: product.stock <= 5 ? '#FFFFFFFFF' : '#FFFFFFFFF', borderTop: '1px solid #EAF1FB' }}>
-                      <td style={{ padding: '12px 14px', color: '#10233F' }}>{product.sku}</td>
-                      <td style={{ padding: '12px 14px', color: '#0B1F3A', fontWeight: 700 }}>{product.name}</td>
-                      <td style={{ padding: '12px 14px', color: '#10233F', fontWeight: 600 }}>{formatMoney(product.price)}</td>
-                      <td style={{ padding: '12px 14px', color: '#10233F' }}>
+                    <tr key={product.id} style={{ background: product.stock <= 5 ? '#FFFDF8' : '#FFFDF8', borderTop: '1px solid #F0E9D8' }}>
+                      <td style={{ padding: '12px 14px', color: '#292521' }}>{product.sku}</td>
+                      <td style={{ padding: '12px 14px', color: '#2B2118', fontWeight: 700 }}>{product.name}</td>
+                      <td style={{ padding: '12px 14px', color: '#292521', fontWeight: 600 }}>{formatMoney(product.price)}</td>
+                      <td style={{ padding: '12px 14px', color: '#292521' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <span>{product.stock}</span>
                           {product.stock === 0 ? (
                             <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 999, background: '#fef2f2', color: '#b42318', fontWeight: 700 }}>Out</span>
                           ) : product.stock <= lowStockThreshold ? (
-                            <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 999, background: '#FFFFFFFFF', color: '#c2410c', fontWeight: 700 }}>Low</span>
+                            <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 999, background: '#FFFDF8', color: '#c2410c', fontWeight: 700 }}>Low</span>
                           ) : (
                             <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 999, background: '#f0fdf4', color: '#15803d', fontWeight: 700 }}>OK</span>
                           )}
@@ -2146,7 +2153,7 @@ function App() {
                       </td>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                          <button onClick={() => addToCart(product)} disabled={product.stock === 0} style={{ background: '#0B1F3A', color: '#FFFFFFFFF', border: 'none', borderRadius: 8, padding: '7px 10px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer', opacity: product.stock === 0 ? 0.6 : 1 }}>
+                          <button onClick={() => addToCart(product)} disabled={product.stock === 0} style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 8, padding: '7px 10px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer', opacity: product.stock === 0 ? 0.6 : 1 }}>
                             Add
                           </button>
                           {user.role === 'admin' && (
@@ -2159,14 +2166,14 @@ function App() {
                                     value={reorderQuantity[product.id] || ''}
                                     onChange={(e) => setReorderQuantity((current) => ({ ...current, [product.id]: e.target.value }))}
                                     placeholder="Qty"
-                                    style={{ width: 70, padding: '7px 8px', borderRadius: 8, border: '1px solid #D7E3F5', color: '#0B1F3A' }}
+                                    style={{ width: 70, padding: '7px 8px', borderRadius: 8, border: '1px solid #E5DCCB', color: '#2B2118' }}
                                   />
                                   <button onClick={() => handleReorder(product)} style={{ background: '#e8f7ee', color: '#15803d', border: '1px solid #bbf7d0', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
                                     Reorder
                                   </button>
                                 </div>
                               )}
-                              <button onClick={() => startEditProduct(product)} style={{ background: '#EAF1FB', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
+                              <button onClick={() => startEditProduct(product)} style={{ background: '#F0E9D8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
                                 Edit
                               </button>
                               <button onClick={() => deleteProduct(product.id)} style={{ background: '#f7dede', color: '#660000', border: '1px solid #e3b1b1', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
@@ -2190,58 +2197,58 @@ function App() {
         <div style={{ display: 'grid', gap: 20, gridTemplateColumns: '1fr', alignItems: 'start' }}>
           <section
             style={{
-              background: '#FFFFFF',
-              color: '#0B1F3A',
+              background: '#FFFDF8',
+              color: '#2B2118',
               padding: 24,
               borderRadius: 16,
               boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-              border: '1px solid #EAF1FB',
-              fontFamily: 'Poppins, sans-serif',
+              border: '1px solid #F0E9D8',
+              fontFamily: 'Manrope, sans-serif',
             }}
           >
-            <div style={{ marginTop: 18, background: 'linear-gradient(135deg, #FFFFFFFFF 0%, #F4F8FD 100%)', border: '1px solid #D7E3F5', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+            <div style={{ marginTop: 18, background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
                 <div>
-                  <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Inventory Setup</div>
-                  <h3 style={{ margin: '6px 0 0', fontSize: 24, color: '#0B1F3A', fontFamily: 'Montserrat, sans-serif' }}>Register New Item</h3>
+                  <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Inventory Setup</div>
+                  <h3 style={{ margin: '6px 0 0', fontSize: 24, color: '#2B2118', fontFamily: 'Cormorant Garamond, serif' }}>Register New Item</h3>
                 </div>
-                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFFFF', color: '#1456D9', border: '1px solid #D7E3F5', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFDF8', color: '#C6A15B', border: '1px solid #E5DCCB', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                   Product Details
                 </div>
               </div>
               <form onSubmit={saveProduct} style={{ display: 'grid', gap: 14, maxWidth: 720 }}>
                 <div style={{ display: 'grid', gap: 12, gridTemplateColumns: '1.3fr 1fr', alignItems: 'start' }}>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                     Item name
-                    <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }} placeholder="e.g. Premium Soap" />
+                    <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="e.g. Premium Soap" />
                   </label>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                     Category / SKU
-                    <input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }} placeholder="e.g. Household" />
+                    <input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="e.g. Household" />
                   </label>
                 </div>
                 <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                     Selling price
-                    <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }} placeholder="0.00" />
+                    <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="0.00" />
                   </label>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                     Cost price
-                    <input required type="number" step="0.01" value={form.costPrice} onChange={(e) => setForm({ ...form, costPrice: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }} placeholder="0.00" />
+                    <input required type="number" step="0.01" value={form.costPrice} onChange={(e) => setForm({ ...form, costPrice: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="0.00" />
                   </label>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                     Stock
-                    <input required type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }} placeholder="0" />
+                    <input required type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="0" />
                   </label>
                 </div>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 2 }}>
-                  <button type="button" onClick={addReceivingItem} style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #14335E 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="button" onClick={addReceivingItem} style={{ background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Add to Receipt
                   </button>
-                  <button type="submit" style={{ background: 'linear-gradient(135deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="submit" style={{ background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Save Item
                   </button>
-                  <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '' }); }} style={{ background: '#FFFFFF', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
+                  <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '' }); }} style={{ background: '#FFFDF8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
                     Clear
                   </button>
                 </div>
@@ -2250,14 +2257,14 @@ function App() {
 
             <div style={{ marginTop: 24, display: 'grid', gap: 14 }}>
               <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', maxWidth: 700 }}>
-                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                   Supplier account
                   <input
                     value={supplierName}
                     onChange={(e) => setSupplierName(e.target.value)}
                     placeholder="Supplier name"
                     list="supplier-options"
-                    style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                    style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                   />
                   <datalist id="supplier-options">
                     {suppliers.map((supplier) => (
@@ -2265,36 +2272,36 @@ function App() {
                     ))}
                   </datalist>
                 </label>
-                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F', fontWeight: 600 }}>
+                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
                   Store account
                   <input
                     value={storeAccount}
                     onChange={(e) => setStoreAccount(e.target.value)}
                     placeholder="Main Store"
-                    style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFFFFF', color: '#0B1F3A' }}
+                    style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                   />
                 </label>
               </div>
 
               {receivingItems.length > 0 && (
-                <div style={{ background: 'linear-gradient(135deg, #FFFFFFFFF 0%, #F4F8FD 100%)', border: '1px solid #D7E3F5', borderRadius: 18, padding: 18, boxShadow: '0 8px 18px rgba(17, 24, 39, 0.05)' }}>
+                <div style={{ background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 18, padding: 18, boxShadow: '0 8px 18px rgba(17, 24, 39, 0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
-                    <h3 style={{ margin: 0, fontSize: 20, color: '#0B1F3A' }}>Receiving Receipt</h3>
-                    <div style={{ fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700, padding: '6px 10px', borderRadius: 999, background: '#FFFFFF', border: '1px solid #D7E3F5' }}>Draft</div>
+                    <h3 style={{ margin: 0, fontSize: 20, color: '#2B2118' }}>Receiving Receipt</h3>
+                    <div style={{ fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700, padding: '6px 10px', borderRadius: 999, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>Draft</div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 12, padding: '12px 14px', borderRadius: 12, background: '#FFFFFFFFF', border: '1px solid #D7E3F5' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 12, padding: '12px 14px', borderRadius: 12, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
                     <div>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', fontWeight: 700 }}>Draft summary</div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: '#0B1F3A', marginTop: 4 }}>{receivingItems.length} item{receivingItems.length === 1 ? '' : 's'} • {receivingItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0)} unit{receivingItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0) === 1 ? '' : 's'}</div>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', fontWeight: 700 }}>Draft summary</div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: '#2B2118', marginTop: 4 }}>{receivingItems.length} item{receivingItems.length === 1 ? '' : 's'} • {receivingItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0)} unit{receivingItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0) === 1 ? '' : 's'}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 12, color: '#5B6B82' }}>Expected total</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(receivingItems.reduce((sum, item) => sum + item.totalCost, 0))}</div>
+                      <div style={{ fontSize: 12, color: '#8A8177' }}>Expected total</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2B2118' }}>{formatMoney(receivingItems.reduce((sum, item) => sum + item.totalCost, 0))}</div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gap: 4, marginBottom: 12, fontSize: 13, color: '#10233F' }}>
+                  <div style={{ display: 'grid', gap: 4, marginBottom: 12, fontSize: 13, color: '#292521' }}>
                     <div><strong>Supplier:</strong> {supplierName || 'Supplier not specified'}</div>
                     <div><strong>Store Account:</strong> {storeAccount || 'Main Store'}</div>
                     <div><strong>Date:</strong> {new Date().toLocaleString()}</div>
@@ -2302,40 +2309,40 @@ function App() {
 
                   <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 12 }}>
                     <thead>
-                      <tr style={{ background: '#EAF1FB' }}>
-                        <th style={{ textAlign: 'left', padding: '10px 12px', color: '#0B1F3A' }}>Item</th>
-                        <th style={{ textAlign: 'left', padding: '10px 12px', color: '#0B1F3A' }}>SKU</th>
-                        <th style={{ textAlign: 'right', padding: '10px 12px', color: '#0B1F3A' }}>Qty</th>
-                        <th style={{ textAlign: 'right', padding: '10px 12px', color: '#0B1F3A' }}>Unit Cost</th>
-                        <th style={{ textAlign: 'right', padding: '10px 12px', color: '#0B1F3A' }}>Amount</th>
-                        <th style={{ textAlign: 'center', padding: '10px 12px', color: '#0B1F3A' }}>Action</th>
+                      <tr style={{ background: '#F0E9D8' }}>
+                        <th style={{ textAlign: 'left', padding: '10px 12px', color: '#2B2118' }}>Item</th>
+                        <th style={{ textAlign: 'left', padding: '10px 12px', color: '#2B2118' }}>SKU</th>
+                        <th style={{ textAlign: 'right', padding: '10px 12px', color: '#2B2118' }}>Qty</th>
+                        <th style={{ textAlign: 'right', padding: '10px 12px', color: '#2B2118' }}>Unit Cost</th>
+                        <th style={{ textAlign: 'right', padding: '10px 12px', color: '#2B2118' }}>Amount</th>
+                        <th style={{ textAlign: 'center', padding: '10px 12px', color: '#2B2118' }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {receivingItems.map((item) => (
-                        <tr key={item.id} style={{ borderTop: '1px solid #D7E3F5' }}>
-                          <td style={{ padding: '10px 12px', color: '#0B1F3A' }}>{item.name}</td>
-                          <td style={{ padding: '10px 12px', color: '#10233F' }}>{item.sku}</td>
-                          <td style={{ padding: '10px 12px', color: '#10233F' }}>
+                        <tr key={item.id} style={{ borderTop: '1px solid #E5DCCB' }}>
+                          <td style={{ padding: '10px 12px', color: '#2B2118' }}>{item.name}</td>
+                          <td style={{ padding: '10px 12px', color: '#292521' }}>{item.sku}</td>
+                          <td style={{ padding: '10px 12px', color: '#292521' }}>
                             <input
                               type="number"
                               min="1"
                               value={item.quantity}
                               onChange={(e) => updateReceivingItem(item.id, 'quantity', e.target.value)}
-                              style={{ width: 70, padding: '7px 8px', borderRadius: 8, border: '1px solid #D7E3F5', color: '#0B1F3A', textAlign: 'right' }}
+                              style={{ width: 70, padding: '7px 8px', borderRadius: 8, border: '1px solid #E5DCCB', color: '#2B2118', textAlign: 'right' }}
                             />
                           </td>
-                          <td style={{ padding: '10px 12px', color: '#10233F' }}>
+                          <td style={{ padding: '10px 12px', color: '#292521' }}>
                             <input
                               type="number"
                               min="0"
                               step="0.01"
                               value={item.unitCost}
                               onChange={(e) => updateReceivingItem(item.id, 'unitCost', e.target.value)}
-                              style={{ width: 90, padding: '7px 8px', borderRadius: 8, border: '1px solid #D7E3F5', color: '#0B1F3A', textAlign: 'right' }}
+                              style={{ width: 90, padding: '7px 8px', borderRadius: 8, border: '1px solid #E5DCCB', color: '#2B2118', textAlign: 'right' }}
                             />
                           </td>
-                          <td style={{ textAlign: 'right', padding: '10px 12px', color: '#0B1F3A', fontWeight: 700 }}>{formatMoney(item.totalCost)}</td>
+                          <td style={{ textAlign: 'right', padding: '10px 12px', color: '#2B2118', fontWeight: 700 }}>{formatMoney(item.totalCost)}</td>
                           <td style={{ textAlign: 'center', padding: '10px 12px' }}>
                             <button
                               type="button"
@@ -2350,19 +2357,19 @@ function App() {
                     </tbody>
                   </table>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 12, padding: '12px 14px' }}>
-                    <strong style={{ color: '#0B1F3A' }}>Total</strong>
-                    <span style={{ color: '#0B1F3A', fontSize: 22, fontWeight: 700 }}>{formatMoney(receivingItems.reduce((sum, item) => sum + item.totalCost, 0))}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: '12px 14px' }}>
+                    <strong style={{ color: '#2B2118' }}>Total</strong>
+                    <span style={{ color: '#2B2118', fontSize: 22, fontWeight: 700 }}>{formatMoney(receivingItems.reduce((sum, item) => sum + item.totalCost, 0))}</span>
                   </div>
 
                   <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 16 }}>
-                    <button type="button" onClick={completeReceiving} style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #14335E 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                    <button type="button" onClick={completeReceiving} style={{ background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                       Complete Receiving
                     </button>
-                    <button type="button" onClick={addPurchaseOrder} style={{ background: 'linear-gradient(135deg, #1456D9 0%, #0B1F3A 100%)', color: '#FFFFFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                    <button type="button" onClick={addPurchaseOrder} style={{ background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                       Save Purchase Order
                     </button>
-                    <button type="button" onClick={() => setReceivingItems([])} style={{ background: '#FFFFFF', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
+                    <button type="button" onClick={() => setReceivingItems([])} style={{ background: '#FFFDF8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
                       Clear Receipt
                     </button>
                   </div>
@@ -2370,22 +2377,22 @@ function App() {
               )}
 
               {purchaseOrders.length > 0 && (
-                <div style={{ background: '#F4F8FD', border: '1px solid #EAF1FB', borderRadius: 14, padding: 16 }}>
+                <div style={{ background: '#F7F3EA', border: '1px solid #F0E9D8', borderRadius: 14, padding: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                    <h3 style={{ margin: 0, fontSize: 18, color: '#0B1F3A' }}>Purchase Orders</h3>
-                    <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#5B6B82', fontWeight: 700 }}>Draft summary</div>
+                    <h3 style={{ margin: 0, fontSize: 18, color: '#2B2118' }}>Purchase Orders</h3>
+                    <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8A8177', fontWeight: 700 }}>Draft summary</div>
                   </div>
                   <div style={{ display: 'grid', gap: 8 }}>
                     {purchaseOrderSummary.map((entry) => (
-                      <div key={entry.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFFFF', border: '1px solid #EAF1FB' }}>
+                      <div key={entry.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #F0E9D8' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                          <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{entry.supplier}</div>
-                          <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(entry.totalAmount)}</div>
+                          <div style={{ fontWeight: 700, color: '#2B2118' }}>{entry.supplier}</div>
+                          <div style={{ fontWeight: 700, color: '#2B2118' }}>{formatMoney(entry.totalAmount)}</div>
                         </div>
-                        <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 6 }}>{entry.ordersCount} order{entry.ordersCount === 1 ? '' : 's'} • {entry.itemCount} item{entry.itemCount === 1 ? '' : 's'}</div>
+                        <div style={{ fontSize: 12, color: '#8A8177', marginTop: 6 }}>{entry.ordersCount} order{entry.ordersCount === 1 ? '' : 's'} • {entry.itemCount} item{entry.itemCount === 1 ? '' : 's'}</div>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
                           <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#fef3c7', color: '#92400e', fontWeight: 700 }}>Pending {entry.pendingCount}</span>
-                          <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#EAF1FB', color: '#1456D9', fontWeight: 700 }}>Approved {entry.approvedCount}</span>
+                          <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#F0E9D8', color: '#C6A15B', fontWeight: 700 }}>Approved {entry.approvedCount}</span>
                           <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#dcfce7', color: '#166534', fontWeight: 700 }}>Completed {entry.completedCount}</span>
                         </div>
                       </div>
@@ -2396,7 +2403,7 @@ function App() {
                     <button
                       type="button"
                       onClick={handleExportPurchaseOrders}
-                      style={{ background: '#0B1F3A', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '10px 12px', fontWeight: 700, cursor: 'pointer' }}
+                      style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '10px 12px', fontWeight: 700, cursor: 'pointer' }}
                     >
                       Export PDF
                     </button>
@@ -2405,12 +2412,12 @@ function App() {
                       value={purchaseOrderSupplierFilter}
                       onChange={(e) => setPurchaseOrderSupplierFilter(e.target.value)}
                       placeholder="Search supplier"
-                      style={{ minWidth: 220, padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ minWidth: 220, padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     />
                     <select
                       value={purchaseOrderStatusFilter}
                       onChange={(e) => setPurchaseOrderStatusFilter(e.target.value)}
-                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     >
                       <option value="all">All statuses</option>
                       <option value="pending">Pending</option>
@@ -2421,18 +2428,18 @@ function App() {
                       type="date"
                       value={purchaseOrderStartDate}
                       onChange={(e) => setPurchaseOrderStartDate(e.target.value)}
-                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     />
                     <input
                       type="date"
                       value={purchaseOrderEndDate}
                       onChange={(e) => setPurchaseOrderEndDate(e.target.value)}
-                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                      style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     />
                     <button
                       type="button"
                       onClick={clearPurchaseOrderFilters}
-                      style={{ background: 'transparent', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 10, padding: '10px 12px', cursor: 'pointer', fontWeight: 700 }}
+                      style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', cursor: 'pointer', fontWeight: 700 }}
                     >
                       Clear filters
                     </button>
@@ -2450,49 +2457,49 @@ function App() {
                       const supplierPerformance = buildSupplierPerformanceSummary(purchaseOrders, receivingHistory, order?.supplier);
                       const isExpanded = selectedPurchaseOrderId === order.id;
                       return (
-                        <div key={order.id} style={{ border: '1px solid #EAF1FB', borderRadius: 10, background: '#FFFFFF' }}>
+                        <div key={order.id} style={{ border: '1px solid #F0E9D8', borderRadius: 10, background: '#FFFDF8' }}>
                           <button
                             type="button"
                             onClick={() => setSelectedPurchaseOrderId(isExpanded ? null : order.id)}
-                            style={{ width: '100%', textAlign: 'left', padding: '12px 14px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#0B1F3A' }}
+                            style={{ width: '100%', textAlign: 'left', padding: '12px 14px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#2B2118' }}
                           >
                             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                               <div>
                                 <div style={{ fontWeight: 700 }}>{order.supplier || 'Supplier not specified'}</div>
-                                <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{new Date(order.createdAt || order.date).toLocaleString()}</div>
+                                <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{new Date(order.createdAt || order.date).toLocaleString()}</div>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <span style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, textTransform: 'capitalize', background: order.status === 'completed' ? '#dcfce7' : order.status === 'approved' ? '#EAF1FB' : '#fef3c7', color: order.status === 'completed' ? '#166534' : order.status === 'approved' ? '#1456D9' : '#92400e', fontWeight: 700 }}>
+                                <span style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, textTransform: 'capitalize', background: order.status === 'completed' ? '#dcfce7' : order.status === 'approved' ? '#F0E9D8' : '#fef3c7', color: order.status === 'completed' ? '#166534' : order.status === 'approved' ? '#C6A15B' : '#92400e', fontWeight: 700 }}>
                                   {order.status || 'pending'}
                                 </span>
                                 <div style={{ fontWeight: 700 }}>{formatMoney(order.totalAmount || 0)}</div>
                               </div>
                             </div>
-                            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8, fontSize: 12, color: '#5B6B82' }}>
+                            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8, fontSize: 12, color: '#8A8177' }}>
                               <span>Items: {auditSummary.itemsCount}</span>
                               <span>Last update: {auditSummary.lastUpdatedLabel}</span>
                               <span>Total: {formatMoney(auditSummary.totalAmount)}</span>
                             </div>
                             {supplierContact && (
-                              <div style={{ marginTop: 6, fontSize: 12, color: '#5B6B82' }}>
+                              <div style={{ marginTop: 6, fontSize: 12, color: '#8A8177' }}>
                                 {supplierContact.phone ? `Phone: ${supplierContact.phone}` : 'Supplier contact saved'}
                               </div>
                             )}
                           </button>
                           {isExpanded && (
-                            <div style={{ borderTop: '1px solid #EAF1FB', padding: '10px 14px', display: 'grid', gap: 6 }}>
-                              <div style={{ fontSize: 12, color: '#5B6B82' }}>Store account: {order.storeAccount || 'Main Store'}</div>
+                            <div style={{ borderTop: '1px solid #F0E9D8', padding: '10px 14px', display: 'grid', gap: 6 }}>
+                              <div style={{ fontSize: 12, color: '#8A8177' }}>Store account: {order.storeAccount || 'Main Store'}</div>
                               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                <button type="button" onClick={() => updatePurchaseOrderStatus(order.id, 'approved')} style={{ background: '#EAF1FB', color: '#1456D9', border: '1px solid #D7E3F5', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Approve</button>
+                                <button type="button" onClick={() => updatePurchaseOrderStatus(order.id, 'approved')} style={{ background: '#F0E9D8', color: '#C6A15B', border: '1px solid #E5DCCB', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Approve</button>
                                 <button type="button" onClick={() => updatePurchaseOrderStatus(order.id, 'completed')} style={{ background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Complete</button>
                                 {order.status === 'approved' && (
-                                  <button type="button" onClick={() => handleReceivePurchaseOrder(order)} style={{ background: '#0B1F3A', color: '#FFFFFF', border: '1px solid #0B1F3A', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Receive</button>
+                                  <button type="button" onClick={() => handleReceivePurchaseOrder(order)} style={{ background: '#2B2118', color: '#FFFDF8', border: '1px solid #2B2118', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Receive</button>
                                 )}
                               </div>
                               {timeline.length > 0 && (
                                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                                   {timeline.map((entry) => (
-                                    <span key={`${order.id}-${entry.label}`} style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, background: entry.tone === 'completed' ? '#dcfce7' : entry.tone === 'approved' ? '#EAF1FB' : '#F4F8FD', color: entry.tone === 'completed' ? '#166534' : entry.tone === 'approved' ? '#1456D9' : '#5B6B82', fontWeight: 700 }}>
+                                    <span key={`${order.id}-${entry.label}`} style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, background: entry.tone === 'completed' ? '#dcfce7' : entry.tone === 'approved' ? '#F0E9D8' : '#F7F3EA', color: entry.tone === 'completed' ? '#166534' : entry.tone === 'approved' ? '#C6A15B' : '#8A8177', fontWeight: 700 }}>
                                       {entry.label} • {new Date(entry.date).toLocaleString()}
                                     </span>
                                   ))}
@@ -2500,51 +2507,51 @@ function App() {
                               )}
                               <div style={{ display: 'grid', gap: 8, marginTop: 8 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-                                  <span style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#5B6B82', fontWeight: 700 }}>Receive progress</span>
-                                  <span style={{ fontSize: 12, fontWeight: 700, color: '#0B1F3A' }}>{progress.percent}%</span>
+                                  <span style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8A8177', fontWeight: 700 }}>Receive progress</span>
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: '#2B2118' }}>{progress.percent}%</span>
                                 </div>
-                                <div style={{ height: 8, borderRadius: 999, background: '#EAF1FB', overflow: 'hidden' }}>
-                                  <div style={{ height: '100%', width: `${progress.percent}%`, background: progress.isComplete ? '#166534' : '#1456D9', borderRadius: 999 }} />
+                                <div style={{ height: 8, borderRadius: 999, background: '#F0E9D8', overflow: 'hidden' }}>
+                                  <div style={{ height: '100%', width: `${progress.percent}%`, background: progress.isComplete ? '#166534' : '#C6A15B', borderRadius: 999 }} />
                                 </div>
-                                <div style={{ fontSize: 12, color: '#5B6B82' }}>{formatMoney(progress.receivedAmount)} received of {formatMoney(progress.orderedAmount)}</div>
+                                <div style={{ fontSize: 12, color: '#8A8177' }}>{formatMoney(progress.receivedAmount)} received of {formatMoney(progress.orderedAmount)}</div>
                               </div>
                               {relatedReceivingHistory.length > 0 && (
                                 <div style={{ display: 'grid', gap: 6, marginTop: 8 }}>
-                                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#5B6B82', fontWeight: 700 }}>Receiving updates</div>
+                                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8A8177', fontWeight: 700 }}>Receiving updates</div>
                                   {relatedReceivingHistory.slice(0, 3).map((entry) => (
-                                    <div key={`${order.id}-${entry.id}`} style={{ padding: '8px 10px', borderRadius: 10, background: '#F4F8FD', border: '1px solid #EAF1FB', display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                                      <span style={{ fontSize: 13, color: '#0B1F3A' }}>{new Date(entry.date).toLocaleString()}</span>
-                                      <span style={{ fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(entry.totalAmount || 0)}</span>
+                                    <div key={`${order.id}-${entry.id}`} style={{ padding: '8px 10px', borderRadius: 10, background: '#F7F3EA', border: '1px solid #F0E9D8', display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+                                      <span style={{ fontSize: 13, color: '#2B2118' }}>{new Date(entry.date).toLocaleString()}</span>
+                                      <span style={{ fontWeight: 700, color: '#2B2118' }}>{formatMoney(entry.totalAmount || 0)}</span>
                                     </div>
                                   ))}
                                 </div>
                               )}
                               {supplierPerformance && (
-                                <div style={{ display: 'grid', gap: 6, marginTop: 8, padding: '10px 12px', borderRadius: 10, background: '#F4F8FD', border: '1px solid #EAF1FB' }}>
-                                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#5B6B82', fontWeight: 700 }}>Supplier performance</div>
-                                  <div style={{ fontSize: 13, color: '#0B1F3A' }}>Spend: {formatMoney(supplierPerformance.totalSpend)}</div>
-                                  <div style={{ fontSize: 13, color: '#0B1F3A' }}>Orders: {supplierPerformance.orderCount} • Receipts: {supplierPerformance.receivingCount}</div>
+                                <div style={{ display: 'grid', gap: 6, marginTop: 8, padding: '10px 12px', borderRadius: 10, background: '#F7F3EA', border: '1px solid #F0E9D8' }}>
+                                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8A8177', fontWeight: 700 }}>Supplier performance</div>
+                                  <div style={{ fontSize: 13, color: '#2B2118' }}>Spend: {formatMoney(supplierPerformance.totalSpend)}</div>
+                                  <div style={{ fontSize: 13, color: '#2B2118' }}>Orders: {supplierPerformance.orderCount} • Receipts: {supplierPerformance.receivingCount}</div>
                                   {supplierPerformance.lastActivityDate && (
-                                    <div style={{ fontSize: 12, color: '#5B6B82' }}>Last activity: {new Date(supplierPerformance.lastActivityDate).toLocaleString()}</div>
+                                    <div style={{ fontSize: 12, color: '#8A8177' }}>Last activity: {new Date(supplierPerformance.lastActivityDate).toLocaleString()}</div>
                                   )}
                                 </div>
                               )}
                               {supplierOrderHistory.length > 0 && (
                                 <div style={{ display: 'grid', gap: 6, marginTop: 8 }}>
-                                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#5B6B82', fontWeight: 700 }}>Supplier history</div>
+                                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8A8177', fontWeight: 700 }}>Supplier history</div>
                                   {supplierOrderHistory.map((entry) => (
-                                    <div key={entry.id} style={{ padding: '8px 10px', borderRadius: 10, background: '#FFFFFF', border: '1px solid #EAF1FB', display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                                      <span style={{ fontSize: 13, color: '#0B1F3A' }}>{entry.type === 'receiving' ? 'Receiving' : 'Purchase order'} • {new Date(entry.date).toLocaleString()}</span>
-                                      <span style={{ fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(entry.amount || 0)}</span>
+                                    <div key={entry.id} style={{ padding: '8px 10px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #F0E9D8', display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+                                      <span style={{ fontSize: 13, color: '#2B2118' }}>{entry.type === 'receiving' ? 'Receiving' : 'Purchase order'} • {new Date(entry.date).toLocaleString()}</span>
+                                      <span style={{ fontWeight: 700, color: '#2B2118' }}>{formatMoney(entry.amount || 0)}</span>
                                     </div>
                                   ))}
                                 </div>
                               )}
                               {items.length === 0 ? (
-                                <div style={{ fontSize: 13, color: '#5B6B82' }}>No items recorded.</div>
+                                <div style={{ fontSize: 13, color: '#8A8177' }}>No items recorded.</div>
                               ) : (
                                 items.map((item, index) => (
-                                  <div key={`${order.id}-${index}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 13, color: '#0B1F3A' }}>
+                                  <div key={`${order.id}-${index}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 13, color: '#2B2118' }}>
                                     <span>{item.name} ×{item.quantity}</span>
                                     <span>{formatMoney((Number(item.totalCost) || 0) || (Number(item.unitCost) || 0) * (Number(item.quantity) || 0))}</span>
                                   </div>
@@ -2566,14 +2573,14 @@ function App() {
 
       {activeView === 'sales' && (
         <div style={{ display: 'grid', gap: 20, gridTemplateColumns: '1.1fr 0.9fr', alignItems: 'start' }}>
-          <section style={{ background: '#FFFFFF', padding: 24, borderRadius: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.04)', border: '1px solid #EAF1FB' }}>
+          <section style={{ background: '#FFFDF8', padding: 24, borderRadius: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.04)', border: '1px solid #F0E9D8' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h2 style={{ margin: '0', color: '#0B1F3A' }}>Quick sales</h2>
+                <h2 style={{ margin: '0', color: '#2B2118' }}>Quick sales</h2>
               </div>
             </div>
             <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F' }}>
+              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521' }}>
                 Search item / scan barcode
                 <input
                   ref={skuInputRef}
@@ -2581,20 +2588,20 @@ function App() {
                   value={skuInput}
                   onChange={(e) => setSkuInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && scanBySku()}
-                  style={{ padding: '12px 14px', borderRadius: 12, border: '1px solid #D7E3F5', fontSize: 14, background: '#FFFFFFFFF', boxShadow: 'inset 0 0 0 1px rgba(244, 183, 68, 0.2)' }}
+                  style={{ padding: '12px 14px', borderRadius: 12, border: '1px solid #E5DCCB', fontSize: 14, background: '#FFFDF8', boxShadow: 'inset 0 0 0 1px rgba(244, 183, 68, 0.2)' }}
                   placeholder="Type item name or scan SKU"
                 />
               </label>
-              <button type="button" onClick={scanBySku} style={{ width: 140, background: '#0B1F3A', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 12px', cursor: 'pointer', fontWeight: 700 }}>
+              <button type="button" onClick={scanBySku} style={{ width: 140, background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 12px', cursor: 'pointer', fontWeight: 700 }}>
                 Add to cart
               </button>
             </div>
 
-            <div style={{ marginBottom: 16, background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 14, padding: 12 }}>
-              <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700, marginBottom: 8 }}>Available items</div>
+            <div style={{ marginBottom: 16, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 12 }}>
+              <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700, marginBottom: 8 }}>Available items</div>
               <div style={{ display: 'grid', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
                 {salesSearchResults.length === 0 ? (
-                  <div style={{ color: '#5B6B82', padding: 8 }}>No item matches your search.</div>
+                  <div style={{ color: '#8A8177', padding: 8 }}>No item matches your search.</div>
                 ) : (
                   salesSearchResults.map((product) => (
                     <button
@@ -2606,33 +2613,33 @@ function App() {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         gap: 10,
-                        background: '#FFFFFF',
-                        border: '1px solid #D7E3F5',
+                        background: '#FFFDF8',
+                        border: '1px solid #E5DCCB',
                         borderRadius: 10,
                         padding: '10px 12px',
                         cursor: 'pointer',
                         textAlign: 'left',
-                        color: '#0B1F3A',
+                        color: '#2B2118',
                         width: '100%',
                       }}
                     >
                       <div>
                         <div style={{ fontWeight: 700 }}>{product.name}</div>
-                        <div style={{ fontSize: 12, color: '#5B6B82' }}>{product.sku}</div>
+                        <div style={{ fontSize: 12, color: '#8A8177' }}>{product.sku}</div>
                       </div>
-                      <div style={{ fontWeight: 700, color: '#1456D9' }}>{formatMoney(product.price)}</div>
+                      <div style={{ fontWeight: 700, color: '#C6A15B' }}>{formatMoney(product.price)}</div>
                     </button>
                   ))
                 )}
               </div>
             </div>
             {cart.length === 0 ? (
-              <div style={{ padding: 16, background: '#FFFFFFFFF', borderRadius: 12, color: '#9a2c00' }}>No items in cart yet. Search and add products to begin checkout.</div>
+              <div style={{ padding: 16, background: '#FFFDF8', borderRadius: 12, color: '#9a2c00' }}>No items in cart yet. Search and add products to begin checkout.</div>
             ) : (
-              <div style={{ border: '1px solid #D7E3F5', borderRadius: 16, overflow: 'hidden' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: '#fef3c7', borderBottom: '1px solid #EAF1FB' }}>
-                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Cart</div>
-                  <button type="button" onClick={clearCart} style={{ background: 'transparent', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '7px 10px', cursor: 'pointer', fontWeight: 700 }}>
+              <div style={{ border: '1px solid #E5DCCB', borderRadius: 16, overflow: 'hidden' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: '#fef3c7', borderBottom: '1px solid #F0E9D8' }}>
+                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Cart</div>
+                  <button type="button" onClick={clearCart} style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '7px 10px', cursor: 'pointer', fontWeight: 700 }}>
                     Clear cart
                   </button>
                 </div>
@@ -2647,7 +2654,7 @@ function App() {
                   </thead>
                   <tbody>
                     {cart.map((item) => (
-                      <tr key={item.productId} style={{ borderTop: '1px solid #EAF1FB' }}>
+                      <tr key={item.productId} style={{ borderTop: '1px solid #F0E9D8' }}>
                         <td style={{ padding: 12 }}>{item.name}</td>
                         <td style={{ textAlign: 'center', padding: 12 }}>
                           <input
@@ -2655,7 +2662,7 @@ function App() {
                             min="1"
                             value={item.quantity}
                             onChange={(e) => updateQuantity(item.productId, Number(e.target.value))}
-                            style={{ width: 60, padding: '6px 8px', borderRadius: 8, border: '1px solid #EAF1FB' }}
+                            style={{ width: 60, padding: '6px 8px', borderRadius: 8, border: '1px solid #F0E9D8' }}
                           />
                         </td>
                         <td style={{ textAlign: 'right', padding: 12 }}>{formatMoney(item.price * item.quantity)}</td>
@@ -2671,12 +2678,12 @@ function App() {
               </div>
             )}
           </section>
-          <section style={{ background: '#FFFFFF', color: '#0B1F3A', padding: 24, borderRadius: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.04)', border: '1px solid #EAF1FB' }}>
+          <section style={{ background: '#FFFDF8', color: '#2B2118', padding: 24, borderRadius: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.04)', border: '1px solid #F0E9D8' }}>
             <h3 style={{ margin: '0 0 16px 0', fontSize: 20 }}>Payment</h3>
             <div style={{ marginBottom: 14 }}>
               <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>
                 Payment method
-                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}>
+                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}>
                   <option>Cash</option>
                   <option>POS</option>
                 </select>
@@ -2685,7 +2692,7 @@ function App() {
             <div style={{ marginBottom: 14, display: 'grid', gap: 8 }}>
               <label style={{ display: 'grid', gap: 6, fontSize: 13 }}>
                 Discount
-                <select value={discountType} onChange={(e) => setDiscountType(e.target.value)} style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}>
+                <select value={discountType} onChange={(e) => setDiscountType(e.target.value)} style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}>
                   <option value="none">No discount</option>
                   <option value="amount">Fixed amount</option>
                   <option value="percent">Percent</option>
@@ -2700,7 +2707,7 @@ function App() {
                     step="0.01"
                     value={discountValue}
                     onChange={(e) => setDiscountValue(e.target.value)}
-                    style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                    style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                     placeholder={discountType === 'percent' ? '10' : '20.00'}
                   />
                 </label>
@@ -2715,22 +2722,22 @@ function App() {
                   step="0.01"
                   value={tenderAmount}
                   onChange={(e) => setTenderAmount(e.target.value)}
-                  style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                  style={{ padding: '10px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                   placeholder="0.00"
                 />
               </label>
             </div>
             {paymentMethod === 'Cash' && (
-              <div style={{ background: '#F4F8FD', padding: 12, borderRadius: 12, marginBottom: 16, border: '1px solid #EAF1FB' }}>
+              <div style={{ background: '#F7F3EA', padding: 12, borderRadius: 12, marginBottom: 16, border: '1px solid #F0E9D8' }}>
                 Change: {formatMoney((parseFloat(tenderAmount) || 0) - total)}
               </div>
             )}
-            <div style={{ background: '#F4F8FD', padding: 14, borderRadius: 14, marginBottom: 16, border: '1px solid #EAF1FB' }}>
+            <div style={{ background: '#F7F3EA', padding: 14, borderRadius: 14, marginBottom: 16, border: '1px solid #F0E9D8' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, marginBottom: 6 }}>
                 <span>Subtotal</span>
                 <strong>{formatMoney(saleTotals.subtotal)}</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#5B6B82', marginBottom: 6 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#8A8177', marginBottom: 6 }}>
                 <span>Discount</span>
                 <span>{formatMoney(saleTotals.discountAmount)}</span>
               </div>
@@ -2739,22 +2746,22 @@ function App() {
                 <strong>{formatMoney(total)}</strong>
               </div>
             </div>
-            <div style={{ marginBottom: 16, background: '#FFFFFFFFF', border: '1px solid #D7E3F5', borderRadius: 14, padding: 12 }}>
+            <div style={{ marginBottom: 16, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <strong>Checkout review</strong>
-                <button type="button" onClick={() => setShowCheckoutReview((current) => !current)} style={{ background: 'transparent', border: 'none', color: '#1456D9', cursor: 'pointer', fontWeight: 700 }}>
+                <button type="button" onClick={() => setShowCheckoutReview((current) => !current)} style={{ background: 'transparent', border: 'none', color: '#C6A15B', cursor: 'pointer', fontWeight: 700 }}>
                   {showCheckoutReview ? 'Hide' : 'Preview'}
                 </button>
               </div>
               {showCheckoutReview && (
-                <div style={{ display: 'grid', gap: 6, fontSize: 13, color: '#10233F' }}>
+                <div style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521' }}>
                   {cart.map((item) => (
                     <div key={item.productId} style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                       <span>{item.quantity} × {item.name}</span>
                       <span>{formatMoney((Number(item.price) || 0) * (Number(item.quantity) || 0))}</span>
                     </div>
                   ))}
-                  <div style={{ borderTop: '1px solid #D7E3F5', paddingTop: 6, marginTop: 2, fontWeight: 700 }}>
+                  <div style={{ borderTop: '1px solid #E5DCCB', paddingTop: 6, marginTop: 2, fontWeight: 700 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Payable</span>
                       <span>{formatMoney(total)}</span>
@@ -2764,14 +2771,14 @@ function App() {
               )}
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button onClick={placeSale} disabled={cart.length === 0} style={{ background: '#0B1F3A', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+              <button onClick={placeSale} disabled={cart.length === 0} style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                 Complete Sale
               </button>
-              <button type="button" onClick={() => skuInputRef.current?.focus()} style={{ background: 'transparent', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}>
+              <button type="button" onClick={() => skuInputRef.current?.focus()} style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}>
                 Focus Scanner
               </button>
               {receipt && (
-                <button onClick={() => printReceipt(receipt)} type="button" style={{ background: 'transparent', color: '#0B1F3A', border: '1px solid #D7E3F5', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}>
+                <button onClick={() => printReceipt(receipt)} type="button" style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}>
                   Print Receipt
                 </button>
               )}
@@ -2781,32 +2788,32 @@ function App() {
       )}
 
       {activeView === 'reports' && (
-        <section style={{ marginTop: 24, background: 'linear-gradient(135deg, #FFFFFFFFF 0%, #F4F8FD 100%)', border: '1px solid #D7E3F5', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+        <section style={{ marginTop: 24, background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Sales History</div>
-              <h2 style={{ margin: '6px 0 0', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 28 }}>Sales reports</h2>
+              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Sales History</div>
+              <h2 style={{ margin: '6px 0 0', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 28 }}>Sales reports</h2>
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#5B6B82' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#8A8177' }}>
                 <span>From</span>
-                <input type="date" value={reportStartDate} onChange={(e) => setReportStartDate(e.target.value)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
+                <input type="date" value={reportStartDate} onChange={(e) => setReportStartDate(e.target.value)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
               </label>
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#5B6B82' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#8A8177' }}>
                 <span>To</span>
-                <input type="date" value={reportEndDate} onChange={(e) => setReportEndDate(e.target.value)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
+                <input type="date" value={reportEndDate} onChange={(e) => setReportEndDate(e.target.value)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
               </label>
-              <button type="button" onClick={() => { setReportStartDate(''); setReportEndDate(''); }} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 12px', background: '#FFFFFFFFF', color: '#5B6B82', cursor: 'pointer' }}>
+              <button type="button" onClick={() => { setReportStartDate(''); setReportEndDate(''); }} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 12px', background: '#FFFDF8', color: '#8A8177', cursor: 'pointer' }}>
                 Reset
               </button>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-                <button type="button" onClick={() => setShowSalesHistory((current) => !current)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 12px', background: '#FFFFFFFFF', color: '#1456D9', cursor: 'pointer', fontWeight: 700 }}>
+                <button type="button" onClick={() => setShowSalesHistory((current) => !current)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 12px', background: '#FFFDF8', color: '#C6A15B', cursor: 'pointer', fontWeight: 700 }}>
                   {showSalesHistory ? 'Hide Sales History' : 'Show Sales History'}
                 </button>
-                <button type="button" onClick={handleExportReport} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 12px', background: '#FFFFFFFFF', color: '#1456D9', cursor: 'pointer', fontWeight: 700 }}>
+                <button type="button" onClick={handleExportReport} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 12px', background: '#FFFDF8', color: '#C6A15B', cursor: 'pointer', fontWeight: 700 }}>
                   Export PDF
                 </button>
-                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFFFFFFF', border: '1px solid #D7E3F5', color: '#1456D9', fontWeight: 700, fontSize: 13 }}>
+                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFDF8', border: '1px solid #E5DCCB', color: '#C6A15B', fontWeight: 700, fontSize: 13 }}>
                   {filteredReportSales.length} transaction{filteredReportSales.length === 1 ? '' : 's'}
                 </div>
               </div>
@@ -2814,30 +2821,30 @@ function App() {
           </div>
 
           {filteredReportSales.length === 0 ? (
-            <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 18, color: '#5B6B82' }}>No sales yet.</div>
+            <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 18, color: '#8A8177' }}>No sales yet.</div>
           ) : (
             <div style={{ display: 'grid', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-                <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 6 }}>Revenue</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(salesSummary.totalRevenue)}</div>
+                <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 6 }}>Revenue</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#2B2118' }}>{formatMoney(salesSummary.totalRevenue)}</div>
                 </div>
-                <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 6 }}>Net profit</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(salesSummary.totalProfit)}</div>
+                <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 6 }}>Net profit</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#2B2118' }}>{formatMoney(salesSummary.totalProfit)}</div>
                 </div>
-                <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 6 }}>Items sold</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#0B1F3A' }}>{salesSummary.totalItems}</div>
+                <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 6 }}>Items sold</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#2B2118' }}>{salesSummary.totalItems}</div>
                 </div>
               </div>
 
               {Object.entries(salesSummary.paymentMethods).length > 0 && (
-                <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Payment methods</div>
+                <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Payment methods</div>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {Object.entries(salesSummary.paymentMethods).map(([method, count]) => (
-                      <span key={method} style={{ padding: '6px 10px', borderRadius: 999, background: '#EAF1FB', color: '#1456D9', fontSize: 12, fontWeight: 700 }}>
+                      <span key={method} style={{ padding: '6px 10px', borderRadius: 999, background: '#F0E9D8', color: '#C6A15B', fontSize: 12, fontWeight: 700 }}>
                         {method}: {count}
                       </span>
                     ))}
@@ -2846,8 +2853,8 @@ function App() {
               )}
 
               {topProducts.length > 0 && (
-                <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Top products</div>
+                <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Top products</div>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {topProducts.map(([name, quantity]) => (
                       <span key={name} style={{ padding: '6px 10px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 12, fontWeight: 700 }}>
@@ -2860,21 +2867,21 @@ function App() {
 
               {showSalesHistory && (
                 <div style={{ display: 'grid', gap: 16 }}>
-                  <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Stock movement</div>
+                  <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Stock movement</div>
                     <div style={{ display: 'grid', gap: 8 }}>
                       {stockMovements.length === 0 ? (
-                        <div style={{ color: '#5B6B82' }}>No stock movements recorded yet.</div>
+                        <div style={{ color: '#8A8177' }}>No stock movements recorded yet.</div>
                       ) : (
                         stockMovements.map((movement) => (
-                          <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#FFFFFFFFF', border: '1px solid #EAF1FB' }}>
+                          <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #F0E9D8' }}>
                             <div>
-                              <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{movement.productName}</div>
-                              <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{movement.note}</div>
+                              <div style={{ fontWeight: 700, color: '#2B2118' }}>{movement.productName}</div>
+                              <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{movement.note}</div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
                               <div style={{ fontWeight: 700, color: movement.quantity > 0 ? '#15803d' : '#b42318' }}>{movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity}</div>
-                              <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{new Date(movement.createdAt).toLocaleString()}</div>
+                              <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{new Date(movement.createdAt).toLocaleString()}</div>
                             </div>
                           </div>
                         ))
@@ -2882,24 +2889,24 @@ function App() {
                     </div>
                   </div>
 
-                  <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Receiving history</div>
+                  <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Receiving history</div>
                     <div style={{ display: 'grid', gap: 10, marginBottom: 12 }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <button
                           type="button"
                           onClick={handleExportReceivingHistory}
-                          style={{ background: '#0B1F3A', color: '#FFFFFFFFF', border: 'none', borderRadius: 10, padding: '10px 12px', fontWeight: 700, cursor: 'pointer' }}
+                          style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 10, padding: '10px 12px', fontWeight: 700, cursor: 'pointer' }}
                         >
                           Export PDF
                         </button>
                       </div>
                       <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
                         {receivingSupplierSummary.map((summary) => (
-                          <div key={summary.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFFFFFFF', border: '1px solid #EAF1FB' }}>
-                            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>{summary.supplier}</div>
-                            <div style={{ marginTop: 6, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(summary.totalAmount)}</div>
-                            <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{summary.receiptsCount} receipt{summary.receiptsCount === 1 ? '' : 's'} • {summary.totalItems} item{summary.totalItems === 1 ? '' : 's'}</div>
+                          <div key={summary.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #F0E9D8' }}>
+                            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>{summary.supplier}</div>
+                            <div style={{ marginTop: 6, fontWeight: 700, color: '#2B2118' }}>{formatMoney(summary.totalAmount)}</div>
+                            <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{summary.receiptsCount} receipt{summary.receiptsCount === 1 ? '' : 's'} • {summary.totalItems} item{summary.totalItems === 1 ? '' : 's'}</div>
                           </div>
                         ))}
                       </div>
@@ -2909,43 +2916,43 @@ function App() {
                           value={receivingHistoryFilter}
                           onChange={(e) => setReceivingHistoryFilter(e.target.value)}
                           placeholder="Filter by supplier"
-                          style={{ minWidth: 220, padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                          style={{ minWidth: 220, padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                         />
                         <input
                           type="date"
                           value={receivingHistoryStartDate}
                           onChange={(e) => setReceivingHistoryStartDate(e.target.value)}
-                          style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                          style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                         />
                         <input
                           type="date"
                           value={receivingHistoryEndDate}
                           onChange={(e) => setReceivingHistoryEndDate(e.target.value)}
-                          style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #D7E3F5', background: '#FFFFFF', color: '#0B1F3A' }}
+                          style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
                         />
                       </div>
                     </div>
                     <div style={{ display: 'grid', gap: 8 }}>
                       {filteredReceivingHistory.length === 0 ? (
-                        <div style={{ color: '#5B6B82' }}>No receiving history yet.</div>
+                        <div style={{ color: '#8A8177' }}>No receiving history yet.</div>
                       ) : (
                         filteredReceivingHistory.map((entry) => {
                           const items = JSON.parse(entry.itemsJson || '[]');
                           return (
-                            <div key={entry.id} style={{ padding: '12px 14px', borderRadius: 10, background: '#FFFFFFFFF', border: '1px solid #D7E3F5' }}>
+                            <div key={entry.id} style={{ padding: '12px 14px', borderRadius: 10, background: '#FFFDF8', border: '1px solid #E5DCCB' }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                                 <div>
-                                  <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{entry.supplier}</div>
-                                  <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{entry.storeAccount}</div>
+                                  <div style={{ fontWeight: 700, color: '#2B2118' }}>{entry.supplier}</div>
+                                  <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{entry.storeAccount}</div>
                                 </div>
-                                <div style={{ textAlign: 'right', color: '#5B6B82', fontSize: 12 }}>
+                                <div style={{ textAlign: 'right', color: '#8A8177', fontSize: 12 }}>
                                   <div>{new Date(entry.date).toLocaleString()}</div>
-                                  <div style={{ marginTop: 2, fontWeight: 700, color: '#0B1F3A' }}>{formatMoney(entry.totalAmount)}</div>
+                                  <div style={{ marginTop: 2, fontWeight: 700, color: '#2B2118' }}>{formatMoney(entry.totalAmount)}</div>
                                 </div>
                               </div>
                               <div style={{ marginTop: 8, display: 'grid', gap: 4 }}>
                                 {items.slice(0, 4).map((item) => (
-                                  <div key={`${entry.id}-${item.name}`} style={{ fontSize: 12, color: '#10233F' }}>
+                                  <div key={`${entry.id}-${item.name}`} style={{ fontSize: 12, color: '#292521' }}>
                                     • {item.name} ×{item.quantity}
                                   </div>
                                 ))}
@@ -2958,50 +2965,50 @@ function App() {
                   </div>
 
                   {cashierPerformance.length > 0 && (
-                    <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 14 }}>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Cashier performance</div>
+                    <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 14 }}>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Cashier performance</div>
                       <div style={{ display: 'grid', gap: 12 }}>
                         {cashierPerformance.map((staff) => (
-                          <div key={staff.cashierName} style={{ padding: 12, borderRadius: 12, border: '1px solid #EAF1FB', background: '#FFFFFFFFF' }}>
+                          <div key={staff.cashierName} style={{ padding: 12, borderRadius: 12, border: '1px solid #F0E9D8', background: '#FFFDF8' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
                               <div>
-                                <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{staff.cashierName}</div>
-                                <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{staff.salesCount} sale{staff.salesCount === 1 ? '' : 's'}</div>
+                                <div style={{ fontWeight: 700, color: '#2B2118' }}>{staff.cashierName}</div>
+                                <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{staff.salesCount} sale{staff.salesCount === 1 ? '' : 's'}</div>
                               </div>
                               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                                <span style={{ padding: '6px 10px', borderRadius: 999, background: '#EAF1FB', color: '#1456D9', fontSize: 12, fontWeight: 700 }}>Revenue {formatMoney(staff.totalRevenue)}</span>
+                                <span style={{ padding: '6px 10px', borderRadius: 999, background: '#F0E9D8', color: '#C6A15B', fontSize: 12, fontWeight: 700 }}>Revenue {formatMoney(staff.totalRevenue)}</span>
                                 <span style={{ padding: '6px 10px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 12, fontWeight: 700 }}>Profit {formatMoney(staff.totalProfit)}</span>
                               </div>
                             </div>
                             {staff.topProducts.length > 0 && (
                               <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                                 {staff.topProducts.map((product) => (
-                                  <span key={`${staff.cashierName}-${product.name}`} style={{ padding: '6px 10px', borderRadius: 999, background: '#FFFFFF', border: '1px solid #D7E3F5', color: '#10233F', fontSize: 12, fontWeight: 700 }}>
+                                  <span key={`${staff.cashierName}-${product.name}`} style={{ padding: '6px 10px', borderRadius: 999, background: '#FFFDF8', border: '1px solid #E5DCCB', color: '#292521', fontSize: 12, fontWeight: 700 }}>
                                     {product.name} ×{product.quantity}
                                   </span>
                                 ))}
                               </div>
                             )}
-                            <div style={{ marginTop: 10, borderTop: '1px solid #D7E3F5', paddingTop: 10 }}>
-                              <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Sales history</div>
+                            <div style={{ marginTop: 10, borderTop: '1px solid #E5DCCB', paddingTop: 10 }}>
+                              <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Sales history</div>
                               <div style={{ display: 'grid', gap: 8 }}>
                                 {staff.salesHistory.map((sale) => (
-                                  <div key={`${staff.cashierName}-${sale.id}`} style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 10, padding: 10 }}>
+                                  <div key={`${staff.cashierName}-${sale.id}`} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 10, padding: 10 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
-                                      <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{new Date(sale.datetime).toLocaleString()}</div>
+                                      <div style={{ fontWeight: 700, color: '#2B2118' }}>{new Date(sale.datetime).toLocaleString()}</div>
                                       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                        <span style={{ padding: '4px 8px', borderRadius: 999, background: '#EAF1FB', color: '#1456D9', fontSize: 11, fontWeight: 700 }}>{sale.paymentMethod}</span>
+                                        <span style={{ padding: '4px 8px', borderRadius: 999, background: '#F0E9D8', color: '#C6A15B', fontSize: 11, fontWeight: 700 }}>{sale.paymentMethod}</span>
                                         <span style={{ padding: '4px 8px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 11, fontWeight: 700 }}>Profit {formatMoney(sale.profit)}</span>
                                       </div>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', fontSize: 13, color: '#10233F' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', fontSize: 13, color: '#292521' }}>
                                       <span>Total sale {formatMoney(sale.total)}</span>
                                       <span>{(sale.items || []).reduce((count, item) => count + (Number(item.quantity) || 0), 0)} item{(sale.items || []).reduce((count, item) => count + (Number(item.quantity) || 0), 0) === 1 ? '' : 's'}</span>
                                     </div>
                                     {(sale.items || []).length > 0 && (
                                       <ul style={{ margin: '8px 0 0 16px', padding: 0, display: 'grid', gap: 4 }}>
                                         {(sale.items || []).map((item) => (
-                                          <li key={`${staff.cashierName}-${sale.id}-${item.name}`} style={{ color: '#5B6B82', fontSize: 12 }}>
+                                          <li key={`${staff.cashierName}-${sale.id}-${item.name}`} style={{ color: '#8A8177', fontSize: 12 }}>
                                             {item.quantity} × {item.name}
                                           </li>
                                         ))}
@@ -3020,32 +3027,32 @@ function App() {
                   {filteredReportSales.map((sale) => {
                     const actualProfit = calculateActualProfit(sale);
                     return (
-                      <div key={sale.id} style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 16 }}>
+                      <div key={sale.id} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 16 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
                           <div>
-                            <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 4 }}>Sale</div>
-                            <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{new Date(sale.datetime).toLocaleString()}</div>
+                            <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 4 }}>Sale</div>
+                            <div style={{ fontWeight: 700, color: '#2B2118' }}>{new Date(sale.datetime).toLocaleString()}</div>
                           </div>
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                            <span style={{ padding: '6px 10px', borderRadius: 999, background: '#EAF1FB', color: '#1456D9', fontSize: 12, fontWeight: 700 }}>{sale.paymentMethod}</span>
+                            <span style={{ padding: '6px 10px', borderRadius: 999, background: '#F0E9D8', color: '#C6A15B', fontSize: 12, fontWeight: 700 }}>{sale.paymentMethod}</span>
                             <span style={{ padding: '6px 10px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 12, fontWeight: 700 }}>Profit {formatMoney(actualProfit)}</span>
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, paddingTop: 12, borderTop: '1px solid #EAF1FB', gap: 12, flexWrap: 'wrap' }}>
-                          <div style={{ color: '#5B6B82', fontSize: 14 }}>Total sale</div>
-                          <div style={{ color: '#0B1F3A', fontSize: 20, fontWeight: 700 }}>{formatMoney(sale.total)}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, paddingTop: 12, borderTop: '1px solid #F0E9D8', gap: 12, flexWrap: 'wrap' }}>
+                          <div style={{ color: '#8A8177', fontSize: 14 }}>Total sale</div>
+                          <div style={{ color: '#2B2118', fontSize: 20, fontWeight: 700 }}>{formatMoney(sale.total)}</div>
                         </div>
 
                         <div style={{ marginTop: 12 }}>
-                          <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9', marginBottom: 8 }}>Items</div>
+                          <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B', marginBottom: 8 }}>Items</div>
                           <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 8 }}>
                             {sale.items.map((item) => {
                               const itemProfit = ((Number(item.price) || 0) - (Number(item.costPrice) || 0)) * (Number(item.quantity) || 0);
                               return (
-                                <li key={item.id} style={{ color: '#10233F' }}>
+                                <li key={item.id} style={{ color: '#292521' }}>
                                   <span style={{ fontWeight: 700 }}>{item.quantity} × {item.name}</span>
-                                  <span style={{ color: '#1456D9' }}> • {formatMoney(itemProfit)} profit</span>
+                                  <span style={{ color: '#C6A15B' }}> • {formatMoney(itemProfit)} profit</span>
                                 </li>
                               );
                             })}
@@ -3062,57 +3069,57 @@ function App() {
       )}
 
       {activeView === 'supplierReports' && (
-        <section style={{ marginTop: 24, background: 'linear-gradient(135deg, #FFFFFFFFF 0%, #F4F8FD 100%)', border: '1px solid #D7E3F5', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+        <section style={{ marginTop: 24, background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1456D9', fontWeight: 700 }}>Procurement</div>
-              <h2 style={{ margin: '6px 0 0', fontFamily: 'Montserrat, sans-serif', color: '#0B1F3A', fontSize: 28 }}>Supplier reports</h2>
+              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Procurement</div>
+              <h2 style={{ margin: '6px 0 0', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 28 }}>Supplier reports</h2>
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#5B6B82' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#8A8177' }}>
                 <span>Supplier</span>
-                <input type="text" value={supplierReportSupplierFilter} onChange={(e) => setSupplierReportSupplierFilter(e.target.value)} placeholder="Search supplier" style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 180 }} />
+                <input type="text" value={supplierReportSupplierFilter} onChange={(e) => setSupplierReportSupplierFilter(e.target.value)} placeholder="Search supplier" style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 180 }} />
               </label>
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#5B6B82' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#8A8177' }}>
                 <span>From</span>
-                <input type="date" value={supplierReportStartDate} onChange={(e) => setSupplierReportStartDate(e.target.value)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
+                <input type="date" value={supplierReportStartDate} onChange={(e) => setSupplierReportStartDate(e.target.value)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
               </label>
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#5B6B82' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, color: '#8A8177' }}>
                 <span>To</span>
-                <input type="date" value={supplierReportEndDate} onChange={(e) => setSupplierReportEndDate(e.target.value)} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
+                <input type="date" value={supplierReportEndDate} onChange={(e) => setSupplierReportEndDate(e.target.value)} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 10px', minWidth: 140 }} />
               </label>
-              <button type="button" onClick={() => { setSupplierReportSupplierFilter(''); setSupplierReportStartDate(''); setSupplierReportEndDate(''); }} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 12px', background: '#FFFFFFFFF', color: '#5B6B82', cursor: 'pointer' }}>
+              <button type="button" onClick={() => { setSupplierReportSupplierFilter(''); setSupplierReportStartDate(''); setSupplierReportEndDate(''); }} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 12px', background: '#FFFDF8', color: '#8A8177', cursor: 'pointer' }}>
                 Reset
               </button>
-              <button type="button" onClick={handleExportSupplierReport} style={{ border: '1px solid #D7E3F5', borderRadius: 8, padding: '8px 12px', background: '#FFFFFFFFF', color: '#1456D9', cursor: 'pointer', fontWeight: 700 }}>
+              <button type="button" onClick={handleExportSupplierReport} style={{ border: '1px solid #E5DCCB', borderRadius: 8, padding: '8px 12px', background: '#FFFDF8', color: '#C6A15B', cursor: 'pointer', fontWeight: 700 }}>
                 Export PDF
               </button>
             </div>
           </div>
 
           {supplierReportSummary.length === 0 ? (
-            <div style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 18, color: '#5B6B82' }}>No supplier activity yet.</div>
+            <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 18, color: '#8A8177' }}>No supplier activity yet.</div>
           ) : (
             <div style={{ display: 'grid', gap: 12 }}>
               {supplierReportSummary.map((entry) => (
-                <div key={entry.supplier} style={{ background: '#FFFFFF', border: '1px solid #D7E3F5', borderRadius: 16, padding: 16 }}>
+                <div key={entry.supplier} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                     <div>
-                      <div style={{ fontWeight: 700, color: '#0B1F3A' }}>{entry.supplier}</div>
-                      <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 4 }}>Purchase orders and receiving activity</div>
+                      <div style={{ fontWeight: 700, color: '#2B2118' }}>{entry.supplier}</div>
+                      <div style={{ fontSize: 12, color: '#8A8177', marginTop: 4 }}>Purchase orders and receiving activity</div>
                     </div>
-                    <div style={{ fontWeight: 700, color: '#1456D9' }}>{formatMoney(entry.purchaseOrderAmount + entry.receivingAmount)}</div>
+                    <div style={{ fontWeight: 700, color: '#C6A15B' }}>{formatMoney(entry.purchaseOrderAmount + entry.receivingAmount)}</div>
                   </div>
                   <div style={{ marginTop: 12, display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-                    <div style={{ padding: '10px 12px', borderRadius: 12, background: '#F4F8FD' }}>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9' }}>Purchase orders</div>
-                      <div style={{ fontWeight: 700, color: '#0B1F3A', marginTop: 4 }}>{entry.purchaseOrderCount} order{entry.purchaseOrderCount === 1 ? '' : 's'}</div>
-                      <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{formatMoney(entry.purchaseOrderAmount)}</div>
+                    <div style={{ padding: '10px 12px', borderRadius: 12, background: '#F7F3EA' }}>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B' }}>Purchase orders</div>
+                      <div style={{ fontWeight: 700, color: '#2B2118', marginTop: 4 }}>{entry.purchaseOrderCount} order{entry.purchaseOrderCount === 1 ? '' : 's'}</div>
+                      <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{formatMoney(entry.purchaseOrderAmount)}</div>
                     </div>
-                    <div style={{ padding: '10px 12px', borderRadius: 12, background: '#F4F8FD' }}>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1456D9' }}>Receiving</div>
-                      <div style={{ fontWeight: 700, color: '#0B1F3A', marginTop: 4 }}>{entry.receivingCount} receipt{entry.receivingCount === 1 ? '' : 's'}</div>
-                      <div style={{ fontSize: 12, color: '#5B6B82', marginTop: 2 }}>{formatMoney(entry.receivingAmount)} • {entry.receivingItems} item{entry.receivingItems === 1 ? '' : 's'}</div>
+                    <div style={{ padding: '10px 12px', borderRadius: 12, background: '#F7F3EA' }}>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#C6A15B' }}>Receiving</div>
+                      <div style={{ fontWeight: 700, color: '#2B2118', marginTop: 4 }}>{entry.receivingCount} receipt{entry.receivingCount === 1 ? '' : 's'}</div>
+                      <div style={{ fontSize: 12, color: '#8A8177', marginTop: 2 }}>{formatMoney(entry.receivingAmount)} • {entry.receivingItems} item{entry.receivingItems === 1 ? '' : 's'}</div>
                     </div>
                   </div>
                 </div>
@@ -3127,8 +3134,8 @@ function App() {
 
     {receipt && (
       <div className="receipt-print" style={{ display: 'none' }}>
-        <section style={{ marginTop: 20, background: '#FFFFFF', color: '#0B1F3A', padding: 18, border: '1px solid #D7E3F5', borderRadius: 16, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)', display: 'flex', flexDirection: 'column', minHeight: 320 }}>
-          <div style={{ textAlign: 'center', borderBottom: '1px solid #0B1F3A', paddingBottom: 8, marginBottom: 10 }}>
+        <section style={{ marginTop: 20, background: '#FFFDF8', color: '#2B2118', padding: 18, border: '1px solid #E5DCCB', borderRadius: 16, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)', display: 'flex', flexDirection: 'column', minHeight: 320 }}>
+          <div style={{ textAlign: 'center', borderBottom: '1px solid #2B2118', paddingBottom: 8, marginBottom: 10 }}>
             <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{settings.shopName}</div>
           </div>
 
@@ -3139,10 +3146,10 @@ function App() {
             <div>Payment: {receipt.paymentMethod || 'Cash'}</div>
           </div>
 
-          <div style={{ borderTop: '1px solid #0B1F3A', marginBottom: 8 }} />
+          <div style={{ borderTop: '1px solid #2B2118', marginBottom: 8 }} />
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #0B1F3A' }}>
+              <tr style={{ borderBottom: '1px solid #2B2118' }}>
                 <th style={{ textAlign: 'left', padding: '6px 0', fontWeight: 700 }}>Item</th>
                 <th style={{ textAlign: 'center', padding: '6px 0', fontWeight: 700 }}>Qty</th>
                 <th style={{ textAlign: 'right', padding: '6px 0', fontWeight: 700 }}>Price</th>
@@ -3161,7 +3168,7 @@ function App() {
             </tbody>
           </table>
 
-          <div style={{ borderTop: '1px dashed #0B1F3A', marginTop: 10, paddingTop: 8, fontSize: 12 }}>
+          <div style={{ borderTop: '1px dashed #2B2118', marginTop: 10, paddingTop: 8, fontSize: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
               <span>Subtotal</span>
               <span>{formatMoney((receipt.items || []).reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 0), 0))}</span>
@@ -3190,7 +3197,7 @@ function App() {
             )}
           </div>
 
-          <div style={{ marginTop: 'auto', textAlign: 'center', borderTop: '1px dashed #0B1F3A', paddingTop: 10, fontSize: 10, color: '#5B6B82' }}>
+          <div style={{ marginTop: 'auto', textAlign: 'center', borderTop: '1px dashed #2B2118', paddingTop: 10, fontSize: 10, color: '#8A8177' }}>
             <div>{settings.receiptFooter || 'Thank you for shopping with us!'}</div>
             <div style={{ marginTop: 6, whiteSpace: 'pre-line' }}>SHOP NO 7 & 8 UPSTAIRS LAYIN JALLABA GIDAN IDI BAGWANJE @ KANTIN KWARI MARKET KANO STATE NIGERIA.</div>
             <div style={{ marginTop: 6 }}>CUSTOMER SERVICE NO :- 09048054904 08091212946</div>
