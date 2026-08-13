@@ -1359,9 +1359,6 @@ function App() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 24, padding: '18px 22px', background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', border: '1px solid #E5DCCB', borderRadius: 14, boxShadow: '0 8px 18px rgba(17, 19, 24, 0.18), inset 0 -2px 0 rgba(244, 232, 205, 0.18)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
               <div style={{ width: 4, height: 34, borderRadius: 999, background: 'linear-gradient(180deg, #F0E9D8 0%, #C6A15B 100%)', boxShadow: '0 0 10px rgba(244, 232, 205, 0.35)' }} />
-              <div style={{ padding: '12px 18px', borderRadius: 999, background: '#F0E9D8', color: '#2B2118', fontSize: 14, letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 800, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.16)', border: '1px solid rgba(184, 148, 77, 0.35)' }}>{settings.shopName}</div>
-            </div>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
               <div style={{ minWidth: 220, padding: '12px 18px', borderRadius: 999, background: 'rgba(245, 239, 231, 0.12)', color: '#FFFDF8', border: '1px solid rgba(244, 232, 205, 0.24)', textAlign: 'center', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
                 <div style={{ fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', opacity: 0.8, marginBottom: 4 }}>Welcome</div>
                 <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'Courier New, monospace', letterSpacing: '0.08em' }}>
@@ -1369,6 +1366,7 @@ function App() {
                 </div>
               </div>
             </div>
+            <div style={{ flex: 1 }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 18px', borderRadius: 999, background: '#F0E9D8', color: '#2B2118', fontSize: 14, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.16)', border: '1px solid rgba(184, 148, 77, 0.35)', minWidth: 0 }}>
               <span style={{ fontSize: 16 }}>👤</span>
               {user?.fullName || user?.username || 'Account holder'}
