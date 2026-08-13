@@ -1916,103 +1916,6 @@ function App() {
               })}
             </div>
 
-            {user.role === 'admin' && (
-              <div style={{ marginBottom: 20, background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <h3 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: 24, color: '#2B2118' }}>
-                    {editingProductId ? 'Edit Product' : 'Add New Product'}
-                  </h3>
-                  {editingProductId && (
-                    <button
-                      type="button"
-                      onClick={cancelEditProduct}
-                      style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '8px 12px', cursor: 'pointer' }}
-                    >
-                      Cancel
-                    </button>
-                  )}
-                </div>
-
-                <form onSubmit={saveProduct} style={{ display: 'grid', gap: 12, maxWidth: 760 }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                      Product name
-                      <input
-                        required
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
-                      />
-                    </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                      Category / SKU
-                      <input
-                        required
-                        value={form.sku}
-                        onChange={(e) => setForm({ ...form, sku: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
-                      />
-                    </label>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                      Selling price
-                      <input
-                        required
-                        type="number"
-                        step="0.01"
-                        value={form.price}
-                        onChange={(e) => setForm({ ...form, price: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
-                      />
-                    </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                      Cost price
-                      <input
-                        required
-                        type="number"
-                        step="0.01"
-                        value={form.costPrice}
-                        onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
-                      />
-                    </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                      Stock
-                      <input
-                        required
-                        type="number"
-                        value={form.stock}
-                        onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
-                      />
-                    </label>
-                  </div>
-
-                  {productFormMessage && (
-                    <div style={{ color: '#b42318', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{productFormMessage}</div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                    <button
-                      type="submit"
-                      style={{ background: '#2B2118', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}
-                    >
-                      {editingProductId ? 'Update Product' : 'Save Product'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={cancelEditProduct}
-                      style={{ background: 'transparent', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
                     <div style={{ display: 'grid', gap: 20, marginBottom: 20 }}>
               <div style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
@@ -2182,9 +2085,6 @@ function App() {
                                   </button>
                                 </div>
                               )}
-                              <button onClick={() => startEditProduct(product)} style={{ background: '#F0E9D8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
-                                Edit
-                              </button>
                               <button onClick={() => deleteProduct(product.id)} style={{ background: '#f7dede', color: '#660000', border: '1px solid #e3b1b1', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}>
                                 Delete
                               </button>
