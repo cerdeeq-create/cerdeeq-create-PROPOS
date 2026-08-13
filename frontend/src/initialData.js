@@ -1,5 +1,5 @@
 const defaultSettings = {
-  shopName: 'A NOOR INVESTMENT',
+  shopName: 'NOOR COLLECTION',
   currencySymbol: '₦',
   defaultStoreAccount: 'Main Store',
   receiptFooter: 'Thank you for shopping with us!',
