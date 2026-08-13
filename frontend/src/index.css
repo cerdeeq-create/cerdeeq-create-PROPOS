@@ -1,15 +1,34 @@
+:root {
+  --color-navy: #0B1F3A;
+  --color-navy-light: #14335E;
+  --color-royal-blue: #1456D9;
+  --color-gold: #F4B942;
+  --color-bg: #F4F8FD;
+  --color-border: #D7E3F5;
+  --color-text-muted: #5B6B82;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f5f7;
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-navy);
 }
 
 * {
   box-sizing: border-box;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+}
+
 button {
   cursor: pointer;
+  font-family: var(--font-body);
 }
 
 @media print {
