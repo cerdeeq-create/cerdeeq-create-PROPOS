@@ -6,3 +6,12 @@ build
 coverage
 /.env
 /.DS_Store
+*.db
+*.sqlite
+*.sqlite3
+
+# Unrelated side-project folders (not part of this repo)
+/airtime-data-app/
+/arcade-neon-dodge/
+/mobile-video-editor/
+/social-backup/
