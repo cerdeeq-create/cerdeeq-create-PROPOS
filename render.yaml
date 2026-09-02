@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: pos-shop
+    name: noorcollection
     env: node
     plan: free
     rootDir: .

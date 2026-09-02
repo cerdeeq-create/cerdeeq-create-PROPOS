@@ -1,6 +1,6 @@
 # Cloude Code ToolBox — MCP & Skills awareness
 
-_Generated: 2026-08-10T17:41:59.526Z_
+_Generated: 2026-08-31T12:29:24.491Z_
 
 ## How to use this report
 
@@ -35,6 +35,9 @@ _None found (or no workspace open)._
 
 - **skill-creator** — `C:\Users\WINDOWS 10\.claude\skills\skill-creator`
   - Create new skills, modify and improve existing skills. Use when users want to create a skill from scratch, edit, or optimize an existing skill.
+
+- **microsoft-foundry** — `C:\Users\WINDOWS 10\.agents\skills\microsoft-foundry`
+  - Build, deploy, evaluate, optimize, fine-tune, and manage Microsoft Foundry agents, models, and resources end to end with azd. USE FOR: azd ai agent, azd provision/deploy, hosted agent scaffold/develop/run/deploy, prompt 
 
 ---
 

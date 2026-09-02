@@ -6,11 +6,15 @@
 
 
 
+
+
+
+
 <!-- cloude-code-toolbox:mcp-skills-awareness-begin -->
 
 ### MCP & Skills awareness (Cloude Code ToolBox)
 
-_Last synced: 2026-08-10T17:42:00.386Z._
+_Last synced: 2026-08-31T12:29:27.037Z._
 
 - **Full report:** `.claude/cloude-code-toolbox-mcp-skills-awareness.md` in this workspace (auto-overwritten on each scan). Use it as ground truth for configured servers and skill folders.
 - **MCP:** For **live tools** in Claude Code, enable the matching server via `/mcp`. Servers are configured in `~/.claude.json` (user) and `.mcp.json` (project).
@@ -36,6 +40,8 @@ _None found (or no workspace open)._
 #### User skills
 
 - **skill-creator** — `C:\Users\WINDOWS 10\.claude\skills\skill-creator` — Create new skills, modify and improve existing skills. Use when users want to create a skill from scratch, edit, or optimize an existing skill.
+
+- **microsoft-foundry** — `C:\Users\WINDOWS 10\.agents\skills\microsoft-foundry` — Build, deploy, evaluate, optimize, fine-tune, and manage Microsoft Foundry agents, models, and resources end to end with azd. USE FOR: azd ai agent, azd provision/deploy, hosted agent scaffold/develop/run/deploy, prompt
 
 <!-- cloude-code-toolbox:mcp-skills-awareness-end -->
 <!-- claude-code-memory-bank:begin -->
@@ -65,6 +71,10 @@ Context layers (read deeper files after foundations): **projectbrief** → **pro
 
 Do not delete these files; evolve them as the project changes.
 <!-- claude-code-memory-bank:end -->
+
+
+
+
 
 
 

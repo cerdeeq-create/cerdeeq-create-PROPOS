@@ -97,10 +97,112 @@ function validateServiceTransactionPayload(payload) {
   return { ok: true };
 }
 
+function validateSocialAccountLinkInitPayload(payload) {
+  const platform = String(payload?.platform || '').trim().toLowerCase();
+  const accountLabel = String(payload?.accountLabel || '').trim();
+  const permissions = Array.isArray(payload?.permissions) ? payload.permissions : [];
+
+  if (!['tiktok', 'facebook'].includes(platform)) {
+    return { ok: false, error: 'Platform must be tiktok or facebook' };
+  }
+
+  if (!accountLabel) {
+    return { ok: false, error: 'Account label is required' };
+  }
+
+  const normalizedPermissions = permissions
+    .map((permission) => String(permission || '').trim().toLowerCase())
+    .filter(Boolean);
+
+  if (normalizedPermissions.length === 0) {
+    return { ok: false, error: 'At least one permission is required' };
+  }
+
+  return {
+    ok: true,
+    value: {
+      platform,
+      accountLabel,
+      permissions: normalizedPermissions,
+    },
+  };
+}
+
+function validateMediaImportRequestPayload(payload) {
+  const accountId = Number(payload?.accountId);
+  const mediaType = String(payload?.mediaType || 'all').trim().toLowerCase();
+  const sinceDate = payload?.sinceDate ? String(payload.sinceDate) : '';
+  const untilDate = payload?.untilDate ? String(payload.untilDate) : '';
+  const maxItems = Number(payload?.maxItems || 20);
+
+  if (!Number.isInteger(accountId) || accountId <= 0) {
+    return { ok: false, error: 'A valid account is required' };
+  }
+
+  if (!['all', 'video', 'photo', 'reel'].includes(mediaType)) {
+    return { ok: false, error: 'Unsupported media type filter' };
+  }
+
+  if (!Number.isFinite(maxItems) || maxItems < 1 || maxItems > 200) {
+    return { ok: false, error: 'maxItems must be between 1 and 200' };
+  }
+
+  if (sinceDate && Number.isNaN(new Date(sinceDate).getTime())) {
+    return { ok: false, error: 'sinceDate must be a valid ISO date' };
+  }
+
+  if (untilDate && Number.isNaN(new Date(untilDate).getTime())) {
+    return { ok: false, error: 'untilDate must be a valid ISO date' };
+  }
+
+  return {
+    ok: true,
+    value: {
+      accountId,
+      mediaType,
+      sinceDate,
+      untilDate,
+      maxItems: Math.floor(maxItems),
+    },
+  };
+}
+
+function validateSocialAccountLinkCompletePayload(payload) {
+  const accountId = Number(payload?.accountId);
+  const oauthState = String(payload?.oauthState || '').trim();
+  const authorizationCode = String(payload?.authorizationCode || '').trim();
+  const platformAccountId = String(payload?.platformAccountId || '').trim();
+
+  if (!Number.isInteger(accountId) || accountId <= 0) {
+    return { ok: false, error: 'Valid accountId is required' };
+  }
+
+  if (!oauthState) {
+    return { ok: false, error: 'oauthState is required' };
+  }
+
+  if (!authorizationCode && !platformAccountId) {
+    return { ok: false, error: 'authorizationCode or platformAccountId is required' };
+  }
+
+  return {
+    ok: true,
+    value: {
+      accountId,
+      oauthState,
+      authorizationCode,
+      platformAccountId,
+    },
+  };
+}
+
 module.exports = {
   validateProductPayload,
   validateSalePayload,
   validatePurchaseOrderPayload,
   validateReceivingPayload,
   validateServiceTransactionPayload,
+  validateSocialAccountLinkInitPayload,
+  validateMediaImportRequestPayload,
+  validateSocialAccountLinkCompletePayload,
 };

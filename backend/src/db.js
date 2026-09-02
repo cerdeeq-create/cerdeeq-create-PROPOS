@@ -1,14 +1,19 @@
 const { Pool } = require('pg');
+const { newDb } = require('pg-mem');
 
 const connectionString = process.env.DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is required to connect to Postgres');
-}
+let pool;
 
-const pool = new Pool({
-  connectionString,
-  ssl: connectionString.includes('localhost') ? false : { rejectUnauthorized: false },
-});
+if (connectionString) {
+  pool = new Pool({
+    connectionString,
+    ssl: connectionString.includes('localhost') ? false : { rejectUnauthorized: false },
+  });
+} else {
+  const mem = newDb();
+  const { Pool: MemPool } = mem.adapters.createPg();
+  pool = new MemPool();
+}
 
 module.exports = { pool };
