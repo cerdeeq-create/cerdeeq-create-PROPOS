@@ -19,7 +19,7 @@ function App() {
   const [showCheckoutReview, setShowCheckoutReview] = useState(false);
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [reportSales, setReportSales] = useState([]);
-  const [form, setForm] = useState({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '' });
+  const [form, setForm] = useState({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' });
   const [editingProductId, setEditingProductId] = useState(null);
   const [skuInput, setSkuInput] = useState('');
   const [tenderAmount, setTenderAmount] = useState('');
@@ -653,12 +653,13 @@ function App() {
       costPrice: product.costPrice ? product.costPrice.toString() : '',
       stock: product.stock.toString(),
       imageUrl: product.imageUrl || '',
+      category: product.category || '',
     });
   };
 
   const cancelEditProduct = () => {
     setEditingProductId(null);
-    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '' });
+    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' });
   };
 
   const saveProduct = async (event) => {
@@ -687,6 +688,7 @@ function App() {
       costPrice: parseFloat(form.costPrice || 0),
       stock: parseInt(form.stock, 10),
       imageUrl: (form.imageUrl || '').trim(),
+      category: (form.category || '').trim(),
     };
 
     const url = editingProductId ? `${API_URL}/products/${editingProductId}` : `${API_URL}/products`;
@@ -706,7 +708,7 @@ function App() {
 
     setProductFormMessage('Product saved successfully.');
     setEditingProductId(null);
-    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '' });
+    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' });
     fetchProducts();
   };
 
@@ -747,7 +749,7 @@ function App() {
       },
     ]);
 
-    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '' });
+    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' });
   };
 
   const updateReceivingItem = (itemId, field, value) => {
@@ -2691,8 +2693,25 @@ function App() {
                     <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="e.g. Premium Soap" />
                   </label>
                   <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                    Category / SKU
-                    <input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="e.g. Household" />
+                    SKU
+                    <input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="e.g. SOAP-001" />
+                  </label>
+                </div>
+                <div style={{ display: 'grid', gap: 12, gridTemplateColumns: '1fr' }}>
+                  <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
+                    Category (shown to customers on the shop website)
+                    <input
+                      value={form.category}
+                      onChange={(e) => setForm({ ...form, category: e.target.value })}
+                      list="category-options"
+                      style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }}
+                      placeholder="e.g. Household, Beverages, Snacks"
+                    />
+                    <datalist id="category-options">
+                      {[...new Set((products || []).map((p) => p.category).filter(Boolean))].map((cat) => (
+                        <option key={cat} value={cat} />
+                      ))}
+                    </datalist>
                   </label>
                 </div>
                 <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
@@ -2720,7 +2739,7 @@ function App() {
                   <button type="submit" style={{ background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Save Item
                   </button>
-                  <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '' }); }} style={{ background: '#FFFDF8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
+                  <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' }); }} style={{ background: '#FFFDF8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
                     Clear
                   </button>
                 </div>

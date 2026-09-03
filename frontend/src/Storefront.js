@@ -28,6 +28,7 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
   const [authError, setAuthError] = useState('');
   const [showAuthPassword, setShowAuthPassword] = useState(false);
   const [myOrdersOpen, setMyOrdersOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     if (customerAuth) {
@@ -36,11 +37,18 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
   }, [customerAuth]);
 
   const availableProducts = (products || []).filter((product) => Number(product.stock) > 0);
+  const categories = useMemo(() => {
+    const unique = [...new Set(availableProducts.map((product) => (product.category || '').trim()).filter(Boolean))];
+    return ['All', ...unique.sort((a, b) => a.localeCompare(b))];
+  }, [availableProducts]);
   const visibleProducts = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return availableProducts;
-    return availableProducts.filter((product) => product.name.toLowerCase().includes(q));
-  }, [availableProducts, search]);
+    return availableProducts.filter((product) => {
+      const matchesCategory = activeCategory === 'All' || (product.category || '').trim() === activeCategory;
+      const matchesSearch = !q || product.name.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }, [availableProducts, search, activeCategory]);
 
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0), [cart]);
   const cartTotal = useMemo(
@@ -240,8 +248,34 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
       </div>
 
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 16px 90px' }}>
+        {categories.length > 1 && (
+          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 10, marginBottom: 14, WebkitOverflowScrolling: 'touch' }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                style={{
+                  flexShrink: 0,
+                  padding: '8px 16px',
+                  borderRadius: 999,
+                  border: activeCategory === cat ? 'none' : `1px solid ${COLORS.border}`,
+                  background: activeCategory === cat ? `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)` : COLORS.card,
+                  color: activeCategory === cat ? '#fff' : COLORS.text,
+                  fontWeight: 800,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  boxShadow: activeCategory === cat ? '0 4px 10px rgba(255,59,48,0.3)' : 'none',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
         <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12 }}>
-          {search.trim() ? `Results for "${search.trim()}"` : 'All Products'}
+          {search.trim() ? `Results for "${search.trim()}"` : activeCategory === 'All' ? 'All Products' : activeCategory}
         </div>
         {!visibleProducts.length && (
           <div style={{ color: COLORS.muted, fontSize: 14, background: COLORS.card, borderRadius: 12, padding: 24, textAlign: 'center' }}>
