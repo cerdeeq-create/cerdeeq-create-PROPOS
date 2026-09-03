@@ -26,6 +26,7 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
   const [authForm, setAuthForm] = useState({ name: '', phone: '', email: '', password: '' });
   const [authSubmitting, setAuthSubmitting] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [showAuthPassword, setShowAuthPassword] = useState(false);
   const [myOrdersOpen, setMyOrdersOpen] = useState(false);
 
   useEffect(() => {
@@ -173,6 +174,12 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
 
   return (
     <div style={{ minHeight: '100vh', background: COLORS.bg, fontFamily: "'Manrope', 'Segoe UI', sans-serif" }}>
+      <style>{`
+        @keyframes storefrontAuthPop {
+          from { opacity: 0; transform: translateY(10px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
       <header style={{ position: 'sticky', top: 0, zIndex: 20, background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)`, boxShadow: '0 2px 10px rgba(0,0,0,0.12)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ fontWeight: 900, fontSize: 22, color: '#fff', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>{shopName || 'NOOR'}</div>
@@ -410,79 +417,154 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
       )}
 
       {authOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 30, display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <div
             onClick={() => setAuthOpen(false)}
-            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(17,17,17,0.55)', backdropFilter: 'blur(2px)' }}
           />
-          <div style={{ position: 'relative', width: '100%', maxWidth: 420, background: COLORS.bg, height: '100%', overflowY: 'auto', boxShadow: '-8px 0 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ background: COLORS.card, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
-              <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text }}>{authMode === 'login' ? 'Log In' : 'Sign Up'}</div>
-              <button type="button" onClick={() => setAuthOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: 400,
+              maxHeight: '92vh',
+              overflowY: 'auto',
+              background: COLORS.card,
+              borderRadius: 20,
+              boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
+              animation: 'storefrontAuthPop 0.18s ease-out',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setAuthOpen(false)}
+              aria-label="Close"
+              style={{ position: 'absolute', top: 14, right: 14, width: 30, height: 30, borderRadius: '50%', border: 'none', background: '#F2F2F2', color: COLORS.muted, fontSize: 18, cursor: 'pointer', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              ×
+            </button>
+
+            <div style={{ padding: '36px 32px 28px', textAlign: 'center', borderBottom: `1px solid ${COLORS.border}` }}>
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  margin: '0 auto 14px',
+                  borderRadius: '50%',
+                  background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                  color: '#fff',
+                  fontWeight: 900,
+                  fontSize: 22,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: `0 8px 18px rgba(255,59,48,0.35)`,
+                }}
+              >
+                {(shopName || 'N').trim().charAt(0).toUpperCase()}
+              </div>
+              <div style={{ fontWeight: 900, fontSize: 21, color: COLORS.text, letterSpacing: '-0.01em' }}>
+                {authMode === 'login' ? 'Welcome back' : 'Create your account'}
+              </div>
+              <div style={{ color: COLORS.muted, fontSize: 13, marginTop: 6 }}>
+                {authMode === 'login' ? `Log in to track your orders at ${shopName || 'our store'}.` : 'Sign up to save your details and track your orders.'}
+              </div>
             </div>
 
-            <div style={{ padding: 16, flex: 1 }}>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 16, background: COLORS.card, borderRadius: 999, padding: 4 }}>
+            <div style={{ padding: '24px 32px 32px' }}>
+              <div style={{ display: 'flex', gap: 4, marginBottom: 22, background: COLORS.bg, borderRadius: 999, padding: 4 }}>
                 <button
                   type="button"
                   onClick={() => { setAuthMode('login'); setAuthError(''); }}
-                  style={{ flex: 1, padding: '8px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, background: authMode === 'login' ? COLORS.primary : 'transparent', color: authMode === 'login' ? '#fff' : COLORS.text }}
+                  style={{ flex: 1, padding: '9px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'background 0.15s, color 0.15s', background: authMode === 'login' ? COLORS.card : 'transparent', color: authMode === 'login' ? COLORS.text : COLORS.muted, boxShadow: authMode === 'login' ? '0 1px 4px rgba(0,0,0,0.12)' : 'none' }}
                 >
                   Log In
                 </button>
                 <button
                   type="button"
                   onClick={() => { setAuthMode('signup'); setAuthError(''); }}
-                  style={{ flex: 1, padding: '8px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, background: authMode === 'signup' ? COLORS.primary : 'transparent', color: authMode === 'signup' ? '#fff' : COLORS.text }}
+                  style={{ flex: 1, padding: '9px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'background 0.15s, color 0.15s', background: authMode === 'signup' ? COLORS.card : 'transparent', color: authMode === 'signup' ? COLORS.text : COLORS.muted, boxShadow: authMode === 'signup' ? '0 1px 4px rgba(0,0,0,0.12)' : 'none' }}
                 >
                   Sign Up
                 </button>
               </div>
 
-              <form onSubmit={submitAuth} style={{ display: 'grid', gap: 10 }}>
+              <form onSubmit={submitAuth} style={{ display: 'grid', gap: 14 }}>
                 {authMode === 'signup' && (
                   <>
                     <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
                       Full Name
-                      <input
-                        type="text"
-                        value={authForm.name}
-                        onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
-                        placeholder="Your name"
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>👤</span>
+                        <input
+                          type="text"
+                          value={authForm.name}
+                          onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                          style={{ width: '100%', padding: '12px 14px 12px 38px', borderRadius: 12, border: `1.5px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                          onFocus={(e) => { e.target.style.borderColor = COLORS.primary; }}
+                          onBlur={(e) => { e.target.style.borderColor = COLORS.border; }}
+                          placeholder="Your name"
+                        />
+                      </div>
                     </label>
                     <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
                       Phone Number
-                      <input
-                        type="tel"
-                        value={authForm.phone}
-                        onChange={(e) => setAuthForm({ ...authForm, phone: e.target.value })}
-                        style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
-                        placeholder="Your phone number"
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>📱</span>
+                        <input
+                          type="tel"
+                          value={authForm.phone}
+                          onChange={(e) => setAuthForm({ ...authForm, phone: e.target.value })}
+                          style={{ width: '100%', padding: '12px 14px 12px 38px', borderRadius: 12, border: `1.5px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                          onFocus={(e) => { e.target.style.borderColor = COLORS.primary; }}
+                          onBlur={(e) => { e.target.style.borderColor = COLORS.border; }}
+                          placeholder="Your phone number"
+                        />
+                      </div>
                     </label>
                   </>
                 )}
                 <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
                   Email
-                  <input
-                    type="email"
-                    value={authForm.email}
-                    onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
-                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
-                    placeholder="you@example.com"
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>✉️</span>
+                    <input
+                      type="email"
+                      value={authForm.email}
+                      onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px 12px 38px', borderRadius: 12, border: `1.5px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                      onFocus={(e) => { e.target.style.borderColor = COLORS.primary; }}
+                      onBlur={(e) => { e.target.style.borderColor = COLORS.border; }}
+                      placeholder="you@example.com"
+                    />
+                  </div>
                 </label>
                 <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
-                  Password
-                  <input
-                    type="password"
-                    value={authForm.password}
-                    onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
-                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
-                    placeholder="At least 6 characters"
-                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Password</span>
+                    {authMode === 'login' && (
+                      <span style={{ color: COLORS.primary, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>Forgot password?</span>
+                    )}
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>🔒</span>
+                    <input
+                      type={showAuthPassword ? 'text' : 'password'}
+                      value={authForm.password}
+                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                      style={{ width: '100%', padding: '12px 40px 12px 38px', borderRadius: 12, border: `1.5px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                      onFocus={(e) => { e.target.style.borderColor = COLORS.primary; }}
+                      onBlur={(e) => { e.target.style.borderColor = COLORS.border; }}
+                      placeholder="At least 6 characters"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAuthPassword((v) => !v)}
+                      style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 13, color: COLORS.muted, fontWeight: 700 }}
+                    >
+                      {showAuthPassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                 </label>
 
                 {authError && <div style={{ color: COLORS.sale, background: '#fff1f0', border: '1px solid #ffd0cc', borderRadius: 10, padding: '10px 12px', fontSize: 13, fontWeight: 600 }}>{authError}</div>}
@@ -495,16 +577,35 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
                     background: authSubmitting ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
                     color: '#fff',
                     border: 'none',
-                    borderRadius: 999,
-                    padding: '15px 16px',
+                    borderRadius: 12,
+                    padding: '14px 16px',
                     fontWeight: 800,
                     fontSize: 14,
                     letterSpacing: '0.02em',
                     cursor: authSubmitting ? 'not-allowed' : 'pointer',
+                    boxShadow: authSubmitting ? 'none' : '0 10px 20px rgba(255,59,48,0.28)',
                   }}
                 >
                   {authSubmitting ? 'Please wait…' : authMode === 'login' ? 'Log In' : 'Create Account'}
                 </button>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '2px 0' }}>
+                  <div style={{ flex: 1, height: 1, background: COLORS.border }} />
+                  <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 700 }}>OR</span>
+                  <div style={{ flex: 1, height: 1, background: COLORS.border }} />
+                </div>
+
+                <div style={{ textAlign: 'center', fontSize: 13, color: COLORS.muted }}>
+                  {authMode === 'login' ? (
+                    <>Don't have an account?{' '}
+                      <span style={{ color: COLORS.primary, fontWeight: 800, cursor: 'pointer' }} onClick={() => { setAuthMode('signup'); setAuthError(''); }}>Sign Up</span>
+                    </>
+                  ) : (
+                    <>Already have an account?{' '}
+                      <span style={{ color: COLORS.primary, fontWeight: 800, cursor: 'pointer' }} onClick={() => { setAuthMode('login'); setAuthError(''); }}>Log In</span>
+                    </>
+                  )}
+                </div>
               </form>
             </div>
           </div>
