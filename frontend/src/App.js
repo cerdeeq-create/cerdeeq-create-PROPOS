@@ -5,6 +5,7 @@ import { createAuthenticatedFetch } from './apiClient';
 import { calculateSaleTotals, validateCartAgainstStock } from './posUtils';
 import { validateProductForm } from './formValidation';
 import { loadStarterShopData } from './initialData';
+import Storefront from './Storefront';
 
 const API_URL = process.env.REACT_APP_API_URL || '/api';
 
@@ -84,96 +85,10 @@ function App() {
   });
   const [settingsMessage, setSettingsMessage] = useState('');
   const [productFormMessage, setProductFormMessage] = useState('');
-  const [socialAccounts, setSocialAccounts] = useState([]);
-  const [mediaImportJobs, setMediaImportJobs] = useState([]);
-  const [mediaAssets, setMediaAssets] = useState([]);
-  const [mediaEnvStatus, setMediaEnvStatus] = useState(null);
-  const [connectionTestResult, setConnectionTestResult] = useState(null);
-  const [mediaEnvTemplate, setMediaEnvTemplate] = useState('');
-  const [mediaVaultMessage, setMediaVaultMessage] = useState('');
-  const [mediaVaultError, setMediaVaultError] = useState('');
-  const [mediaVaultLoading, setMediaVaultLoading] = useState(false);
-  const [socialAccountForm, setSocialAccountForm] = useState({
-    platform: 'tiktok',
-    accountLabel: '',
-    permissions: ['media.read'],
-  });
-  const [linkCompletionForm, setLinkCompletionForm] = useState({
-    accountId: '',
-    platformAccountId: '',
-    oauthState: '',
-    authorizationCode: '',
-  });
-  const [mediaImportForm, setMediaImportForm] = useState({
-    accountId: '',
-    mediaType: 'all',
-    sinceDate: '',
-    untilDate: '',
-    maxItems: 20,
-  });
-  const [mediaAssetFilter, setMediaAssetFilter] = useState({
-    accountId: '',
-    mediaType: 'all',
-  });
+  const [showStaffLogin, setShowStaffLogin] = useState(false);
+  const [customerOrders, setCustomerOrders] = useState([]);
+  const [ordersActionMessage, setOrdersActionMessage] = useState('');
   const lowStockThreshold = 5;
-
-  const buildMediaVaultEnvTemplate = (status) => {
-    const statusLines = (status?.platforms || []).map((platformStatus) => {
-      const oauthStatus = platformStatus.readyForOauth ? 'ready' : 'incomplete';
-      const importStatus = platformStatus.readyForImport ? 'ready' : 'incomplete';
-      return `# ${platformStatus.platform}: oauth=${oauthStatus}, import=${importStatus}`;
-    });
-
-    return [
-      '# Media Vault OAuth Environment Template',
-      '# Fill all values before enabling provider-backed imports.',
-      '',
-      'TOKEN_ENCRYPTION_SECRET=replace_with_long_random_secret',
-      'TOKEN_REFRESH_LEEWAY_SECONDS=120',
-      '',
-      '# TikTok OAuth',
-      'TIKTOK_CLIENT_ID=',
-      'TIKTOK_CLIENT_SECRET=',
-      'TIKTOK_OAUTH_AUTHORIZE_URL=',
-      'TIKTOK_OAUTH_TOKEN_URL=',
-      'TIKTOK_OAUTH_REDIRECT_URI=',
-      'TIKTOK_OAUTH_SCOPE=video.list,user.info.basic',
-      'TIKTOK_MEDIA_LIST_URL=',
-      '',
-      '# Facebook OAuth',
-      'FACEBOOK_CLIENT_ID=',
-      'FACEBOOK_CLIENT_SECRET=',
-      'FACEBOOK_OAUTH_AUTHORIZE_URL=',
-      'FACEBOOK_OAUTH_TOKEN_URL=',
-      'FACEBOOK_OAUTH_REDIRECT_URI=',
-      'FACEBOOK_OAUTH_SCOPE=pages_read_engagement,pages_show_list',
-      'FACEBOOK_MEDIA_LIST_URL=',
-      '',
-      '# Optional: If your media endpoint requires account path segments, use {account_id}',
-      '# Example: https://graph.facebook.com/v22.0/{account_id}/media',
-      '',
-      '# Last validation snapshot',
-      `# token_encryption_secret=${status?.tokenEncryptionSecretConfigured ? 'configured' : 'default_or_missing'}`,
-      ...statusLines,
-    ].join('\n');
-  };
-
-  const copyTextToClipboard = async (value) => {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(value);
-      return;
-    }
-
-    const helper = document.createElement('textarea');
-    helper.value = value;
-    helper.setAttribute('readonly', 'true');
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand('copy');
-    document.body.removeChild(helper);
-  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem('posUser');
@@ -190,12 +105,16 @@ function App() {
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchUsers();
-      fetchMediaVaultOverview();
     } else {
       setUserList([]);
-      setSocialAccounts([]);
-      setMediaImportJobs([]);
-      setMediaAssets([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchCustomerOrders();
+    } else {
+      setCustomerOrders([]);
     }
   }, [user]);
 
@@ -422,6 +341,51 @@ function App() {
     }
   };
 
+  const fetchCustomerOrders = async () => {
+    const response = await apiFetch(`${API_URL}/orders`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.ok) {
+      setCustomerOrders(await response.json());
+    } else {
+      setCustomerOrders([]);
+    }
+  };
+
+  const placeGuestOrder = async (orderPayload) => {
+    const response = await fetch(`${API_URL}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.error || 'Could not place order.');
+    }
+    return data;
+  };
+
+  const updateOrderStatus = async (orderId, status) => {
+    const response = await apiFetch(`${API_URL}/orders/${orderId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      setOrdersActionMessage(data?.error || 'Could not update order.');
+      window.setTimeout(() => setOrdersActionMessage(''), 3000);
+      return;
+    }
+    await fetchCustomerOrders();
+    if (status === 'completed') {
+      await fetchProducts();
+      await fetchStockMovements();
+      await fetchReports();
+    }
+  };
+
   const fetchUsers = async () => {
     if (user?.role !== 'admin') {
       setUserList([]);
@@ -436,308 +400,6 @@ function App() {
     } else {
       setUserList([]);
     }
-  };
-
-  const fetchMediaVaultOverview = async () => {
-    if (!user || user.role !== 'admin') {
-      return;
-    }
-
-    try {
-      const [accountsResponse, jobsResponse, assetsResponse] = await Promise.all([
-        apiFetch(`${API_URL}/media-vault/accounts`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        }),
-        apiFetch(`${API_URL}/media-vault/import-jobs`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        }),
-        apiFetch(`${API_URL}/media-vault/assets?limit=100`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        }),
-      ]);
-
-      if (accountsResponse.ok) {
-        const accounts = await accountsResponse.json();
-        setSocialAccounts(accounts);
-        if (accounts.length > 0 && !mediaImportForm.accountId) {
-          setMediaImportForm((current) => ({ ...current, accountId: String(accounts[0].id) }));
-        }
-      }
-
-      if (jobsResponse.ok) {
-        setMediaImportJobs(await jobsResponse.json());
-      }
-
-      if (assetsResponse.ok) {
-        setMediaAssets(await assetsResponse.json());
-      }
-
-      const envStatusResponse = await apiFetch(`${API_URL}/media-vault/env-check`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (envStatusResponse.ok) {
-        const envStatusData = await envStatusResponse.json();
-        setMediaEnvStatus(envStatusData);
-        setMediaEnvTemplate(buildMediaVaultEnvTemplate(envStatusData));
-      }
-    } catch (error) {
-      setMediaVaultError('Unable to load media vault data right now.');
-    }
-  };
-
-  const validateMediaVaultEnv = async () => {
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-    setMediaVaultLoading(true);
-
-    try {
-      const response = await apiFetch(`${API_URL}/media-vault/env-check`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data.error || 'Unable to validate Media Vault environment.');
-      }
-      setMediaEnvStatus(data);
-      setMediaEnvTemplate(buildMediaVaultEnvTemplate(data));
-      setMediaVaultMessage('Environment validation completed.');
-    } catch (error) {
-      setMediaVaultError(error.message || 'Unable to validate Media Vault environment.');
-    } finally {
-      setMediaVaultLoading(false);
-    }
-  };
-
-  const copyMediaVaultEnvTemplate = async () => {
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-
-    const template = mediaEnvTemplate || buildMediaVaultEnvTemplate(mediaEnvStatus);
-    if (!template) {
-      setMediaVaultError('Generate environment status first, then copy template.');
-      return;
-    }
-
-    try {
-      await copyTextToClipboard(template);
-      setMediaVaultMessage('Environment template copied to clipboard.');
-    } catch (error) {
-      setMediaVaultError('Unable to copy template. Please copy manually from the text area.');
-    }
-  };
-
-  const downloadMediaVaultEnvTemplate = () => {
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-
-    const template = mediaEnvTemplate || buildMediaVaultEnvTemplate(mediaEnvStatus);
-    if (!template) {
-      setMediaVaultError('Generate environment status first, then download template.');
-      return;
-    }
-
-    const blob = new Blob([`${template}\n`], { type: 'text/plain;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'media-vault.env.example';
-    anchor.click();
-    window.URL.revokeObjectURL(url);
-    setMediaVaultMessage('Environment template downloaded as media-vault.env.example.');
-  };
-
-  const testProviderConnection = async () => {
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-    setConnectionTestResult(null);
-    setMediaVaultLoading(true);
-
-    try {
-      if (!mediaImportForm.accountId) {
-        throw new Error('Select a linked account first.');
-      }
-
-      const response = await apiFetch(`${API_URL}/media-vault/test-connection`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          accountId: Number(mediaImportForm.accountId),
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data.error || 'Provider connection test failed.');
-      }
-
-      setConnectionTestResult(data);
-      if (data.ok) {
-        setMediaVaultMessage('Provider connection test passed.');
-      } else {
-        setMediaVaultError(data.message || 'Provider connection is not ready.');
-      }
-    } catch (error) {
-      setMediaVaultError(error.message || 'Unable to run provider connection test.');
-    } finally {
-      setMediaVaultLoading(false);
-    }
-  };
-
-  const startSocialLink = async (event) => {
-    event.preventDefault();
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-    setMediaVaultLoading(true);
-
-    try {
-      const payload = {
-        platform: socialAccountForm.platform,
-        accountLabel: socialAccountForm.accountLabel,
-        permissions: socialAccountForm.permissions,
-      };
-      const response = await apiFetch(`${API_URL}/media-vault/accounts/link-init`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to initialize account linking.');
-      }
-
-      setLinkCompletionForm({
-        accountId: String(data.accountId || ''),
-        platformAccountId: '',
-        oauthState: data.oauthState || '',
-        authorizationCode: '',
-      });
-      setMediaVaultMessage(`Link started for ${payload.platform}. OAuth state copied into completion form.`);
-      setSocialAccountForm((current) => ({ ...current, accountLabel: '' }));
-      await fetchMediaVaultOverview();
-    } catch (error) {
-      setMediaVaultError(error.message || 'Unable to initialize account link.');
-    } finally {
-      setMediaVaultLoading(false);
-    }
-  };
-
-  const completeSocialLink = async (event) => {
-    event.preventDefault();
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-    setMediaVaultLoading(true);
-
-    try {
-      const response = await apiFetch(`${API_URL}/media-vault/accounts/link-complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          accountId: Number(linkCompletionForm.accountId),
-          platformAccountId: linkCompletionForm.platformAccountId,
-          oauthState: linkCompletionForm.oauthState,
-          authorizationCode: linkCompletionForm.authorizationCode,
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to complete account link.');
-      }
-
-      setMediaVaultMessage(`Account linked successfully (${data.oauthStatus || 'simulated'}). You can now run imports.`);
-      setLinkCompletionForm({ accountId: '', platformAccountId: '', oauthState: '', authorizationCode: '' });
-      await fetchMediaVaultOverview();
-    } catch (error) {
-      setMediaVaultError(error.message || 'Unable to complete account link.');
-    } finally {
-      setMediaVaultLoading(false);
-    }
-  };
-
-  const runMediaImport = async (event) => {
-    event.preventDefault();
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-    setMediaVaultLoading(true);
-
-    try {
-      const response = await apiFetch(`${API_URL}/media-vault/import-jobs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          accountId: Number(mediaImportForm.accountId),
-          mediaType: mediaImportForm.mediaType,
-          sinceDate: mediaImportForm.sinceDate,
-          untilDate: mediaImportForm.untilDate,
-          maxItems: Number(mediaImportForm.maxItems),
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data.error || 'Media import failed.');
-      }
-
-      setMediaVaultMessage(`Import job #${data.jobId} completed with ${data.importedItems} item(s).`);
-      await fetchMediaVaultOverview();
-    } catch (error) {
-      setMediaVaultError(error.message || 'Unable to run import job.');
-    } finally {
-      setMediaVaultLoading(false);
-    }
-  };
-
-  const refreshMediaAssets = async () => {
-    setMediaVaultError('');
-    const params = new URLSearchParams();
-    if (mediaAssetFilter.accountId) {
-      params.set('accountId', mediaAssetFilter.accountId);
-    }
-    if (mediaAssetFilter.mediaType) {
-      params.set('mediaType', mediaAssetFilter.mediaType);
-    }
-    params.set('limit', '120');
-
-    const response = await apiFetch(`${API_URL}/media-vault/assets?${params.toString()}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) {
-      setMediaVaultError('Unable to refresh media assets.');
-      return;
-    }
-    setMediaAssets(await response.json());
-  };
-
-  const exportMediaBackup = async () => {
-    setMediaVaultError('');
-    setMediaVaultMessage('');
-    const response = await apiFetch(`${API_URL}/media-vault/export`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) {
-      setMediaVaultError('Unable to export backup manifest.');
-      return;
-    }
-
-    const data = await response.json();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `media-vault-export-${new Date().toISOString().slice(0, 10)}.json`;
-    anchor.click();
-    window.URL.revokeObjectURL(url);
-    setMediaVaultMessage(`Export generated with ${data.itemCount || 0} item(s).`);
   };
 
   const addToCart = (product) => {
@@ -1252,6 +914,7 @@ function App() {
     setReceipt(null);
     setCart([]);
     setTenderAmount('');
+    setShowStaffLogin(false);
   };
 
   const placeSale = async () => {
@@ -1295,8 +958,8 @@ function App() {
       saleId: sale.saleId || Date.now(),
       datetime: new Date().toISOString(),
       items: saleItems,
-      subtotal: sale?.subtotal || subtotal,
-      discountAmount: sale?.discountAmount || discountAmount,
+      subtotal: sale?.subtotal || saleTotals.subtotal,
+      discountAmount: sale?.discountAmount || saleTotals.discountAmount,
       total,
       profit,
       paymentMethod,
@@ -1590,11 +1253,30 @@ function App() {
     }
   };
 
+  if (!user && !showStaffLogin) {
+    return (
+      <Storefront
+        products={products}
+        shopName={settings.shopName}
+        currencySymbol={settings.currencySymbol}
+        onStaffLoginClick={() => setShowStaffLogin(true)}
+        onPlaceOrder={placeGuestOrder}
+      />
+    );
+  }
+
   if (!user) {
     return (
       <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', padding: 20 }}>
         <div style={{ width: '100%', maxWidth: 440, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.12)', padding: 32 }}>
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <button
+              type="button"
+              onClick={() => setShowStaffLogin(false)}
+              style={{ marginBottom: 14, border: 'none', background: 'transparent', color: '#8A8177', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
+            >
+              ← Back to Shop
+            </button>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 34, color: '#2B2118', lineHeight: 1 }}>NOOR</div>
             <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 13, letterSpacing: '0.32em', textTransform: 'uppercase', color: '#C6A15B', marginTop: 6 }}>Collection</div>
             <div style={{ width: 64, height: 1, background: 'linear-gradient(90deg, transparent 0%, #C6A15B 50%, transparent 100%)', margin: '12px auto 0' }} />
@@ -1652,12 +1334,12 @@ function App() {
   const navItems = user.role === 'admin'
     ? [
         { key: 'dashboard', label: 'Dashboard' },
+        { key: 'orders', label: 'Orders' },
         { key: 'inventory', label: 'Inventory' },
         { key: 'receiving', label: 'Receiving' },
         { key: 'sales', label: 'Sales' },
         { key: 'reports', label: 'Reports' },
         { key: 'supplierReports', label: 'Supplier Reports' },
-        { key: 'mediaVault', label: 'Media Vault' },
         { key: 'staffs', label: 'Staffs' },
         { key: 'customers', label: 'Customers' },
         { key: 'suppliers', label: 'Suppliers' },
@@ -1665,6 +1347,7 @@ function App() {
       ]
     : [
         { key: 'sales', label: 'Sales' },
+        { key: 'orders', label: 'Orders' },
       ];
 
   const printReceiptCss = `
@@ -2109,6 +1792,76 @@ function App() {
               </ul>
             </div>
           </div>
+        </section>
+      )}
+      {activeView === 'orders' && (
+        <section style={{ marginBottom: 20, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 30 }}>Incoming Orders</h2>
+            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Customer self-checkout</div>
+          </div>
+
+          {ordersActionMessage && (
+            <div style={{ marginBottom: 16, color: '#b42318', background: '#fff1f2', border: '1px solid #fbcfe0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{ordersActionMessage}</div>
+          )}
+
+          {customerOrders.length === 0 ? (
+            <div style={{ color: '#8A8177' }}>No customer orders yet.</div>
+          ) : (
+            <div style={{ display: 'grid', gap: 14 }}>
+              {customerOrders.map((order) => {
+                const items = typeof order.itemsJson === 'string' ? JSON.parse(order.itemsJson) : (order.itemsJson || []);
+                const statusColors = {
+                  pending: { bg: '#FFF8E5', border: '#EBD9A0', text: '#8A6A00' },
+                  confirmed: { bg: '#E9F3FF', border: '#B7D8FF', text: '#0B5FB8' },
+                  completed: { bg: '#EAF7EE', border: '#B7E4C7', text: '#1E7A3B' },
+                  cancelled: { bg: '#FDECEC', border: '#F5C2C2', text: '#B42318' },
+                }[order.status] || { bg: '#F7F3EA', border: '#E5DCCB', text: '#292521' };
+                return (
+                  <div key={order.id} style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 18 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 16, color: '#2B2118' }}>Order #{order.id} — {order.customerName}</div>
+                        <div style={{ color: '#8A8177', fontSize: 13, marginTop: 2 }}>{order.phone}{order.address ? ` · ${order.address}` : ''}</div>
+                        {order.notes && <div style={{ color: '#8A8177', fontSize: 12, marginTop: 4, fontStyle: 'italic' }}>“{order.notes}”</div>}
+                      </div>
+                      <div style={{ padding: '6px 12px', borderRadius: 999, background: statusColors.bg, border: `1px solid ${statusColors.border}`, color: statusColors.text, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        {order.status}
+                      </div>
+                    </div>
+
+                    <ul style={{ listStyle: 'none', margin: '12px 0', padding: 0, display: 'grid', gap: 4 }}>
+                      {items.map((item, idx) => (
+                        <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#292521' }}>
+                          <span>{item.quantity} × {item.name}</span>
+                          <span>{settings.currencySymbol}{(Number(item.price) * Number(item.quantity)).toLocaleString()}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid #E5DCCB' }}>
+                      <div style={{ fontWeight: 700, color: '#2B2118' }}>Total: {settings.currencySymbol}{Number(order.totalAmount).toLocaleString()}</div>
+                      {(order.status === 'pending' || order.status === 'confirmed') && (
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          {order.status === 'pending' && (
+                            <button type="button" onClick={() => updateOrderStatus(order.id, 'confirmed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: '#0B5FB8', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                              Confirm
+                            </button>
+                          )}
+                          <button type="button" onClick={() => updateOrderStatus(order.id, 'completed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                            Complete
+                          </button>
+                          <button type="button" onClick={() => updateOrderStatus(order.id, 'cancelled')} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #F5C2C2', background: 'transparent', color: '#B42318', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                            Cancel
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
       )}
       {activeView === 'dashboard' && (
@@ -3496,260 +3249,6 @@ function App() {
               ))}
             </div>
           )}
-        </section>
-      )}
-
-      {user.role === 'admin' && activeView === 'mediaVault' && (
-        <section style={{ marginTop: 24, background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
-            <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Legal Import Tooling</div>
-              <h2 style={{ margin: '6px 0 0', fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 28 }}>Media Vault</h2>
-            </div>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button type="button" onClick={fetchMediaVaultOverview} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '9px 12px', background: '#FFFDF8', color: '#2B2118', cursor: 'pointer', fontWeight: 700 }}>
-                Refresh
-              </button>
-              <button type="button" onClick={validateMediaVaultEnv} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '9px 12px', background: '#FFFDF8', color: '#2B2118', cursor: 'pointer', fontWeight: 700 }}>
-                Validate OAuth Env
-              </button>
-              <button type="button" onClick={copyMediaVaultEnvTemplate} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '9px 12px', background: '#FFFDF8', color: '#2B2118', cursor: 'pointer', fontWeight: 700 }}>
-                Copy Env Template
-              </button>
-              <button type="button" onClick={downloadMediaVaultEnvTemplate} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '9px 12px', background: '#FFFDF8', color: '#2B2118', cursor: 'pointer', fontWeight: 700 }}>
-                Download .env.example
-              </button>
-              <button type="button" onClick={exportMediaBackup} style={{ border: 'none', borderRadius: 10, padding: '10px 14px', background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', cursor: 'pointer', fontWeight: 700 }}>
-                Export Backup JSON
-              </button>
-            </div>
-          </div>
-
-          <div style={{ marginBottom: 14, color: '#8A8177', fontSize: 13 }}>
-            Use this module only for accounts you own or have written permission to archive. OAuth integration in this starter is intentionally simulated and must be replaced with official provider APIs in production.
-          </div>
-
-          {mediaVaultMessage && <div style={{ marginBottom: 10, color: '#166534', background: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{mediaVaultMessage}</div>}
-          {mediaVaultError && <div style={{ marginBottom: 10, color: '#b42318', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{mediaVaultError}</div>}
-
-          {mediaEnvStatus && (
-            <div style={{ marginBottom: 16, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: 14 }}>
-              <div style={{ fontWeight: 700, color: '#2B2118', marginBottom: 8 }}>OAuth Environment Check</div>
-              <div style={{ fontSize: 12, color: '#8A8177', marginBottom: 8 }}>
-                Encryption secret configured: {mediaEnvStatus.tokenEncryptionSecretConfigured ? 'Yes' : 'No'}
-              </div>
-              <div style={{ display: 'grid', gap: 8 }}>
-                {(mediaEnvStatus.platforms || []).map((platformStatus) => (
-                  <div key={platformStatus.platform} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', background: '#F7F3EA' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
-                      <div style={{ fontWeight: 700, color: '#2B2118' }}>{platformStatus.platform}</div>
-                      <div style={{ fontSize: 12, color: platformStatus.readyForImport ? '#166534' : '#92400e', fontWeight: 700 }}>
-                        {platformStatus.readyForImport ? 'Ready for provider import' : platformStatus.readyForOauth ? 'OAuth ready only' : 'Configuration incomplete'}
-                      </div>
-                    </div>
-                    <div style={{ marginTop: 6, fontSize: 12, color: '#8A8177' }}>
-                      clientId:{platformStatus.checks?.clientId ? 'Y' : 'N'} | clientSecret:{platformStatus.checks?.clientSecret ? 'Y' : 'N'} | authorizeUrl:{platformStatus.checks?.authorizeUrl ? 'Y' : 'N'} | tokenUrl:{platformStatus.checks?.tokenUrl ? 'Y' : 'N'} | redirectUri:{platformStatus.checks?.redirectUri ? 'Y' : 'N'} | mediaListUrl:{platformStatus.checks?.mediaListUrl ? 'Y' : 'N'}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
-                <div style={{ fontSize: 12, color: '#8A8177', fontWeight: 700 }}>Recommended `.env` template</div>
-                <textarea
-                  readOnly
-                  value={mediaEnvTemplate}
-                  style={{ width: '100%', minHeight: 180, border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', background: '#F7F3EA', color: '#2B2118', fontSize: 12, fontFamily: 'Courier New, monospace', lineHeight: 1.4 }}
-                />
-              </div>
-            </div>
-          )}
-
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', marginBottom: 18 }}>
-            <form onSubmit={startSocialLink} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16, display: 'grid', gap: 10 }}>
-              <h3 style={{ margin: 0, color: '#2B2118' }}>1. Start Account Link</h3>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Platform
-                <select value={socialAccountForm.platform} onChange={(e) => setSocialAccountForm((current) => ({ ...current, platform: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }}>
-                  <option value="tiktok">TikTok</option>
-                  <option value="facebook">Facebook</option>
-                </select>
-              </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Account label
-                <input value={socialAccountForm.accountLabel} onChange={(e) => setSocialAccountForm((current) => ({ ...current, accountLabel: e.target.value }))} placeholder="e.g. Official Brand Page" style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} required />
-              </label>
-              <button type="submit" disabled={mediaVaultLoading} style={{ border: 'none', borderRadius: 10, padding: '10px 12px', background: '#2B2118', color: '#FFFDF8', fontWeight: 700, cursor: 'pointer', opacity: mediaVaultLoading ? 0.7 : 1 }}>
-                Start Link
-              </button>
-            </form>
-
-            <form onSubmit={completeSocialLink} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16, display: 'grid', gap: 10 }}>
-              <h3 style={{ margin: 0, color: '#2B2118' }}>2. Complete Link</h3>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Pending account ID
-                <input type="number" value={linkCompletionForm.accountId} onChange={(e) => setLinkCompletionForm((current) => ({ ...current, accountId: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} required />
-              </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Platform account ID
-                <input value={linkCompletionForm.platformAccountId} onChange={(e) => setLinkCompletionForm((current) => ({ ...current, platformAccountId: e.target.value }))} placeholder="provider user/page ID" style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} />
-              </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Authorization code
-                <input value={linkCompletionForm.authorizationCode} onChange={(e) => setLinkCompletionForm((current) => ({ ...current, authorizationCode: e.target.value }))} placeholder="paste provider auth code (optional if using fallback ID)" style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} />
-              </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                OAuth state
-                <input value={linkCompletionForm.oauthState} onChange={(e) => setLinkCompletionForm((current) => ({ ...current, oauthState: e.target.value }))} placeholder="state returned by provider" style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} required />
-              </label>
-              <button type="submit" disabled={mediaVaultLoading} style={{ border: 'none', borderRadius: 10, padding: '10px 12px', background: '#2B2118', color: '#FFFDF8', fontWeight: 700, cursor: 'pointer', opacity: mediaVaultLoading ? 0.7 : 1 }}>
-                Complete Link
-              </button>
-            </form>
-          </div>
-
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', marginBottom: 18 }}>
-            <form onSubmit={runMediaImport} style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16, display: 'grid', gap: 10 }}>
-              <h3 style={{ margin: 0, color: '#2B2118' }}>3. Run Authorized Import</h3>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Linked account
-                <select value={mediaImportForm.accountId} onChange={(e) => setMediaImportForm((current) => ({ ...current, accountId: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} required>
-                  <option value="">Select account</option>
-                  {socialAccounts.filter((account) => account.linkStatus === 'linked').map((account) => (
-                    <option key={account.id} value={account.id}>{account.platform} - {account.accountLabel}</option>
-                  ))}
-                </select>
-              </label>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Media type
-                <select value={mediaImportForm.mediaType} onChange={(e) => setMediaImportForm((current) => ({ ...current, mediaType: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }}>
-                  <option value="all">All</option>
-                  <option value="video">Video</option>
-                  <option value="photo">Photo</option>
-                  <option value="reel">Reel</option>
-                </select>
-              </label>
-              <div style={{ display: 'grid', gap: 10, gridTemplateColumns: '1fr 1fr' }}>
-                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                  Since
-                  <input type="date" value={mediaImportForm.sinceDate} onChange={(e) => setMediaImportForm((current) => ({ ...current, sinceDate: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} />
-                </label>
-                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                  Until
-                  <input type="date" value={mediaImportForm.untilDate} onChange={(e) => setMediaImportForm((current) => ({ ...current, untilDate: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} />
-                </label>
-              </div>
-              <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
-                Max items
-                <input type="number" min="1" max="200" value={mediaImportForm.maxItems} onChange={(e) => setMediaImportForm((current) => ({ ...current, maxItems: e.target.value }))} style={{ padding: '10px 12px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }} />
-              </label>
-              <button type="submit" disabled={mediaVaultLoading} style={{ border: 'none', borderRadius: 10, padding: '10px 12px', background: '#2B2118', color: '#FFFDF8', fontWeight: 700, cursor: 'pointer', opacity: mediaVaultLoading ? 0.7 : 1 }}>
-                Import Authorized Media
-              </button>
-              <button type="button" onClick={testProviderConnection} disabled={mediaVaultLoading} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', background: '#FFFDF8', color: '#2B2118', fontWeight: 700, cursor: 'pointer', opacity: mediaVaultLoading ? 0.7 : 1 }}>
-                Test Provider Connection
-              </button>
-            </form>
-
-            <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16, display: 'grid', gap: 10 }}>
-              <h3 style={{ margin: 0, color: '#2B2118' }}>Linked Accounts</h3>
-              {socialAccounts.length === 0 ? (
-                <div style={{ color: '#8A8177', fontSize: 13 }}>No linked accounts yet.</div>
-              ) : (
-                socialAccounts.map((account) => (
-                  <div key={account.id} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', background: '#F7F3EA' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                      <div style={{ fontWeight: 700, color: '#2B2118' }}>{account.platform} - {account.accountLabel}</div>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 8px', borderRadius: 999, background: account.linkStatus === 'linked' ? '#dcfce7' : '#fef3c7', color: account.linkStatus === 'linked' ? '#166534' : '#92400e' }}>{account.linkStatus}</span>
-                    </div>
-                    <div style={{ marginTop: 6, color: '#8A8177', fontSize: 12 }}>Permissions: {(account.permissions || []).join(', ') || 'n/a'}</div>
-                    {account.lastSyncAt && <div style={{ marginTop: 4, color: '#8A8177', fontSize: 12 }}>Last sync: {new Date(account.lastSyncAt).toLocaleString()}</div>}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {connectionTestResult && (
-            <div style={{ marginBottom: 16, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 12, padding: 14 }}>
-              <div style={{ fontWeight: 700, color: '#2B2118', marginBottom: 8 }}>Connection Test Result</div>
-              <div style={{ fontSize: 13, color: connectionTestResult.ok ? '#166534' : '#92400e', fontWeight: 700 }}>
-                {connectionTestResult.ok ? 'Success' : 'Not ready'} ({connectionTestResult.mode})
-              </div>
-              <div style={{ marginTop: 6, fontSize: 13, color: '#292521' }}>{connectionTestResult.message}</div>
-              {connectionTestResult.sample && (
-                <div style={{ marginTop: 6, fontSize: 12, color: '#8A8177' }}>
-                  Sample: {connectionTestResult.sample.platformMediaId} ({connectionTestResult.sample.mediaType})
-                </div>
-              )}
-            </div>
-          )}
-
-          <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16, marginBottom: 16 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
-              <h3 style={{ margin: 0, color: '#2B2118' }}>Imported Assets</h3>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <select value={mediaAssetFilter.accountId} onChange={(e) => setMediaAssetFilter((current) => ({ ...current, accountId: e.target.value }))} style={{ padding: '8px 10px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }}>
-                  <option value="">All accounts</option>
-                  {socialAccounts.map((account) => (
-                    <option key={account.id} value={account.id}>{account.platform} - {account.accountLabel}</option>
-                  ))}
-                </select>
-                <select value={mediaAssetFilter.mediaType} onChange={(e) => setMediaAssetFilter((current) => ({ ...current, mediaType: e.target.value }))} style={{ padding: '8px 10px', border: '1px solid #E5DCCB', borderRadius: 10, background: '#FFFDF8', color: '#2B2118' }}>
-                  <option value="all">All types</option>
-                  <option value="video">Video</option>
-                  <option value="photo">Photo</option>
-                  <option value="reel">Reel</option>
-                </select>
-                <button type="button" onClick={refreshMediaAssets} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '8px 10px', background: '#2B2118', color: '#FFFDF8', fontWeight: 700, cursor: 'pointer' }}>
-                  Apply
-                </button>
-              </div>
-            </div>
-            {mediaAssets.length === 0 ? (
-              <div style={{ color: '#8A8177', fontSize: 13 }}>No assets imported yet.</div>
-            ) : (
-              <div style={{ display: 'grid', gap: 8 }}>
-                {mediaAssets.slice(0, 50).map((asset) => (
-                  <div key={asset.id} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', display: 'grid', gap: 4 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                      <div style={{ fontWeight: 700, color: '#2B2118' }}>{asset.platform} - {asset.accountLabel}</div>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 8px', borderRadius: 999, background: '#F0E9D8', color: '#C6A15B' }}>{asset.mediaType}</span>
-                    </div>
-                    <div style={{ color: '#8A8177', fontSize: 12 }}>Posted: {new Date(asset.postedAt).toLocaleString()}</div>
-                    <div style={{ color: '#292521', fontSize: 13 }}>{asset.caption || 'No caption'}</div>
-                    <div style={{ color: '#2B2118', fontSize: 12, wordBreak: 'break-all' }}>Saved path: {asset.downloadPath}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16 }}>
-            <h3 style={{ margin: '0 0 10px 0', color: '#2B2118' }}>Import Jobs</h3>
-            {mediaImportJobs.length === 0 ? (
-              <div style={{ color: '#8A8177', fontSize: 13 }}>No import jobs run yet.</div>
-            ) : (
-              <div style={{ display: 'grid', gap: 8 }}>
-                {mediaImportJobs.slice(0, 25).map((job) => (
-                  <div key={job.id} style={{ border: '1px solid #E5DCCB', borderRadius: 10, padding: '10px 12px', background: '#F7F3EA' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                      <div style={{ fontWeight: 700, color: '#2B2118' }}>Job #{job.id} - {job.platform} / {job.accountLabel}</div>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 8px', borderRadius: 999, background: job.status === 'completed' ? '#dcfce7' : '#fef3c7', color: job.status === 'completed' ? '#166534' : '#92400e' }}>{job.status}</span>
-                    </div>
-                    <div style={{ marginTop: 4, color: '#8A8177', fontSize: 12 }}>Created: {new Date(job.createdAt).toLocaleString()}</div>
-                    <div style={{ marginTop: 4, color: '#8A8177', fontSize: 12 }}>Imported items: {job.itemCount || 0}</div>
-                    <div style={{ marginTop: 4, color: '#8A8177', fontSize: 12 }}>Mode: {job.importMode || 'simulated'}</div>
-                    {job.errorMessage && (
-                      <div style={{ marginTop: 6, color: '#b42318', fontSize: 12, background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 8, padding: '6px 8px' }}>
-                        Provider note: {job.errorMessage}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </section>
       )}
 

@@ -80,6 +80,38 @@ function validateReceivingPayload(payload) {
   return { ok: true };
 }
 
+function validateCustomerOrderPayload(payload, products = []) {
+  const items = Array.isArray(payload?.items) ? payload.items : [];
+  const customerName = String(payload?.customerName || '').trim();
+  const phone = String(payload?.phone || '').trim();
+
+  if (!customerName || !phone) {
+    return { ok: false, error: 'Name and phone number are required' };
+  }
+
+  if (!items.length) {
+    return { ok: false, error: 'Order must contain at least one item' };
+  }
+
+  const productMap = new Map((products || []).map((product) => [product.id, product]));
+  for (const item of items) {
+    const requestedQuantity = Number(item?.quantity) || 0;
+    const product = productMap.get(item?.productId);
+    if (!product) {
+      return { ok: false, error: `Product ${item?.name || 'unknown'} was not found` };
+    }
+    if (requestedQuantity <= 0) {
+      return { ok: false, error: 'Each order item needs a positive quantity' };
+    }
+    const available = Number(product.stock) || 0;
+    if (requestedQuantity > available) {
+      return { ok: false, error: `Not enough stock for ${product.name || 'item'}` };
+    }
+  }
+
+  return { ok: true };
+}
+
 function validateServiceTransactionPayload(payload) {
   const serviceType = String(payload?.serviceType || '').trim().toLowerCase();
   const beneficiary = String(payload?.beneficiary || '').trim();
@@ -97,112 +129,11 @@ function validateServiceTransactionPayload(payload) {
   return { ok: true };
 }
 
-function validateSocialAccountLinkInitPayload(payload) {
-  const platform = String(payload?.platform || '').trim().toLowerCase();
-  const accountLabel = String(payload?.accountLabel || '').trim();
-  const permissions = Array.isArray(payload?.permissions) ? payload.permissions : [];
-
-  if (!['tiktok', 'facebook'].includes(platform)) {
-    return { ok: false, error: 'Platform must be tiktok or facebook' };
-  }
-
-  if (!accountLabel) {
-    return { ok: false, error: 'Account label is required' };
-  }
-
-  const normalizedPermissions = permissions
-    .map((permission) => String(permission || '').trim().toLowerCase())
-    .filter(Boolean);
-
-  if (normalizedPermissions.length === 0) {
-    return { ok: false, error: 'At least one permission is required' };
-  }
-
-  return {
-    ok: true,
-    value: {
-      platform,
-      accountLabel,
-      permissions: normalizedPermissions,
-    },
-  };
-}
-
-function validateMediaImportRequestPayload(payload) {
-  const accountId = Number(payload?.accountId);
-  const mediaType = String(payload?.mediaType || 'all').trim().toLowerCase();
-  const sinceDate = payload?.sinceDate ? String(payload.sinceDate) : '';
-  const untilDate = payload?.untilDate ? String(payload.untilDate) : '';
-  const maxItems = Number(payload?.maxItems || 20);
-
-  if (!Number.isInteger(accountId) || accountId <= 0) {
-    return { ok: false, error: 'A valid account is required' };
-  }
-
-  if (!['all', 'video', 'photo', 'reel'].includes(mediaType)) {
-    return { ok: false, error: 'Unsupported media type filter' };
-  }
-
-  if (!Number.isFinite(maxItems) || maxItems < 1 || maxItems > 200) {
-    return { ok: false, error: 'maxItems must be between 1 and 200' };
-  }
-
-  if (sinceDate && Number.isNaN(new Date(sinceDate).getTime())) {
-    return { ok: false, error: 'sinceDate must be a valid ISO date' };
-  }
-
-  if (untilDate && Number.isNaN(new Date(untilDate).getTime())) {
-    return { ok: false, error: 'untilDate must be a valid ISO date' };
-  }
-
-  return {
-    ok: true,
-    value: {
-      accountId,
-      mediaType,
-      sinceDate,
-      untilDate,
-      maxItems: Math.floor(maxItems),
-    },
-  };
-}
-
-function validateSocialAccountLinkCompletePayload(payload) {
-  const accountId = Number(payload?.accountId);
-  const oauthState = String(payload?.oauthState || '').trim();
-  const authorizationCode = String(payload?.authorizationCode || '').trim();
-  const platformAccountId = String(payload?.platformAccountId || '').trim();
-
-  if (!Number.isInteger(accountId) || accountId <= 0) {
-    return { ok: false, error: 'Valid accountId is required' };
-  }
-
-  if (!oauthState) {
-    return { ok: false, error: 'oauthState is required' };
-  }
-
-  if (!authorizationCode && !platformAccountId) {
-    return { ok: false, error: 'authorizationCode or platformAccountId is required' };
-  }
-
-  return {
-    ok: true,
-    value: {
-      accountId,
-      oauthState,
-      authorizationCode,
-      platformAccountId,
-    },
-  };
-}
-
 module.exports = {
   validateProductPayload,
   validateSalePayload,
   validatePurchaseOrderPayload,
   validateReceivingPayload,
   validateServiceTransactionPayload,
-  validateSocialAccountLinkInitPayload,
-  validateMediaImportRequestPayload,
-  validateSocialAccountLinkCompletePayload,
+  validateCustomerOrderPayload,
 };
