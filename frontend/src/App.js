@@ -1453,46 +1453,77 @@ function App() {
   if (!user) {
     return (
       <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', padding: 20 }}>
-        <div style={{ width: '100%', maxWidth: 440, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.12)', padding: 32 }}>
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <style>{`
+          @keyframes staffLoginPop {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+          }
+        `}</style>
+        <div style={{ width: '100%', maxWidth: 420, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.18)', overflow: 'hidden', animation: 'staffLoginPop 0.2s ease-out' }}>
+          <div style={{ textAlign: 'center', padding: '36px 32px 26px', borderBottom: '1px solid #E5DCCB' }}>
             <button
               type="button"
               onClick={() => { window.history.pushState({}, '', '/'); setShowStaffLogin(false); }}
-              style={{ marginBottom: 14, border: 'none', background: 'transparent', color: '#8A8177', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
+              style={{ marginBottom: 16, border: 'none', background: 'transparent', color: '#8A8177', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
             >
               ← Back to Shop
             </button>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 34, color: '#2B2118', lineHeight: 1 }}>NOOR</div>
-            <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 13, letterSpacing: '0.32em', textTransform: 'uppercase', color: '#C6A15B', marginTop: 6 }}>Collection</div>
-            <div style={{ width: 64, height: 1, background: 'linear-gradient(90deg, transparent 0%, #C6A15B 50%, transparent 100%)', margin: '12px auto 0' }} />
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                margin: '0 auto 16px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)',
+                color: '#FFFDF8',
+                fontSize: 22,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 18px rgba(43,33,24,0.28)',
+              }}
+            >
+              🔒
+            </div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 32, color: '#2B2118', lineHeight: 1 }}>NOOR</div>
+            <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 13, letterSpacing: '0.32em', textTransform: 'uppercase', color: '#C6A15B', marginTop: 6 }}>Staff Portal</div>
+            <div style={{ color: '#8A8177', fontSize: 13, marginTop: 12 }}>Sign in with your staff username and password.</div>
           </div>
 
-          <form onSubmit={login} style={{ display: 'grid', gap: 16 }}>
+          <form onSubmit={login} style={{ display: 'grid', gap: 16, padding: '28px 32px 32px' }}>
             <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
               Username
-              <input
-                type="text"
-                value={loginForm.username}
-                onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15 }}
-                placeholder="Enter username"
-              />
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>👤</span>
+                <input
+                  type="text"
+                  value={loginForm.username}
+                  onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+                  style={{ width: '100%', padding: '12px 14px 12px 38px', borderRadius: 12, border: '1.5px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                  onFocus={(e) => { e.target.style.borderColor = '#C6A15B'; }}
+                  onBlur={(e) => { e.target.style.borderColor = '#E5DCCB'; }}
+                  placeholder="Enter username"
+                />
+              </div>
             </label>
 
             <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
               Password
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>🔑</span>
                 <input
                   type={showLoginPassword ? 'text' : 'password'}
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15 }}
+                  style={{ width: '100%', padding: '12px 66px 12px 38px', borderRadius: 12, border: '1.5px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                  onFocus={(e) => { e.target.style.borderColor = '#C6A15B'; }}
+                  onBlur={(e) => { e.target.style.borderColor = '#E5DCCB'; }}
                   placeholder="Enter password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowLoginPassword((prev) => !prev)}
-                  style={{ padding: '11px 12px', minWidth: 74, border: '1px solid #E5DCCB', borderRadius: 10, background: '#F0E9D8', color: '#2B2118', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', color: '#8A8177', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
                 >
                   {showLoginPassword ? 'Hide' : 'Show'}
                 </button>
@@ -1503,7 +1534,7 @@ function App() {
 
             <button
               type="submit"
-              style={{ marginTop: 4, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 12, padding: '14px 16px', fontWeight: 700, fontSize: 15, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
+              style={{ marginTop: 4, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 12, padding: '14px 16px', fontWeight: 700, fontSize: 15, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 10px 20px rgba(198,161,91,0.3)' }}
             >
               Login
             </button>
