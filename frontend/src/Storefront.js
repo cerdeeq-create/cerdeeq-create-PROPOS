@@ -1,26 +1,35 @@
 import React, { useMemo, useState } from 'react';
 
 const COLORS = {
-  espresso: '#2B2118',
-  walnut: '#4A3426',
-  gold: '#C6A15B',
-  antiqueGold: '#A9823A',
-  ivory: '#F7F3EA',
-  warmWhite: '#FFFDF8',
-  charcoal: '#292521',
-  taupe: '#8A8177',
-  border: '#E5DCCB',
+  primary: '#FF6B00',
+  primaryDark: '#E85D04',
+  primaryDarker: '#C24A00',
+  sale: '#FF3B30',
+  bg: '#F5F5F5',
+  card: '#FFFFFF',
+  text: '#1A1A1A',
+  muted: '#767676',
+  border: '#ECECEC',
+  green: '#0C8A3E',
 };
 
 function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
   const [cart, setCart] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const [form, setForm] = useState({ customerName: '', phone: '', address: '', notes: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successOrder, setSuccessOrder] = useState(null);
 
   const availableProducts = (products || []).filter((product) => Number(product.stock) > 0);
+  const visibleProducts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return availableProducts;
+    return availableProducts.filter((product) => product.name.toLowerCase().includes(q));
+  }, [availableProducts, search]);
 
+  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0), [cart]);
   const cartTotal = useMemo(
     () => cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 0), 0),
     [cart]
@@ -75,6 +84,7 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
       });
       setSuccessOrder(order);
       setCart([]);
+      setCartOpen(false);
       setForm({ customerName: '', phone: '', address: '', notes: '' });
     } catch (err) {
       setError(err.message || 'Could not place order. Please try again.');
@@ -85,20 +95,20 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
 
   if (successOrder) {
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: `linear-gradient(135deg, ${COLORS.ivory} 0%, #F0E9D8 100%)`, padding: 20 }}>
-        <div style={{ width: '100%', maxWidth: 460, background: COLORS.warmWhite, border: `1px solid ${COLORS.border}`, borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.12)', padding: 32, textAlign: 'center' }}>
-          <div style={{ fontSize: 40, marginBottom: 8 }}>✓</div>
-          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 26, color: COLORS.espresso }}>Order Placed!</div>
-          <div style={{ color: COLORS.taupe, fontSize: 14, marginTop: 8 }}>
-            Order #{successOrder.id} — {currencySymbol}{Number(successOrder.totalAmount).toLocaleString()}
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: COLORS.bg, padding: 20 }}>
+        <div style={{ width: '100%', maxWidth: 420, background: COLORS.card, borderRadius: 20, boxShadow: '0 20px 50px rgba(0,0,0,0.12)', padding: 32, textAlign: 'center' }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: COLORS.green, color: '#fff', display: 'grid', placeItems: 'center', fontSize: 32, margin: '0 auto 12px' }}>✓</div>
+          <div style={{ fontWeight: 800, fontSize: 22, color: COLORS.text }}>Order Placed!</div>
+          <div style={{ color: COLORS.muted, fontSize: 14, marginTop: 8 }}>
+            Order #{successOrder.id} · {currencySymbol}{Number(successOrder.totalAmount).toLocaleString()}
           </div>
-          <div style={{ color: COLORS.charcoal, fontSize: 14, marginTop: 16, lineHeight: 1.6 }}>
+          <div style={{ color: COLORS.text, fontSize: 14, marginTop: 16, lineHeight: 1.6 }}>
             Thank you, {successOrder.customerName}! Please come in or wait for us to reach out to arrange pickup/delivery and payment.
           </div>
           <button
             type="button"
             onClick={() => setSuccessOrder(null)}
-            style={{ marginTop: 20, background: `linear-gradient(180deg, ${COLORS.gold} 0%, ${COLORS.espresso} 100%)`, color: COLORS.warmWhite, border: 'none', borderRadius: 12, padding: '12px 20px', fontWeight: 700, fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
+            style={{ marginTop: 20, width: '100%', background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`, color: '#fff', border: 'none', borderRadius: 999, padding: '14px 20px', fontWeight: 800, fontSize: 14, letterSpacing: '0.03em', cursor: 'pointer' }}
           >
             Place Another Order
           </button>
@@ -108,156 +118,218 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: COLORS.ivory }}>
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '18px 28px', background: COLORS.warmWhite, borderBottom: `1px solid ${COLORS.border}` }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 26, color: COLORS.espresso, lineHeight: 1 }}>{shopName || 'NOOR'}</div>
-          <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: COLORS.gold, marginTop: 4 }}>Shop Online</div>
+    <div style={{ minHeight: '100vh', background: COLORS.bg, fontFamily: "'Manrope', 'Segoe UI', sans-serif" }}>
+      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)`, boxShadow: '0 2px 10px rgba(0,0,0,0.12)' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontWeight: 900, fontSize: 22, color: '#fff', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>{shopName || 'NOOR'}</div>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products..."
+              style={{ width: '100%', padding: '10px 14px', borderRadius: 999, border: 'none', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setCartOpen(true)}
+            style={{ position: 'relative', background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 16px', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+          >
+            🛒 Cart
+            {cartCount > 0 && (
+              <span style={{ background: '#fff', color: COLORS.sale, borderRadius: '50%', minWidth: 20, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900, padding: '0 4px' }}>
+                {cartCount}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: 24, padding: 24, maxWidth: 1200, margin: '0 auto', alignItems: 'start' }}>
-        <div>
-          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 700, color: COLORS.espresso, marginBottom: 16 }}>Our Products</div>
-          {!availableProducts.length && (
-            <div style={{ color: COLORS.taupe, fontSize: 14 }}>No products are available right now. Please check back later.</div>
-          )}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-            {availableProducts.map((product) => {
-              const inCart = cart.find((item) => item.productId === product.id);
-              return (
-                <div key={product.id} style={{ background: COLORS.warmWhite, border: `1px solid ${COLORS.border}`, borderRadius: 16, padding: 16, display: 'grid', gap: 8 }}>
-                  <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 12, overflow: 'hidden', background: COLORS.ivory, border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
-                    ) : (
-                      <span style={{ color: COLORS.taupe, fontSize: 12 }}>No Image</span>
-                    )}
+      <div style={{ background: `linear-gradient(120deg, ${COLORS.sale} 0%, ${COLORS.primary} 60%, ${COLORS.primaryDark} 100%)`, color: '#fff', padding: '22px 16px', textAlign: 'center' }}>
+        <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: '-0.01em' }}>🔥 Shop Now, Pay on Pickup or Delivery</div>
+        <div style={{ fontSize: 13, opacity: 0.92, marginTop: 4, fontWeight: 600 }}>No account needed — order in seconds</div>
+      </div>
+
+      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 16px 90px' }}>
+        <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12 }}>
+          {search.trim() ? `Results for "${search.trim()}"` : 'All Products'}
+        </div>
+        {!visibleProducts.length && (
+          <div style={{ color: COLORS.muted, fontSize: 14, background: COLORS.card, borderRadius: 12, padding: 24, textAlign: 'center' }}>
+            {availableProducts.length ? 'No products match your search.' : 'No products are available right now. Please check back later.'}
+          </div>
+        )}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
+          {visibleProducts.map((product) => {
+            const inCart = cart.find((item) => item.productId === product.id);
+            const maxedOut = inCart ? inCart.quantity >= product.stock : false;
+            const lowStock = product.stock > 0 && product.stock <= 5;
+            return (
+              <div key={product.id} style={{ background: COLORS.card, borderRadius: 12, overflow: 'hidden', display: 'grid', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: `1px solid ${COLORS.border}` }}>
+                <div style={{ width: '100%', aspectRatio: '1 / 1', background: '#FAFAFA', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {product.imageUrl ? (
+                    <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                  ) : (
+                    <span style={{ color: COLORS.muted, fontSize: 12 }}>No Image</span>
+                  )}
+                  {lowStock && (
+                    <span style={{ position: 'absolute', top: 6, left: 6, background: COLORS.sale, color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 6 }}>
+                      LOW STOCK
+                    </span>
+                  )}
+                </div>
+                <div style={{ padding: 10, display: 'grid', gap: 6 }}>
+                  <div style={{ fontWeight: 600, color: COLORS.text, fontSize: 13, lineHeight: 1.3, minHeight: 34, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    {product.name}
                   </div>
-                  <div style={{ fontWeight: 700, color: COLORS.espresso, fontSize: 15 }}>{product.name}</div>
-                  <div style={{ color: COLORS.gold, fontWeight: 700, fontSize: 16 }}>{currencySymbol}{Number(product.price).toLocaleString()}</div>
-                  <div style={{ color: COLORS.taupe, fontSize: 12 }}>{product.stock} in stock</div>
+                  <div style={{ color: COLORS.sale, fontWeight: 900, fontSize: 17 }}>{currencySymbol}{Number(product.price).toLocaleString()}</div>
+                  <div style={{ color: lowStock ? COLORS.sale : COLORS.green, fontSize: 11, fontWeight: 700 }}>{product.stock} in stock</div>
                   <button
                     type="button"
                     onClick={() => addToCart(product)}
-                    disabled={inCart ? inCart.quantity >= product.stock : false}
+                    disabled={maxedOut}
                     style={{
-                      marginTop: 4,
-                      padding: '10px 12px',
-                      borderRadius: 10,
+                      padding: '9px 10px',
+                      borderRadius: 999,
                       border: 'none',
-                      background: inCart && inCart.quantity >= product.stock ? COLORS.border : `linear-gradient(180deg, ${COLORS.gold} 0%, ${COLORS.antiqueGold} 100%)`,
-                      color: COLORS.warmWhite,
-                      fontWeight: 700,
-                      fontSize: 13,
-                      cursor: inCart && inCart.quantity >= product.stock ? 'not-allowed' : 'pointer',
+                      background: maxedOut ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                      color: '#fff',
+                      fontWeight: 800,
+                      fontSize: 12,
+                      cursor: maxedOut ? 'not-allowed' : 'pointer',
                     }}
                   >
-                    {inCart ? `In Cart (${inCart.quantity})` : 'Add to Cart'}
+                    {inCart ? `In Cart (${inCart.quantity})` : '+ Add to Cart'}
                   </button>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div style={{ background: COLORS.warmWhite, border: `1px solid ${COLORS.border}`, borderRadius: 16, padding: 20, position: 'sticky', top: 24 }}>
-          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 700, color: COLORS.espresso, marginBottom: 12 }}>Your Cart</div>
-          {!cart.length && <div style={{ color: COLORS.taupe, fontSize: 13 }}>Your cart is empty.</div>}
-          <div style={{ display: 'grid', gap: 10 }}>
-            {cart.map((item) => (
-              <div key={item.productId} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 6, alignItems: 'center', borderBottom: `1px solid ${COLORS.border}`, paddingBottom: 8 }}>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.charcoal }}>{item.name}</div>
-                  <div style={{ fontSize: 12, color: COLORS.taupe }}>{currencySymbol}{item.price.toLocaleString()} each</div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <button type="button" onClick={() => updateQuantity(item.productId, item.quantity - 1)} style={{ width: 26, height: 26, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.ivory, cursor: 'pointer' }}>-</button>
-                  <span style={{ minWidth: 18, textAlign: 'center', fontSize: 13 }}>{item.quantity}</span>
-                  <button type="button" onClick={() => updateQuantity(item.productId, item.quantity + 1)} style={{ width: 26, height: 26, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.ivory, cursor: 'pointer' }}>+</button>
-                  <button type="button" onClick={() => removeFromCart(item.productId)} style={{ marginLeft: 4, border: 'none', background: 'transparent', color: '#b42318', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>Remove</button>
-                </div>
               </div>
-            ))}
-          </div>
-
-          {!!cart.length && (
-            <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', fontWeight: 700, color: COLORS.espresso }}>
-              <span>Total</span>
-              <span>{currencySymbol}{cartTotal.toLocaleString()}</span>
-            </div>
-          )}
-
-          <form onSubmit={submitOrder} style={{ display: 'grid', gap: 10, marginTop: 16 }}>
-            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.charcoal, fontWeight: 600 }}>
-              Full Name
-              <input
-                type="text"
-                value={form.customerName}
-                onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-                style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14 }}
-                placeholder="Your name"
-              />
-            </label>
-            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.charcoal, fontWeight: 600 }}>
-              Phone Number
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14 }}
-                placeholder="Your phone number"
-              />
-            </label>
-            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.charcoal, fontWeight: 600 }}>
-              Delivery Address (optional)
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14 }}
-                placeholder="Leave blank for in-store pickup"
-              />
-            </label>
-            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.charcoal, fontWeight: 600 }}>
-              Notes (optional)
-              <textarea
-                value={form.notes}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, minHeight: 50, fontFamily: 'inherit' }}
-                placeholder="Any special instructions"
-              />
-            </label>
-
-            {error && <div style={{ color: '#b42318', background: '#fff1f2', border: '1px solid #fbcfe0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{error}</div>}
-
-            <button
-              type="submit"
-              disabled={submitting || !cart.length}
-              style={{
-                marginTop: 4,
-                background: submitting || !cart.length ? COLORS.border : `linear-gradient(180deg, ${COLORS.gold} 0%, ${COLORS.espresso} 100%)`,
-                color: COLORS.warmWhite,
-                border: 'none',
-                borderRadius: 12,
-                padding: '14px 16px',
-                fontWeight: 700,
-                fontSize: 14,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                cursor: submitting || !cart.length ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {submitting ? 'Placing Order…' : 'Place Order (Pay on Pickup/Delivery)'}
-            </button>
-            <div style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.06em', color: COLORS.taupe, fontWeight: 700, textTransform: 'uppercase' }}>
-              POWERD BY PRO CREATIVES | 08147621844
-            </div>
-          </form>
+            );
+          })}
         </div>
-      </div>
+      </main>
+
+      {cartCount > 0 && !cartOpen && (
+        <button
+          type="button"
+          onClick={() => setCartOpen(true)}
+          style={{ position: 'fixed', left: 16, right: 16, bottom: 16, zIndex: 25, background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`, color: '#fff', border: 'none', borderRadius: 999, padding: '14px 20px', fontWeight: 800, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 6px 20px rgba(0,0,0,0.2)', cursor: 'pointer', maxWidth: 1200, margin: '0 auto' }}
+        >
+          <span>🛒 {cartCount} item{cartCount > 1 ? 's' : ''}</span>
+          <span>View Cart · {currencySymbol}{cartTotal.toLocaleString()}</span>
+        </button>
+      )}
+
+      {cartOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 30, display: 'flex', justifyContent: 'flex-end' }}>
+          <div
+            onClick={() => setCartOpen(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }}
+          />
+          <div style={{ position: 'relative', width: '100%', maxWidth: 420, background: COLORS.bg, height: '100%', overflowY: 'auto', boxShadow: '-8px 0 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: COLORS.card, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text }}>Your Cart</div>
+              <button type="button" onClick={() => setCartOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
+            </div>
+
+            <div style={{ padding: 16, flex: 1 }}>
+              {!cart.length && <div style={{ color: COLORS.muted, fontSize: 13, textAlign: 'center', marginTop: 30 }}>Your cart is empty.</div>}
+              <div style={{ display: 'grid', gap: 10 }}>
+                {cart.map((item) => (
+                  <div key={item.productId} style={{ background: COLORS.card, borderRadius: 10, padding: 12, display: 'grid', gridTemplateColumns: '1fr auto', gap: 6, alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text }}>{item.name}</div>
+                      <div style={{ fontSize: 12, color: COLORS.sale, fontWeight: 700 }}>{currencySymbol}{item.price.toLocaleString()} each</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity - 1)} style={{ width: 26, height: 26, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.bg, cursor: 'pointer', fontWeight: 700 }}>-</button>
+                      <span style={{ minWidth: 18, textAlign: 'center', fontSize: 13, fontWeight: 700 }}>{item.quantity}</span>
+                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity + 1)} style={{ width: 26, height: 26, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.bg, cursor: 'pointer', fontWeight: 700 }}>+</button>
+                      <button type="button" onClick={() => removeFromCart(item.productId)} style={{ marginLeft: 4, border: 'none', background: 'transparent', color: COLORS.sale, cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>Remove</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {!!cart.length && (
+                <div style={{ marginTop: 14, background: COLORS.card, borderRadius: 10, padding: 12, display: 'flex', justifyContent: 'space-between', fontWeight: 800, color: COLORS.text, fontSize: 15 }}>
+                  <span>Total</span>
+                  <span style={{ color: COLORS.sale }}>{currencySymbol}{cartTotal.toLocaleString()}</span>
+                </div>
+              )}
+
+              <form onSubmit={submitOrder} style={{ display: 'grid', gap: 10, marginTop: 16 }}>
+                <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                  Full Name
+                  <input
+                    type="text"
+                    value={form.customerName}
+                    onChange={(e) => setForm({ ...form, customerName: e.target.value })}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                    placeholder="Your name"
+                  />
+                </label>
+                <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                  Phone Number
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                    placeholder="Your phone number"
+                  />
+                </label>
+                <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                  Delivery Address (optional)
+                  <input
+                    type="text"
+                    value={form.address}
+                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                    placeholder="Leave blank for in-store pickup"
+                  />
+                </label>
+                <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                  Notes (optional)
+                  <textarea
+                    value={form.notes}
+                    onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, minHeight: 50, fontFamily: 'inherit', boxSizing: 'border-box' }}
+                    placeholder="Any special instructions"
+                  />
+                </label>
+
+                {error && <div style={{ color: COLORS.sale, background: '#fff1f0', border: '1px solid #ffd0cc', borderRadius: 10, padding: '10px 12px', fontSize: 13, fontWeight: 600 }}>{error}</div>}
+
+                <button
+                  type="submit"
+                  disabled={submitting || !cart.length}
+                  style={{
+                    marginTop: 4,
+                    background: submitting || !cart.length ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 999,
+                    padding: '15px 16px',
+                    fontWeight: 800,
+                    fontSize: 14,
+                    letterSpacing: '0.02em',
+                    cursor: submitting || !cart.length ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {submitting ? 'Placing Order…' : 'Place Order (Pay on Pickup/Delivery)'}
+                </button>
+                <div style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.04em', color: COLORS.muted, fontWeight: 700 }}>
+                  POWERD BY PRO CREATIVES | 08147621844
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default Storefront;
+
