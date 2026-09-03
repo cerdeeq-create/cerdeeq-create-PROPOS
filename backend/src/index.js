@@ -257,16 +257,16 @@ const server = http.createServer(async (req, res) => {
       if (!user) return;
       if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
       const body = await readJsonBody(req);
-      const { sku, name, price, stock, costPrice } = body;
+      const { sku, name, price, stock, costPrice, imageUrl } = body;
       const validation = validateProductPayload({ sku, name, price, costPrice, stock });
       if (!validation.ok) {
         return sendJson(res, 400, { error: validation.error });
       }
       const result = await pool.query(
-        'INSERT INTO products (sku, name, price, "costPrice", stock) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [sku, name, price, Number(costPrice) || 0, stock]
+        'INSERT INTO products (sku, name, price, "costPrice", stock, "imageUrl") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+        [sku, name, price, Number(costPrice) || 0, stock, String(imageUrl || '').trim()]
       );
-      return sendJson(res, 201, { id: result.rows[0].id, sku, name, price, costPrice: Number(costPrice) || 0, stock });
+      return sendJson(res, 201, { id: result.rows[0].id, sku, name, price, costPrice: Number(costPrice) || 0, stock, imageUrl: String(imageUrl || '').trim() });
     }
 
     if (req.method === 'GET' && pathname === '/api/users') {
@@ -392,16 +392,16 @@ const server = http.createServer(async (req, res) => {
       if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
       const id = pathname.split('/').pop();
       const body = await readJsonBody(req);
-      const { sku, name, price, stock, costPrice } = body;
+      const { sku, name, price, stock, costPrice, imageUrl } = body;
       const validation = validateProductPayload({ sku, name, price, costPrice, stock });
       if (!validation.ok) {
         return sendJson(res, 400, { error: validation.error });
       }
-      const result = await pool.query('UPDATE products SET sku = $1, name = $2, price = $3, "costPrice" = $4, stock = $5 WHERE id = $6', [sku, name, price, Number(costPrice) || 0, stock, id]);
+      const result = await pool.query('UPDATE products SET sku = $1, name = $2, price = $3, "costPrice" = $4, stock = $5, "imageUrl" = $6 WHERE id = $7', [sku, name, price, Number(costPrice) || 0, stock, String(imageUrl || '').trim(), id]);
       if (result.rowCount === 0) {
         return sendJson(res, 404, { error: 'Product not found' });
       }
-      return sendJson(res, 200, { id: Number(id), sku, name, price, costPrice: Number(costPrice) || 0, stock });
+      return sendJson(res, 200, { id: Number(id), sku, name, price, costPrice: Number(costPrice) || 0, stock, imageUrl: String(imageUrl || '').trim() });
     }
 
     if (req.method === 'DELETE' && pathname.startsWith('/api/products/')) {
@@ -499,6 +499,8 @@ async function initDatabase() {
     "costPrice" DOUBLE PRECISION NOT NULL DEFAULT 0,
     stock INTEGER NOT NULL DEFAULT 0
   )`);
+
+  await pool.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS "imageUrl" TEXT NOT NULL DEFAULT \'\'');
 
   await pool.query(`CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,

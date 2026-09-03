@@ -19,7 +19,7 @@ function App() {
   const [showCheckoutReview, setShowCheckoutReview] = useState(false);
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [reportSales, setReportSales] = useState([]);
-  const [form, setForm] = useState({ sku: '', name: '', price: '', costPrice: '', stock: '' });
+  const [form, setForm] = useState({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '' });
   const [editingProductId, setEditingProductId] = useState(null);
   const [skuInput, setSkuInput] = useState('');
   const [tenderAmount, setTenderAmount] = useState('');
@@ -94,6 +94,9 @@ function App() {
     const storedUser = localStorage.getItem('posUser');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+    }
+    if (window.location.pathname === '/staff') {
+      setShowStaffLogin(true);
     }
     fetchProducts();
     fetchReports();
@@ -474,12 +477,13 @@ function App() {
       price: product.price.toString(),
       costPrice: product.costPrice ? product.costPrice.toString() : '',
       stock: product.stock.toString(),
+      imageUrl: product.imageUrl || '',
     });
   };
 
   const cancelEditProduct = () => {
     setEditingProductId(null);
-    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '' });
+    setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '' });
   };
 
   const saveProduct = async (event) => {
@@ -507,6 +511,7 @@ function App() {
       price: parseFloat(form.price),
       costPrice: parseFloat(form.costPrice || 0),
       stock: parseInt(form.stock, 10),
+      imageUrl: (form.imageUrl || '').trim(),
     };
 
     const url = editingProductId ? `${API_URL}/products/${editingProductId}` : `${API_URL}/products`;
@@ -1259,7 +1264,6 @@ function App() {
         products={products}
         shopName={settings.shopName}
         currencySymbol={settings.currencySymbol}
-        onStaffLoginClick={() => setShowStaffLogin(true)}
         onPlaceOrder={placeGuestOrder}
       />
     );
@@ -1272,7 +1276,7 @@ function App() {
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
             <button
               type="button"
-              onClick={() => setShowStaffLogin(false)}
+              onClick={() => { window.history.pushState({}, '', '/'); setShowStaffLogin(false); }}
               style={{ marginBottom: 14, border: 'none', background: 'transparent', color: '#8A8177', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
             >
               ← Back to Shop
@@ -2291,6 +2295,10 @@ function App() {
                               Stock
                               <input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} />
                             </label>
+                            <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#292521', fontWeight: 600 }}>
+                              Image URL
+                              <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="https://example.com/photo.jpg" />
+                            </label>
                           </div>
                           {productFormMessage && (
                             <div style={{ marginTop: 10, color: '#b42318', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{productFormMessage}</div>
@@ -2364,6 +2372,10 @@ function App() {
                     <input required type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="0" />
                   </label>
                 </div>
+                <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#292521', fontWeight: 600 }}>
+                  Image URL (shown to customers on the shop website)
+                  <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118' }} placeholder="https://example.com/photo.jpg" />
+                </label>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 2 }}>
                   <button type="button" onClick={addReceivingItem} style={{ background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Add to Receipt
@@ -2371,7 +2383,7 @@ function App() {
                   <button type="submit" style={{ background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Save Item
                   </button>
-                  <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '' }); }} style={{ background: '#FFFDF8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
+                  <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '' }); }} style={{ background: '#FFFDF8', color: '#2B2118', border: '1px solid #E5DCCB', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
                     Clear
                   </button>
                 </div>

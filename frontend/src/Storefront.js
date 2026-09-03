@@ -12,7 +12,7 @@ const COLORS = {
   border: '#E5DCCB',
 };
 
-function Storefront({ products, shopName, currencySymbol, onStaffLoginClick, onPlaceOrder }) {
+function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
   const [cart, setCart] = useState([]);
   const [form, setForm] = useState({ customerName: '', phone: '', address: '', notes: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -109,18 +109,11 @@ function Storefront({ products, shopName, currencySymbol, onStaffLoginClick, onP
 
   return (
     <div style={{ minHeight: '100vh', background: COLORS.ivory }}>
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 28px', background: COLORS.warmWhite, borderBottom: `1px solid ${COLORS.border}` }}>
-        <div>
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '18px 28px', background: COLORS.warmWhite, borderBottom: `1px solid ${COLORS.border}` }}>
+        <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 26, color: COLORS.espresso, lineHeight: 1 }}>{shopName || 'NOOR'}</div>
           <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: COLORS.gold, marginTop: 4 }}>Shop Online</div>
         </div>
-        <button
-          type="button"
-          onClick={onStaffLoginClick}
-          style={{ padding: '10px 16px', border: `1px solid ${COLORS.border}`, borderRadius: 10, background: 'transparent', color: COLORS.walnut, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
-        >
-          Staff Login
-        </button>
       </header>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: 24, padding: 24, maxWidth: 1200, margin: '0 auto', alignItems: 'start' }}>
@@ -134,6 +127,13 @@ function Storefront({ products, shopName, currencySymbol, onStaffLoginClick, onP
               const inCart = cart.find((item) => item.productId === product.id);
               return (
                 <div key={product.id} style={{ background: COLORS.warmWhite, border: `1px solid ${COLORS.border}`, borderRadius: 16, padding: 16, display: 'grid', gap: 8 }}>
+                  <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 12, overflow: 'hidden', background: COLORS.ivory, border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                    ) : (
+                      <span style={{ color: COLORS.taupe, fontSize: 12 }}>No Image</span>
+                    )}
+                  </div>
                   <div style={{ fontWeight: 700, color: COLORS.espresso, fontSize: 15 }}>{product.name}</div>
                   <div style={{ color: COLORS.gold, fontWeight: 700, fontSize: 16 }}>{currencySymbol}{Number(product.price).toLocaleString()}</div>
                   <div style={{ color: COLORS.taupe, fontSize: 12 }}>{product.stock} in stock</div>
