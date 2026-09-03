@@ -88,12 +88,24 @@ function App() {
   const [showStaffLogin, setShowStaffLogin] = useState(false);
   const [customerOrders, setCustomerOrders] = useState([]);
   const [ordersActionMessage, setOrdersActionMessage] = useState('');
+  const [editingOrderId, setEditingOrderId] = useState(null);
+  const [editingOrderItems, setEditingOrderItems] = useState([]);
+  const [customerAuth, setCustomerAuth] = useState(null);
+  const [myOrders, setMyOrders] = useState([]);
+  const [onlineCustomers, setOnlineCustomers] = useState([]);
+  const [selectedOnlineCustomerId, setSelectedOnlineCustomerId] = useState(null);
+  const [selectedOnlineCustomerOrders, setSelectedOnlineCustomerOrders] = useState([]);
+  const [adminOverview, setAdminOverview] = useState(null);
   const lowStockThreshold = 5;
 
   useEffect(() => {
     const storedUser = localStorage.getItem('posUser');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+    }
+    const storedCustomer = localStorage.getItem('posCustomerAuth');
+    if (storedCustomer) {
+      setCustomerAuth(JSON.parse(storedCustomer));
     }
     if (window.location.pathname === '/staff') {
       setShowStaffLogin(true);
@@ -108,8 +120,12 @@ function App() {
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchUsers();
+      fetchOnlineCustomers();
+      fetchAdminOverview();
     } else {
       setUserList([]);
+      setOnlineCustomers([]);
+      setAdminOverview(null);
     }
   }, [user]);
 
@@ -120,6 +136,14 @@ function App() {
       setCustomerOrders([]);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (customerAuth?.token) {
+      fetchMyOrders();
+    } else {
+      setMyOrders([]);
+    }
+  }, [customerAuth]);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -359,14 +383,164 @@ function App() {
   const placeGuestOrder = async (orderPayload) => {
     const response = await fetch(`${API_URL}/orders`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(customerAuth?.token ? { Authorization: `Bearer ${customerAuth.token}` } : {}),
+      },
       body: JSON.stringify(orderPayload),
     });
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data?.error || 'Could not place order.');
     }
+    if (customerAuth?.token) {
+      fetchMyOrders();
+    }
     return data;
+  };
+
+  const customerSignup = async ({ name, phone, email, password }) => {
+    const response = await fetch(`${API_URL}/customers/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, email, password }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.error || 'Could not create account.');
+    }
+    setCustomerAuth(data);
+    localStorage.setItem('posCustomerAuth', JSON.stringify(data));
+    return data;
+  };
+
+  const customerLogin = async ({ email, password }) => {
+    const response = await fetch(`${API_URL}/customers/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.error || 'Could not log in.');
+    }
+    setCustomerAuth(data);
+    localStorage.setItem('posCustomerAuth', JSON.stringify(data));
+    return data;
+  };
+
+  const customerLogout = () => {
+    setCustomerAuth(null);
+    setMyOrders([]);
+    localStorage.removeItem('posCustomerAuth');
+  };
+
+  const fetchMyOrders = async () => {
+    if (!customerAuth?.token) {
+      setMyOrders([]);
+      return;
+    }
+    const response = await fetch(`${API_URL}/customers/orders`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${customerAuth.token}` },
+    });
+    if (response.ok) {
+      setMyOrders(await response.json());
+    } else {
+      setMyOrders([]);
+    }
+  };
+
+  const fetchOnlineCustomers = async () => {
+    if (user?.role !== 'admin') {
+      setOnlineCustomers([]);
+      return;
+    }
+    const response = await apiFetch(`${API_URL}/admin/customers`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.ok) {
+      setOnlineCustomers(await response.json());
+    } else {
+      setOnlineCustomers([]);
+    }
+  };
+
+  const viewOnlineCustomerOrders = async (customerId) => {
+    if (selectedOnlineCustomerId === customerId) {
+      setSelectedOnlineCustomerId(null);
+      setSelectedOnlineCustomerOrders([]);
+      return;
+    }
+    const response = await apiFetch(`${API_URL}/admin/customers/${customerId}/orders`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    setSelectedOnlineCustomerId(customerId);
+    if (response.ok) {
+      setSelectedOnlineCustomerOrders(await response.json());
+    } else {
+      setSelectedOnlineCustomerOrders([]);
+    }
+  };
+
+  const toggleOnlineCustomerStatus = async (customerId, nextStatus) => {
+    const response = await apiFetch(`${API_URL}/admin/customers/${customerId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: nextStatus }),
+    });
+    if (response.ok) {
+      await fetchOnlineCustomers();
+    }
+  };
+
+  const fetchAdminOverview = async () => {
+    if (user?.role !== 'admin') {
+      setAdminOverview(null);
+      return;
+    }
+    const response = await apiFetch(`${API_URL}/admin/overview`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.ok) {
+      setAdminOverview(await response.json());
+    } else {
+      setAdminOverview(null);
+    }
+  };
+
+  const startEditOrder = (order) => {
+    const items = typeof order.itemsJson === 'string' ? JSON.parse(order.itemsJson) : (order.itemsJson || []);
+    setEditingOrderId(order.id);
+    setEditingOrderItems(items.map((item) => ({ ...item })));
+  };
+
+  const cancelEditOrder = () => {
+    setEditingOrderId(null);
+    setEditingOrderItems([]);
+  };
+
+  const updateEditingOrderQuantity = (productId, quantity) => {
+    setEditingOrderItems((prev) => prev.map((item) => (item.productId === productId ? { ...item, quantity: Math.max(1, Number(quantity) || 1) } : item)));
+  };
+
+  const saveOrderEdits = async (orderId) => {
+    const response = await apiFetch(`${API_URL}/orders/${orderId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: editingOrderItems.map((item) => ({ productId: item.productId, quantity: item.quantity })) }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      setOrdersActionMessage(data?.error || 'Could not update order.');
+      window.setTimeout(() => setOrdersActionMessage(''), 3000);
+      return;
+    }
+    cancelEditOrder();
+    await fetchCustomerOrders();
   };
 
   const updateOrderStatus = async (orderId, status) => {
@@ -386,6 +560,7 @@ function App() {
       await fetchProducts();
       await fetchStockMovements();
       await fetchReports();
+      await fetchAdminOverview();
     }
   };
 
@@ -1265,6 +1440,12 @@ function App() {
         shopName={settings.shopName}
         currencySymbol={settings.currencySymbol}
         onPlaceOrder={placeGuestOrder}
+        customerAuth={customerAuth}
+        onCustomerSignup={customerSignup}
+        onCustomerLogin={customerLogin}
+        onCustomerLogout={customerLogout}
+        myOrders={myOrders}
+        onRefreshMyOrders={fetchMyOrders}
       />
     );
   }
@@ -1346,6 +1527,7 @@ function App() {
         { key: 'supplierReports', label: 'Supplier Reports' },
         { key: 'staffs', label: 'Staffs' },
         { key: 'customers', label: 'Customers' },
+        { key: 'accounts', label: 'Customer Accounts' },
         { key: 'suppliers', label: 'Suppliers' },
         { key: 'settings', label: 'Settings' },
       ]
@@ -1835,29 +2017,61 @@ function App() {
                     </div>
 
                     <ul style={{ listStyle: 'none', margin: '12px 0', padding: 0, display: 'grid', gap: 4 }}>
-                      {items.map((item, idx) => (
-                        <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#292521' }}>
-                          <span>{item.quantity} × {item.name}</span>
-                          <span>{settings.currencySymbol}{(Number(item.price) * Number(item.quantity)).toLocaleString()}</span>
-                        </li>
-                      ))}
+                      {editingOrderId === order.id
+                        ? editingOrderItems.map((item) => (
+                            <li key={item.productId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, color: '#292521', gap: 8 }}>
+                              <span>{item.name}</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.quantity}
+                                  onChange={(e) => updateEditingOrderQuantity(item.productId, e.target.value)}
+                                  style={{ width: 60, padding: '5px 8px', borderRadius: 8, border: '1px solid #E5DCCB' }}
+                                />
+                                <span>× {settings.currencySymbol}{Number(item.price).toLocaleString()}</span>
+                              </div>
+                            </li>
+                          ))
+                        : items.map((item, idx) => (
+                            <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#292521' }}>
+                              <span>{item.quantity} × {item.name}</span>
+                              <span>{settings.currencySymbol}{(Number(item.price) * Number(item.quantity)).toLocaleString()}</span>
+                            </li>
+                          ))}
                     </ul>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid #E5DCCB' }}>
                       <div style={{ fontWeight: 700, color: '#2B2118' }}>Total: {settings.currencySymbol}{Number(order.totalAmount).toLocaleString()}</div>
                       {(order.status === 'pending' || order.status === 'confirmed') && (
-                        <div style={{ display: 'flex', gap: 8 }}>
-                          {order.status === 'pending' && (
-                            <button type="button" onClick={() => updateOrderStatus(order.id, 'confirmed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: '#0B5FB8', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                              Confirm
-                            </button>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          {editingOrderId === order.id ? (
+                            <>
+                              <button type="button" onClick={() => saveOrderEdits(order.id)} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: '#0B5FB8', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                                Save Changes
+                              </button>
+                              <button type="button" onClick={cancelEditOrder} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#F0E9D8', color: '#2B2118', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                                Cancel Edit
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button type="button" onClick={() => startEditOrder(order)} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #E5DCCB', background: '#F0E9D8', color: '#2B2118', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                                Edit
+                              </button>
+                              {order.status === 'pending' && (
+                                <button type="button" onClick={() => updateOrderStatus(order.id, 'confirmed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: '#0B5FB8', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                                  Confirm
+                                </button>
+                              )}
+                              <button type="button" onClick={() => updateOrderStatus(order.id, 'completed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                                Complete
+                              </button>
+                              <button type="button" onClick={() => updateOrderStatus(order.id, 'cancelled')} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #F5C2C2', background: 'transparent', color: '#B42318', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                                Cancel
+                              </button>
+                            </>
                           )}
-                          <button type="button" onClick={() => updateOrderStatus(order.id, 'completed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                            Complete
-                          </button>
-                          <button type="button" onClick={() => updateOrderStatus(order.id, 'cancelled')} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #F5C2C2', background: 'transparent', color: '#B42318', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                            Cancel
-                          </button>
                         </div>
                       )}
                     </div>
@@ -1868,8 +2082,100 @@ function App() {
           )}
         </section>
       )}
+      {user.role === 'admin' && activeView === 'accounts' && (
+        <section style={{ marginBottom: 20, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 16, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E5DCCB', paddingBottom: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: 'Cormorant Garamond, serif', color: '#2B2118', fontSize: 30 }}>Customer Accounts</h2>
+            <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700 }}>Registered on the shop website</div>
+          </div>
+
+          {onlineCustomers.length === 0 ? (
+            <div style={{ color: '#8A8177' }}>No customer accounts have been created yet.</div>
+          ) : (
+            <div style={{ display: 'grid', gap: 12 }}>
+              {onlineCustomers.map((customer) => (
+                <div key={customer.id} style={{ background: '#F7F3EA', border: '1px solid #E5DCCB', borderRadius: 14, padding: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: '#2B2118' }}>{customer.name}</div>
+                      <div style={{ color: '#8A8177', fontSize: 13, marginTop: 2 }}>{customer.email} · {customer.phone}</div>
+                      <div style={{ color: '#8A8177', fontSize: 12, marginTop: 4 }}>
+                        {customer.orderCount} order{Number(customer.orderCount) === 1 ? '' : 's'} · Spent {settings.currencySymbol}{Number(customer.totalSpent).toLocaleString()}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', background: customer.status === 'suspended' ? '#B42318' : '#1E7A3B', color: '#FFFDF8', borderRadius: 999, padding: '5px 8px', fontWeight: 700 }}>
+                        {customer.status}
+                      </span>
+                      <button type="button" onClick={() => viewOnlineCustomerOrders(customer.id)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #E5DCCB', background: '#F0E9D8', color: '#2B2118', fontWeight: 700, cursor: 'pointer' }}>
+                        {selectedOnlineCustomerId === customer.id ? 'Hide Orders' : 'View Orders'}
+                      </button>
+                      {customer.status === 'suspended' ? (
+                        <button type="button" onClick={() => toggleOnlineCustomerStatus(customer.id, 'active')} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #bbf7d0', background: '#f0fdf4', color: '#15803d', fontWeight: 700, cursor: 'pointer' }}>
+                          Activate
+                        </button>
+                      ) : (
+                        <button type="button" onClick={() => toggleOnlineCustomerStatus(customer.id, 'suspended')} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #ef4444', background: '#fef2f2', color: '#b91c1c', fontWeight: 700, cursor: 'pointer' }}>
+                          Suspend
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {selectedOnlineCustomerId === customer.id && (
+                    <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #E5DCCB', display: 'grid', gap: 8 }}>
+                      {selectedOnlineCustomerOrders.length === 0 ? (
+                        <div style={{ color: '#8A8177', fontSize: 13 }}>No orders from this customer yet.</div>
+                      ) : (
+                        selectedOnlineCustomerOrders.map((order) => (
+                          <div key={order.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 10, padding: '8px 12px', fontSize: 13 }}>
+                            <span>Order #{order.id} · {new Date(order.createdAt).toLocaleDateString()}</span>
+                            <span style={{ textTransform: 'uppercase', fontWeight: 700, fontSize: 11, color: '#8A8177' }}>{order.status}</span>
+                            <span style={{ fontWeight: 700, color: '#2B2118' }}>{settings.currencySymbol}{Number(order.totalAmount).toLocaleString()}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
       {activeView === 'dashboard' && (
       <div style={{ display: 'grid', gap: 20 }}>
+        {adminOverview && (
+          <section style={{ background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
+            <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C6A15B', fontWeight: 700, marginBottom: 12 }}>Admin Overview</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+              <div style={{ background: 'linear-gradient(135deg, #2B2118 0%, #4A3426 100%)', color: '#FFFDF8', borderRadius: 14, padding: 16, border: '1px solid #A9823A' }}>
+                <div style={{ color: 'rgba(255,255,255,0.76)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total Customers</div>
+                <div style={{ fontSize: 22, fontWeight: 700 }}>{adminOverview.totalCustomers}</div>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', borderRadius: 14, padding: 16, border: '1px solid #A9823A' }}>
+                <div style={{ color: 'rgba(255,255,255,0.82)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Orders Today</div>
+                <div style={{ fontSize: 22, fontWeight: 700 }}>{adminOverview.ordersToday}</div>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', borderRadius: 14, padding: 16, border: '1px solid #E5DCCB' }}>
+                <div style={{ color: '#8A8177', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Orders This Week</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{adminOverview.ordersThisWeek}</div>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', borderRadius: 14, padding: 16, border: '1px solid #E5DCCB' }}>
+                <div style={{ color: '#8A8177', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue Today</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{formatMoney(adminOverview.revenueToday)}</div>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', borderRadius: 14, padding: 16, border: '1px solid #E5DCCB' }}>
+                <div style={{ color: '#8A8177', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue This Week</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{formatMoney(adminOverview.revenueThisWeek)}</div>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', borderRadius: 14, padding: 16, border: '1px solid #E5DCCB' }}>
+                <div style={{ color: '#8A8177', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Pending Orders</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: '#2B2118' }}>{adminOverview.pendingOrders}</div>
+              </div>
+            </div>
+          </section>
+        )}
         <section style={{ background: 'linear-gradient(135deg, #FFFDF8 0%, #F7F3EA 100%)', border: '1px solid #E5DCCB', borderRadius: 20, padding: 24, boxShadow: '0 10px 24px rgba(17, 19, 24, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>

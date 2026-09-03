@@ -6,7 +6,7 @@ const path = require('path');
 const { pool } = require('./db');
 const { ensureDefaultUsers } = require('./auth');
 const { ensureStarterProducts } = require('./shopData');
-const { validateProductPayload, validateSalePayload, validatePurchaseOrderPayload, validateReceivingPayload, validateServiceTransactionPayload, validateCustomerOrderPayload } = require('./validation');
+const { validateProductPayload, validateSalePayload, validatePurchaseOrderPayload, validateReceivingPayload, validateServiceTransactionPayload, validateCustomerOrderPayload, validateCustomerSignupPayload } = require('./validation');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'pos_jwt_secret';
 const HOST = process.env.HOST || '0.0.0.0';
@@ -85,9 +85,123 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 201, { id: result.rows[0].id, ...body, createdAt: now, createdBy: user.username || 'Unknown' });
     }
 
+    if (req.method === 'POST' && pathname === '/api/customers/signup') {
+      const body = await readJsonBody(req);
+      const { name, phone, email, password } = body;
+      const validation = validateCustomerSignupPayload({ name, phone, email, password });
+      if (!validation.ok) {
+        return sendJson(res, 400, { error: validation.error });
+      }
+      const normalizedEmail = String(email).trim().toLowerCase();
+      const existing = await pool.query('SELECT id FROM customers WHERE email = $1', [normalizedEmail]);
+      if (existing.rows.length) {
+        return sendJson(res, 409, { error: 'An account with this email already exists' });
+      }
+      const now = new Date().toISOString();
+      const hashedPassword = hashPassword(password);
+      const result = await pool.query(
+        'INSERT INTO customers (name, phone, email, password, status, "createdAt") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+        [String(name).trim(), String(phone).trim(), normalizedEmail, hashedPassword, 'active', now]
+      );
+      const customer = { id: result.rows[0].id, name: String(name).trim(), phone: String(phone).trim(), email: normalizedEmail };
+      const token = signToken({ id: customer.id, name: customer.name, email: customer.email, type: 'customer' }, JWT_SECRET, '7d');
+      return sendJson(res, 201, { ...customer, token });
+    }
+
+    if (req.method === 'POST' && pathname === '/api/customers/login') {
+      const body = await readJsonBody(req);
+      const { email, password } = body;
+      const normalizedEmail = String(email || '').trim().toLowerCase();
+      const { rows } = await pool.query('SELECT * FROM customers WHERE email = $1', [normalizedEmail]);
+      const customer = rows[0];
+      if (!customer || !verifyPassword(password, customer.password)) {
+        return sendJson(res, 401, { error: 'Invalid email or password' });
+      }
+      if (customer.status === 'suspended') {
+        return sendJson(res, 403, { error: 'Your account has been suspended. Please contact the store.' });
+      }
+      const token = signToken({ id: customer.id, name: customer.name, email: customer.email, type: 'customer' }, JWT_SECRET, '7d');
+      return sendJson(res, 200, { id: customer.id, name: customer.name, phone: customer.phone, email: customer.email, token });
+    }
+
+    if (req.method === 'GET' && pathname === '/api/customers/orders') {
+      const customer = await requireCustomerAuth(req, res);
+      if (!customer) return;
+      const { rows } = await pool.query('SELECT * FROM customer_orders WHERE "customerId" = $1 ORDER BY "createdAt" DESC', [customer.id]);
+      return sendJson(res, 200, rows);
+    }
+
+    if (req.method === 'GET' && pathname === '/api/admin/customers') {
+      const user = await requireAuth(req, res);
+      if (!user) return;
+      if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
+      const { rows } = await pool.query(`
+        SELECT c.id, c.name, c.phone, c.email, c.status, c."createdAt",
+          COUNT(o.id) AS "orderCount",
+          COALESCE(SUM(CASE WHEN o.status = 'completed' THEN o."totalAmount" ELSE 0 END), 0) AS "totalSpent"
+        FROM customers c
+        LEFT JOIN customer_orders o ON o."customerId" = c.id
+        GROUP BY c.id
+        ORDER BY c."createdAt" DESC
+      `);
+      return sendJson(res, 200, rows);
+    }
+
+    if (req.method === 'GET' && pathname.startsWith('/api/admin/customers/') && pathname.endsWith('/orders')) {
+      const user = await requireAuth(req, res);
+      if (!user) return;
+      if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
+      const segments = pathname.split('/').filter(Boolean);
+      const id = segments[3];
+      const { rows } = await pool.query('SELECT * FROM customer_orders WHERE "customerId" = $1 ORDER BY "createdAt" DESC', [id]);
+      return sendJson(res, 200, rows);
+    }
+
+    if (req.method === 'PUT' && pathname.startsWith('/api/admin/customers/')) {
+      const user = await requireAuth(req, res);
+      if (!user) return;
+      if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
+      const id = pathname.split('/').pop();
+      const body = await readJsonBody(req);
+      const { status } = body;
+      if (!['active', 'suspended'].includes(status)) {
+        return sendJson(res, 400, { error: 'Invalid status' });
+      }
+      const result = await pool.query('UPDATE customers SET status = $1 WHERE id = $2', [status, id]);
+      if (result.rowCount === 0) {
+        return sendJson(res, 404, { error: 'Customer not found' });
+      }
+      return sendJson(res, 200, { id: Number(id), status });
+    }
+
+    if (req.method === 'GET' && pathname === '/api/admin/overview') {
+      const user = await requireAuth(req, res);
+      if (!user) return;
+      if (user.role !== 'admin') return sendJson(res, 403, { error: 'Admin access required' });
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const weekStart = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000);
+      weekStart.setHours(0, 0, 0, 0);
+      const totalCustomersResult = await pool.query('SELECT COUNT(*) AS count FROM customers');
+      const ordersTodayResult = await pool.query('SELECT COUNT(*) AS count FROM customer_orders WHERE "createdAt" >= $1', [todayStart.toISOString()]);
+      const ordersWeekResult = await pool.query('SELECT COUNT(*) AS count FROM customer_orders WHERE "createdAt" >= $1', [weekStart.toISOString()]);
+      const revenueTodayResult = await pool.query('SELECT COALESCE(SUM("totalAmount"), 0) AS sum FROM customer_orders WHERE status = $1 AND "updatedAt" >= $2', ['completed', todayStart.toISOString()]);
+      const revenueWeekResult = await pool.query('SELECT COALESCE(SUM("totalAmount"), 0) AS sum FROM customer_orders WHERE status = $1 AND "updatedAt" >= $2', ['completed', weekStart.toISOString()]);
+      const pendingOrdersResult = await pool.query("SELECT COUNT(*) AS count FROM customer_orders WHERE status IN ('pending', 'confirmed')");
+      return sendJson(res, 200, {
+        totalCustomers: Number(totalCustomersResult.rows[0].count),
+        ordersToday: Number(ordersTodayResult.rows[0].count),
+        ordersThisWeek: Number(ordersWeekResult.rows[0].count),
+        revenueToday: Number(revenueTodayResult.rows[0].sum),
+        revenueThisWeek: Number(revenueWeekResult.rows[0].sum),
+        pendingOrders: Number(pendingOrdersResult.rows[0].count),
+      });
+    }
+
     if (req.method === 'POST' && pathname === '/api/orders') {
       const body = await readJsonBody(req);
       const { customerName, phone, address, notes, items: rawItems } = body;
+      const customer = tryGetCustomerFromAuth(req);
       const productRowsResult = await pool.query('SELECT * FROM products');
       const validation = validateCustomerOrderPayload({ customerName, phone, items: rawItems }, productRowsResult.rows);
       if (!validation.ok) {
@@ -102,10 +216,10 @@ const server = http.createServer(async (req, res) => {
       const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       const now = new Date().toISOString();
       const result = await pool.query(
-        'INSERT INTO customer_orders ("customerName", phone, address, notes, "itemsJson", "totalAmount", status, "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-        [String(customerName).trim(), String(phone).trim(), String(address || '').trim(), String(notes || '').trim(), JSON.stringify(items), totalAmount, 'pending', now, now]
+        'INSERT INTO customer_orders ("customerName", phone, address, notes, "itemsJson", "totalAmount", status, "createdAt", "updatedAt", "customerId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
+        [String(customerName).trim(), String(phone).trim(), String(address || '').trim(), String(notes || '').trim(), JSON.stringify(items), totalAmount, 'pending', now, now, customer ? customer.id : null]
       );
-      return sendJson(res, 201, { id: result.rows[0].id, customerName: String(customerName).trim(), phone: String(phone).trim(), address: String(address || '').trim(), notes: String(notes || '').trim(), items, totalAmount, status: 'pending', createdAt: now, updatedAt: now });
+      return sendJson(res, 201, { id: result.rows[0].id, customerName: String(customerName).trim(), phone: String(phone).trim(), address: String(address || '').trim(), notes: String(notes || '').trim(), items, totalAmount, status: 'pending', createdAt: now, updatedAt: now, customerId: customer ? customer.id : null });
     }
 
     if (req.method === 'GET' && pathname === '/api/orders') {
@@ -120,11 +234,7 @@ const server = http.createServer(async (req, res) => {
       if (!user) return;
       const id = pathname.split('/').pop();
       const body = await readJsonBody(req);
-      const { status } = body;
-      const allowedStatuses = ['confirmed', 'completed', 'cancelled'];
-      if (!allowedStatuses.includes(status)) {
-        return sendJson(res, 400, { error: 'Invalid status' });
-      }
+      const { status, items: editedItems, address: editedAddress, notes: editedNotes } = body;
 
       const orderResult = await pool.query('SELECT * FROM customer_orders WHERE id = $1', [id]);
       const order = orderResult.rows[0];
@@ -135,8 +245,41 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 400, { error: `Order is already ${order.status}` });
       }
 
+      let items = JSON.parse(order.itemsJson);
+      let totalAmount = Number(order.totalAmount);
       const now = new Date().toISOString();
-      const items = JSON.parse(order.itemsJson);
+
+      if (Array.isArray(editedItems) && editedItems.length) {
+        const productRowsResult = await pool.query('SELECT * FROM products');
+        const validation = validateCustomerOrderPayload({ customerName: order.customerName, phone: order.phone, items: editedItems }, productRowsResult.rows);
+        if (!validation.ok) {
+          return sendJson(res, 400, { error: validation.error });
+        }
+        const productMap = new Map(productRowsResult.rows.map((product) => [product.id, product]));
+        items = editedItems.map((item) => {
+          const product = productMap.get(item.productId);
+          const quantity = Math.max(1, Math.floor(Number(item.quantity) || 0));
+          return { productId: product.id, name: product.name, price: Number(product.price) || 0, quantity };
+        });
+        totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      }
+
+      const nextAddress = editedAddress !== undefined ? String(editedAddress).trim() : order.address;
+      const nextNotes = editedNotes !== undefined ? String(editedNotes).trim() : order.notes;
+
+      if (!status) {
+        await pool.query(
+          'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, "updatedAt" = $5 WHERE id = $6',
+          [JSON.stringify(items), totalAmount, nextAddress, nextNotes, now, id]
+        );
+        const refreshed = await pool.query('SELECT * FROM customer_orders WHERE id = $1', [id]);
+        return sendJson(res, 200, refreshed.rows[0]);
+      }
+
+      const allowedStatuses = ['confirmed', 'completed', 'cancelled'];
+      if (!allowedStatuses.includes(status)) {
+        return sendJson(res, 400, { error: 'Invalid status' });
+      }
 
       if (status === 'completed') {
         const productIds = items.map((item) => item.productId);
@@ -153,10 +296,10 @@ const server = http.createServer(async (req, res) => {
         try {
           await client.query('BEGIN');
           const totalCost = items.reduce((sum, item) => sum + (Number(productMap.get(item.productId)?.costPrice) || 0) * item.quantity, 0);
-          const profit = Number(order.totalAmount) - totalCost;
+          const profit = totalAmount - totalCost;
           const saleResult = await client.query(
             'INSERT INTO sales (datetime, total, profit, "paymentMethod", "cashierName") VALUES ($1, $2, $3, $4, $5) RETURNING id',
-            [now, Number(order.totalAmount), profit, 'Online Order', user.username || 'Unknown']
+            [now, totalAmount, profit, 'Online Order', user.username || 'Unknown']
           );
           const saleId = saleResult.rows[0].id;
           for (const item of items) {
@@ -171,7 +314,10 @@ const server = http.createServer(async (req, res) => {
               [item.productId, item.name, 'sale', -Math.abs(Number(item.quantity) || 0), now, `Online order #${order.id}`]
             );
           }
-          await client.query('UPDATE customer_orders SET status = $1, "updatedAt" = $2 WHERE id = $3', ['completed', now, id]);
+          await client.query(
+            'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, status = $5, "updatedAt" = $6 WHERE id = $7',
+            [JSON.stringify(items), totalAmount, nextAddress, nextNotes, 'completed', now, id]
+          );
           await client.query('COMMIT');
         } catch (error) {
           await client.query('ROLLBACK');
@@ -180,7 +326,10 @@ const server = http.createServer(async (req, res) => {
           client.release();
         }
       } else {
-        await pool.query('UPDATE customer_orders SET status = $1, "updatedAt" = $2 WHERE id = $3', [status, now, id]);
+        await pool.query(
+          'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, status = $5, "updatedAt" = $6 WHERE id = $7',
+          [JSON.stringify(items), totalAmount, nextAddress, nextNotes, status, now, id]
+        );
       }
 
       const updatedResult = await pool.query('SELECT * FROM customer_orders WHERE id = $1', [id]);
@@ -591,6 +740,18 @@ async function initDatabase() {
     "updatedAt" TEXT NOT NULL
   )`);
 
+  await pool.query('ALTER TABLE customer_orders ADD COLUMN IF NOT EXISTS "customerId" INTEGER');
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS customers (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'active',
+    "createdAt" TEXT NOT NULL
+  )`);
+
   await pool.query('DELETE FROM refresh_tokens WHERE "expiresAt" < $1', [new Date().toISOString()]);
 
   await ensureDefaultUsers(pool);
@@ -722,6 +883,34 @@ async function requireAuth(req, res) {
     return null;
   }
   return user;
+}
+
+async function requireCustomerAuth(req, res) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  if (!token) {
+    sendJson(res, 401, { error: 'Authorization token required' });
+    return null;
+  }
+  const payload = verifyToken(token);
+  if (!payload || payload.type !== 'customer') {
+    sendJson(res, 401, { error: 'Invalid or expired token' });
+    return null;
+  }
+  return payload;
+}
+
+function tryGetCustomerFromAuth(req) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  if (!token) {
+    return null;
+  }
+  const payload = verifyToken(token);
+  if (!payload || payload.type !== 'customer') {
+    return null;
+  }
+  return payload;
 }
 
 initDatabase()

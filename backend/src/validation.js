@@ -53,6 +53,28 @@ function validateSalePayload(payload, products = []) {
   return { ok: true };
 }
 
+function validateCustomerSignupPayload(payload) {
+  const name = String(payload?.name || '').trim();
+  const phone = String(payload?.phone || '').trim();
+  const email = String(payload?.email || '').trim().toLowerCase();
+  const password = String(payload?.password || '');
+
+  if (!name) {
+    return { ok: false, error: 'Name is required' };
+  }
+  if (!phone) {
+    return { ok: false, error: 'Phone number is required' };
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, error: 'A valid email address is required' };
+  }
+  if (!password || password.length < 6) {
+    return { ok: false, error: 'Password must be at least 6 characters' };
+  }
+
+  return { ok: true };
+}
+
 function validatePurchaseOrderPayload(payload) {
   const items = Array.isArray(payload?.items) ? payload.items : [];
   const supplier = String(payload?.supplier || '').trim();
@@ -136,4 +158,5 @@ module.exports = {
   validateReceivingPayload,
   validateServiceTransactionPayload,
   validateCustomerOrderPayload,
+  validateCustomerSignupPayload,
 };

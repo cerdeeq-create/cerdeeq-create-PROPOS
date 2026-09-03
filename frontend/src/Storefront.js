@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const COLORS = {
   primary: '#FF6B00',
@@ -13,7 +13,7 @@ const COLORS = {
   green: '#0C8A3E',
 };
 
-function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
+function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customerAuth, onCustomerSignup, onCustomerLogin, onCustomerLogout, myOrders, onRefreshMyOrders }) {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -21,6 +21,18 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successOrder, setSuccessOrder] = useState(null);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [authForm, setAuthForm] = useState({ name: '', phone: '', email: '', password: '' });
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [myOrdersOpen, setMyOrdersOpen] = useState(false);
+
+  useEffect(() => {
+    if (customerAuth) {
+      setForm((prev) => ({ ...prev, customerName: customerAuth.name || prev.customerName, phone: customerAuth.phone || prev.phone }));
+    }
+  }, [customerAuth]);
 
   const availableProducts = (products || []).filter((product) => Number(product.stock) > 0);
   const visibleProducts = useMemo(() => {
@@ -93,6 +105,48 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
     }
   };
 
+  const submitAuth = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    setAuthSubmitting(true);
+    try {
+      if (authMode === 'login') {
+        if (!authForm.email.trim() || !authForm.password) {
+          throw new Error('Please enter your email and password.');
+        }
+        await onCustomerLogin({ email: authForm.email.trim(), password: authForm.password });
+      } else {
+        if (!authForm.name.trim() || !authForm.phone.trim() || !authForm.email.trim() || !authForm.password) {
+          throw new Error('Please fill in all fields.');
+        }
+        await onCustomerSignup({
+          name: authForm.name.trim(),
+          phone: authForm.phone.trim(),
+          email: authForm.email.trim(),
+          password: authForm.password,
+        });
+      }
+      setAuthForm({ name: '', phone: '', email: '', password: '' });
+      setAuthOpen(false);
+    } catch (err) {
+      setAuthError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setAuthSubmitting(false);
+    }
+  };
+
+  const openMyOrders = () => {
+    setMyOrdersOpen(true);
+    if (onRefreshMyOrders) onRefreshMyOrders();
+  };
+
+  const orderStatusColors = {
+    pending: { bg: '#FFF8E5', text: '#8A6A00' },
+    confirmed: { bg: '#E9F3FF', text: '#0B5FB8' },
+    completed: { bg: '#EAF7EE', text: '#1E7A3B' },
+    cancelled: { bg: '#FDECEC', text: COLORS.sale },
+  };
+
   if (successOrder) {
     return (
       <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: COLORS.bg, padding: 20 }}>
@@ -131,6 +185,33 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
               style={{ width: '100%', padding: '10px 14px', borderRadius: 999, border: 'none', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
+          {customerAuth ? (
+            <>
+              <span style={{ color: '#fff', fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}>Hi, {customerAuth.name}</span>
+              <button
+                type="button"
+                onClick={openMyOrders}
+                style={{ background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                My Orders
+              </button>
+              <button
+                type="button"
+                onClick={onCustomerLogout}
+                style={{ background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => { setAuthOpen(true); setAuthMode('login'); setAuthError(''); }}
+              style={{ background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              Login / Sign Up
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setCartOpen(true)}
@@ -323,6 +404,154 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder }) {
                   POWERD BY PRO CREATIVES | 08147621844
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {authOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 30, display: 'flex', justifyContent: 'flex-end' }}>
+          <div
+            onClick={() => setAuthOpen(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }}
+          />
+          <div style={{ position: 'relative', width: '100%', maxWidth: 420, background: COLORS.bg, height: '100%', overflowY: 'auto', boxShadow: '-8px 0 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: COLORS.card, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text }}>{authMode === 'login' ? 'Log In' : 'Sign Up'}</div>
+              <button type="button" onClick={() => setAuthOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
+            </div>
+
+            <div style={{ padding: 16, flex: 1 }}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16, background: COLORS.card, borderRadius: 999, padding: 4 }}>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('login'); setAuthError(''); }}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, background: authMode === 'login' ? COLORS.primary : 'transparent', color: authMode === 'login' ? '#fff' : COLORS.text }}
+                >
+                  Log In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('signup'); setAuthError(''); }}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, background: authMode === 'signup' ? COLORS.primary : 'transparent', color: authMode === 'signup' ? '#fff' : COLORS.text }}
+                >
+                  Sign Up
+                </button>
+              </div>
+
+              <form onSubmit={submitAuth} style={{ display: 'grid', gap: 10 }}>
+                {authMode === 'signup' && (
+                  <>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                      Full Name
+                      <input
+                        type="text"
+                        value={authForm.name}
+                        onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                        placeholder="Your name"
+                      />
+                    </label>
+                    <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                      Phone Number
+                      <input
+                        type="tel"
+                        value={authForm.phone}
+                        onChange={(e) => setAuthForm({ ...authForm, phone: e.target.value })}
+                        style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                        placeholder="Your phone number"
+                      />
+                    </label>
+                  </>
+                )}
+                <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                  Email
+                  <input
+                    type="email"
+                    value={authForm.email}
+                    onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                    placeholder="you@example.com"
+                  />
+                </label>
+                <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
+                  Password
+                  <input
+                    type="password"
+                    value={authForm.password}
+                    onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                    style={{ padding: '10px 12px', borderRadius: 10, border: `1px solid ${COLORS.border}`, fontSize: 14, boxSizing: 'border-box' }}
+                    placeholder="At least 6 characters"
+                  />
+                </label>
+
+                {authError && <div style={{ color: COLORS.sale, background: '#fff1f0', border: '1px solid #ffd0cc', borderRadius: 10, padding: '10px 12px', fontSize: 13, fontWeight: 600 }}>{authError}</div>}
+
+                <button
+                  type="submit"
+                  disabled={authSubmitting}
+                  style={{
+                    marginTop: 4,
+                    background: authSubmitting ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 999,
+                    padding: '15px 16px',
+                    fontWeight: 800,
+                    fontSize: 14,
+                    letterSpacing: '0.02em',
+                    cursor: authSubmitting ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {authSubmitting ? 'Please wait…' : authMode === 'login' ? 'Log In' : 'Create Account'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {myOrdersOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 30, display: 'flex', justifyContent: 'flex-end' }}>
+          <div
+            onClick={() => setMyOrdersOpen(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }}
+          />
+          <div style={{ position: 'relative', width: '100%', maxWidth: 420, background: COLORS.bg, height: '100%', overflowY: 'auto', boxShadow: '-8px 0 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: COLORS.card, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text }}>My Orders</div>
+              <button type="button" onClick={() => setMyOrdersOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
+            </div>
+
+            <div style={{ padding: 16, flex: 1, display: 'grid', gap: 10, alignContent: 'start' }}>
+              {!(myOrders || []).length && (
+                <div style={{ color: COLORS.muted, fontSize: 13, textAlign: 'center', marginTop: 30 }}>You haven't placed any orders yet.</div>
+              )}
+              {(myOrders || []).map((order) => {
+                const items = typeof order.itemsJson === 'string' ? JSON.parse(order.itemsJson) : (order.itemsJson || []);
+                const statusStyle = orderStatusColors[order.status] || { bg: COLORS.border, text: COLORS.text };
+                return (
+                  <div key={order.id} style={{ background: COLORS.card, borderRadius: 10, padding: 12, border: `1px solid ${COLORS.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontWeight: 800, fontSize: 13, color: COLORS.text }}>Order #{order.id}</span>
+                      <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: statusStyle.text, background: statusStyle.bg, borderRadius: 999, padding: '4px 8px' }}>
+                        {order.status}
+                      </span>
+                    </div>
+                    <div style={{ display: 'grid', gap: 2, marginBottom: 6 }}>
+                      {items.map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: COLORS.muted }}>
+                          <span>{item.quantity} × {item.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 13, color: COLORS.text }}>
+                      <span>Total</span>
+                      <span style={{ color: COLORS.sale }}>{currencySymbol}{Number(order.totalAmount).toLocaleString()}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
