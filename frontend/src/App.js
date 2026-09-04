@@ -1,4 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {
+  FiHome,
+  FiShoppingCart,
+  FiShoppingBag,
+  FiBox,
+  FiTruck,
+  FiDollarSign,
+  FiBarChart2,
+  FiPieChart,
+  FiUserCheck,
+  FiUsers,
+  FiUser,
+  FiBriefcase,
+  FiSettings,
+  FiLogOut,
+  FiCalendar,
+  FiClock,
+  FiTrendingUp,
+  FiPackage,
+  FiAlertTriangle,
+} from 'react-icons/fi';
 import { buildStaffUpdatePayload } from './staffUtils';
 import { buildCashierPerformance, buildPurchaseOrderAuditSummary, buildPurchaseOrderCompletionPayload, buildPurchaseOrderProgress, buildPurchaseOrderReceivingHistory, buildPurchaseOrderSummary, buildPurchaseOrderTimeline, buildReceivingItemsFromPurchaseOrder, buildReceivingSpendTrend, buildReceivingSupplierSummary, buildSalesSummary, buildSupplierContactSummary, buildSupplierOrderHistory, buildSupplierPerformanceSummary, buildSupplierReportSummary, calculateActualProfit, exportPurchaseOrdersToCsv, exportReceivingHistoryToCsv, exportSalesToCsv, exportSupplierReportToCsv, filterReceivingHistory, filterSalesByDateRange, parsePurchaseOrderItems } from './reportUtils';
 import { createAuthenticatedFetch } from './apiClient';
@@ -1454,19 +1475,19 @@ function App() {
 
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #F7F3EA 0%, #F0E9D8 100%)', padding: 20 }}>
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: '#F8FAFC', padding: 20 }}>
         <style>{`
           @keyframes staffLoginPop {
             from { opacity: 0; transform: translateY(10px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
           }
         `}</style>
-        <div style={{ width: '100%', maxWidth: 420, background: '#FFFDF8', border: '1px solid #E5DCCB', borderRadius: 24, boxShadow: '0 24px 60px rgba(29, 27, 24, 0.18)', overflow: 'hidden', animation: 'staffLoginPop 0.2s ease-out' }}>
-          <div style={{ textAlign: 'center', padding: '36px 32px 26px', borderBottom: '1px solid #E5DCCB' }}>
+        <div style={{ width: '100%', maxWidth: 420, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.08)', overflow: 'hidden', animation: 'staffLoginPop 0.2s ease-out' }}>
+          <div style={{ textAlign: 'center', padding: '36px 32px 26px', borderBottom: '1px solid #E2E8F0' }}>
             <button
               type="button"
               onClick={() => { window.history.pushState({}, '', '/'); setShowStaffLogin(false); }}
-              style={{ marginBottom: 16, border: 'none', background: 'transparent', color: '#8A8177', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
+              style={{ marginBottom: 16, border: 'none', background: 'transparent', color: '#64748B', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}
             >
               ← Back to Shop
             </button>
@@ -1476,24 +1497,24 @@ function App() {
                 height: 56,
                 margin: '0 auto 16px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #C6A15B 0%, #2B2118 100%)',
-                color: '#FFFDF8',
+                background: 'linear-gradient(135deg, #F68B1E 0%, #C2670E 100%)',
+                color: '#FFFFFF',
                 fontSize: 22,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 8px 18px rgba(43,33,24,0.28)',
+                boxShadow: '0 8px 18px rgba(246,139,30,0.3)',
               }}
             >
               🔒
             </div>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 32, color: '#2B2118', lineHeight: 1 }}>NOOR</div>
-            <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: 13, letterSpacing: '0.32em', textTransform: 'uppercase', color: '#C6A15B', marginTop: 6 }}>Staff Portal</div>
-            <div style={{ color: '#8A8177', fontSize: 13, marginTop: 12 }}>Sign in with your staff username and password.</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 30, color: '#0F172A', lineHeight: 1 }}>NOOR</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 12, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#F68B1E', marginTop: 6 }}>Staff Portal</div>
+            <div style={{ color: '#64748B', fontSize: 13, marginTop: 12 }}>Sign in with your staff username and password.</div>
           </div>
 
           <form onSubmit={login} style={{ display: 'grid', gap: 16, padding: '28px 32px 32px' }}>
-            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
+            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#334155', fontWeight: 600 }}>
               Username
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>👤</span>
@@ -1501,15 +1522,15 @@ function App() {
                   type="text"
                   value={loginForm.username}
                   onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                  style={{ width: '100%', padding: '12px 14px 12px 38px', borderRadius: 12, border: '1.5px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
-                  onFocus={(e) => { e.target.style.borderColor = '#C6A15B'; }}
-                  onBlur={(e) => { e.target.style.borderColor = '#E5DCCB'; }}
+                  style={{ width: '100%', padding: '12px 14px 12px 38px', borderRadius: 12, border: '1.5px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: 15, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                  onFocus={(e) => { e.target.style.borderColor = '#F68B1E'; }}
+                  onBlur={(e) => { e.target.style.borderColor = '#E2E8F0'; }}
                   placeholder="Enter username"
                 />
               </div>
             </label>
 
-            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#292521', fontWeight: 600 }}>
+            <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#334155', fontWeight: 600 }}>
               Password
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', fontSize: 15, opacity: 0.55 }}>🔑</span>
@@ -1517,15 +1538,15 @@ function App() {
                   type={showLoginPassword ? 'text' : 'password'}
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                  style={{ width: '100%', padding: '12px 66px 12px 38px', borderRadius: 12, border: '1.5px solid #E5DCCB', background: '#FFFDF8', color: '#2B2118', fontSize: 15, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
-                  onFocus={(e) => { e.target.style.borderColor = '#C6A15B'; }}
-                  onBlur={(e) => { e.target.style.borderColor = '#E5DCCB'; }}
+                  style={{ width: '100%', padding: '12px 66px 12px 38px', borderRadius: 12, border: '1.5px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: 15, boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.15s' }}
+                  onFocus={(e) => { e.target.style.borderColor = '#F68B1E'; }}
+                  onBlur={(e) => { e.target.style.borderColor = '#E2E8F0'; }}
                   placeholder="Enter password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowLoginPassword((prev) => !prev)}
-                  style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', color: '#8A8177', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', color: '#64748B', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
                 >
                   {showLoginPassword ? 'Hide' : 'Show'}
                 </button>
@@ -1536,11 +1557,11 @@ function App() {
 
             <button
               type="submit"
-              style={{ marginTop: 4, background: 'linear-gradient(180deg, #C6A15B 0%, #2B2118 100%)', color: '#FFFDF8', border: 'none', borderRadius: 12, padding: '14px 16px', fontWeight: 700, fontSize: 15, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 10px 20px rgba(198,161,91,0.3)' }}
+              style={{ marginTop: 4, background: 'linear-gradient(180deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 12, padding: '14px 16px', fontWeight: 700, fontSize: 15, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 10px 20px rgba(246,139,30,0.3)' }}
             >
               Login
             </button>
-            <div style={{ marginTop: 6, textAlign: 'center', fontSize: 11, letterSpacing: '0.08em', color: '#8A8177', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div style={{ marginTop: 6, textAlign: 'center', fontSize: 11, letterSpacing: '0.08em', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
               POWERD BY PRO CREATIVES | 08147621844
             </div>
           </form>
@@ -1568,6 +1589,21 @@ function App() {
         { key: 'sales', label: 'Sales' },
         { key: 'orders', label: 'Orders' },
       ];
+
+  const navIcons = {
+    dashboard: FiHome,
+    orders: FiShoppingCart,
+    inventory: FiBox,
+    receiving: FiTruck,
+    sales: FiDollarSign,
+    reports: FiBarChart2,
+    supplierReports: FiPieChart,
+    staffs: FiUserCheck,
+    customers: FiUsers,
+    accounts: FiUser,
+    suppliers: FiBriefcase,
+    settings: FiSettings,
+  };
 
   const printReceiptCss = `
     @media print {
@@ -1602,35 +1638,39 @@ function App() {
     <>
       <style>{printReceiptCss}</style>
       <div className="no-print" style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
-        <aside style={{ width: 250, background: 'linear-gradient(180deg, #0F172A 0%, #1E293B 100%)', color: '#F8FAFC', padding: '24px 18px', display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '4px 0 20px rgba(15, 23, 42, 0.16)' }}>
+        <aside style={{ width: 250, background: 'linear-gradient(180deg, #14161A 0%, #000000 100%)', color: '#F8FAFC', padding: '24px 18px', display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '4px 0 20px rgba(0, 0, 0, 0.25)' }}>
           <div style={{ marginBottom: 22, padding: '16px 12px 18px', borderRadius: 16, background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 92, height: 92, borderRadius: 28, background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 48%, #1E3A8A 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 24px rgba(0, 0, 0, 0.22)', border: '2px solid rgba(255, 255, 255, 0.24)' }}>
+            <div style={{ width: 92, height: 92, borderRadius: 28, background: 'linear-gradient(135deg, #FDBA74 0%, #F68B1E 48%, #9A3412 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 24px rgba(0, 0, 0, 0.22)', border: '2px solid rgba(255, 255, 255, 0.24)' }}>
               <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="7" y="7" width="50" height="50" rx="18" fill="#0F172A" />
+                <rect x="7" y="7" width="50" height="50" rx="18" fill="#14161A" />
                 <path d="M20 18H29L40 32L29 46H20L31 32L20 18Z" fill="#FFFFFF" />
-                <path d="M33 18H42L31 32L42 46H33L24 32L33 18Z" fill="#60A5FA" />
+                <path d="M33 18H42L31 32L42 46H33L24 32L33 18Z" fill="#FDBA74" />
               </svg>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 24, color: '#FFFFFF', lineHeight: 1 }}>NOOR</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 12, letterSpacing: '0.28em', color: '#60A5FA', marginTop: 4 }}>ADMIN</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 12, letterSpacing: '0.28em', color: '#F68B1E', marginTop: 4 }}>ADMIN</div>
             </div>
-            <div style={{ width: '60%', height: 1, background: 'linear-gradient(90deg, transparent 0%, #2563EB 50%, transparent 100%)' }} />
+            <div style={{ width: '60%', height: 1, background: 'linear-gradient(90deg, transparent 0%, #F68B1E 50%, transparent 100%)' }} />
           </div>
           <div style={{ padding: '0 8px', marginBottom: 6, fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'rgba(148, 163, 184, 0.85)' }}>
             Menu
           </div>
           {navItems.map((item) => {
             const isActive = activeView === item.key;
+            const Icon = navIcons[item.key];
             return (
               <button
                 key={item.key}
                 onClick={() => item.key === 'logout' ? logout() : setActiveView(item.key)}
                 style={{
-                  background: isActive ? 'rgba(37, 99, 235, 0.18)' : 'transparent',
-                  color: isActive ? '#93C5FD' : 'rgba(226, 232, 240, 0.78)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  background: isActive ? 'rgba(246, 139, 30, 0.18)' : 'transparent',
+                  color: isActive ? '#FDBA74' : 'rgba(226, 232, 240, 0.78)',
                   border: 'none',
-                  borderLeft: isActive ? '3px solid #2563EB' : '3px solid transparent',
+                  borderLeft: isActive ? '3px solid #F68B1E' : '3px solid transparent',
                   borderRadius: 8,
                   padding: '12px 16px',
                   textAlign: 'left',
@@ -1643,6 +1683,7 @@ function App() {
                   transition: 'background 0.15s ease, color 0.15s ease',
                 }}
               >
+                {Icon && <Icon size={16} />}
                 {item.label}
               </button>
             );
@@ -1651,6 +1692,9 @@ function App() {
             onClick={logout}
             style={{
               marginTop: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
               background: 'transparent',
               color: 'rgba(226, 232, 240, 0.78)',
               border: '1px solid rgba(148, 163, 184, 0.3)',
@@ -1665,13 +1709,14 @@ function App() {
               boxShadow: 'none',
             }}
           >
+            <FiLogOut size={16} />
             Logout
           </button>
         </aside>
         <div style={{ flex: 1, padding: 20, maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 24, padding: '18px 22px', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 14, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-              <div style={{ width: 4, height: 34, borderRadius: 999, background: 'linear-gradient(180deg, #60A5FA 0%, #2563EB 100%)' }} />
+              <div style={{ width: 4, height: 34, borderRadius: 999, background: 'linear-gradient(180deg, #FDBA74 0%, #F68B1E 100%)' }} />
               <div style={{ minWidth: 220, padding: '12px 18px', borderRadius: 12, background: '#F1F5F9', color: '#0F172A', border: '1px solid #E2E8F0', textAlign: 'center' }}>
                 <div style={{ fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.55, marginBottom: 4, fontWeight: 600 }}>Welcome</div>
                 <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'Courier New, monospace', letterSpacing: '0.04em' }}>
@@ -1680,7 +1725,7 @@ function App() {
               </div>
             </div>
             <div style={{ flex: 1 }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 999, background: '#EFF6FF', color: '#1D4ED8', fontSize: 14, fontWeight: 700, boxShadow: 'none', border: '1px solid #BFDBFE', minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 999, background: '#FFF3E0', color: '#C2670E', fontSize: 14, fontWeight: 700, boxShadow: 'none', border: '1px solid #FED7AA', minWidth: 0 }}>
               <span style={{ fontSize: 16 }}>👤</span>
               {user?.fullName || user?.username || 'Account holder'}
             </div>
@@ -1689,7 +1734,7 @@ function App() {
         <section style={{ marginBottom: 20, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
             <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 26 }}>Settings</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>System preferences</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>System preferences</div>
           </div>
 
           <form onSubmit={saveSettings} style={{ display: 'grid', gap: 16 }}>
@@ -1739,7 +1784,7 @@ function App() {
 
             {settingsMessage && <div style={{ color: '#1d6438', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '10px 12px', fontSize: 13 }}>{settingsMessage}</div>}
 
-            <button type="submit" style={{ justifySelf: 'start', background: 'linear-gradient(180deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, cursor: 'pointer' }}>
+            <button type="submit" style={{ justifySelf: 'start', background: 'linear-gradient(180deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, cursor: 'pointer' }}>
               Save settings
             </button>
           </form>
@@ -1750,7 +1795,7 @@ function App() {
         <section style={{ marginBottom: 20, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
             <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 26 }}>Cashier Management</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Staff Register</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Staff Register</div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 20 }}>
@@ -1808,7 +1853,7 @@ function App() {
                   <option value="admin">Admin</option>
                 </select>
               </label>
-              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 Create Cashier
               </button>
             </form>
@@ -1864,7 +1909,7 @@ function App() {
                             </select>
                           </label>
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                            <button type="submit" style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #2563EB', background: '#2563EB', color: '#FFFFFF', fontWeight: 700, cursor: 'pointer' }}>
+                            <button type="submit" style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #F68B1E', background: '#F68B1E', color: '#FFFFFF', fontWeight: 700, cursor: 'pointer' }}>
                               Save
                             </button>
                             <button type="button" onClick={cancelEditingUser} style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #E2E8F0', background: '#E2E8F0', color: '#0F172A', fontWeight: 700, cursor: 'pointer' }}>
@@ -1880,7 +1925,7 @@ function App() {
                               <div style={{ color: '#64748B', fontSize: 12, marginTop: 2 }}>{u.username}</div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                              <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', background: u.role === 'admin' ? '#0F172A' : '#2563EB', color: '#FFFFFF', borderRadius: 999, padding: '5px 8px', fontWeight: 700 }}>
+                              <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', background: u.role === 'admin' ? '#0F172A' : '#F68B1E', color: '#FFFFFF', borderRadius: 999, padding: '5px 8px', fontWeight: 700 }}>
                                 {u.role}
                               </span>
                               <button type="button" onClick={() => startEditingUser(u)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #E2E8F0', background: '#E2E8F0', color: '#0F172A', fontWeight: 700, cursor: 'pointer' }}>
@@ -1906,7 +1951,7 @@ function App() {
         <section style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
             <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 26 }}>Customers</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Register</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Register</div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 20 }}>
@@ -1933,7 +1978,7 @@ function App() {
                   required
                 />
               </label>
-              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 Save Customer
               </button>
             </form>
@@ -1961,7 +2006,7 @@ function App() {
         <section style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
             <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 26 }}>Suppliers</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Register</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Register</div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 20 }}>
@@ -1988,7 +2033,7 @@ function App() {
                   required
                 />
               </label>
-              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              <button type="submit" style={{ marginTop: 6, background: 'linear-gradient(180deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '12px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 Save Supplier
               </button>
             </form>
@@ -2015,7 +2060,7 @@ function App() {
         <section style={{ marginBottom: 20, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
             <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 26 }}>Incoming Orders</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Customer self-checkout</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Customer self-checkout</div>
           </div>
 
           {ordersActionMessage && (
@@ -2095,7 +2140,7 @@ function App() {
                                   Confirm
                                 </button>
                               )}
-                              <button type="button" onClick={() => updateOrderStatus(order.id, 'completed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'linear-gradient(180deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                              <button type="button" onClick={() => updateOrderStatus(order.id, 'completed')} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'linear-gradient(180deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
                                 Complete
                               </button>
                               <button type="button" onClick={() => updateOrderStatus(order.id, 'cancelled')} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #F5C2C2', background: 'transparent', color: '#B42318', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
@@ -2117,7 +2162,7 @@ function App() {
         <section style={{ marginBottom: 20, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
             <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 26 }}>Customer Accounts</h2>
-            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Registered on the shop website</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Registered on the shop website</div>
           </div>
 
           {onlineCustomers.length === 0 ? (
@@ -2178,30 +2223,30 @@ function App() {
       <div style={{ display: 'grid', gap: 20 }}>
         {adminOverview && (
           <section style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 20, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
-            <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700, marginBottom: 12 }}>Admin Overview</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700, marginBottom: 12 }}>Admin Overview</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
               <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: '#FFFFFF', borderRadius: 14, padding: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
-                <div style={{ color: 'rgba(255,255,255,0.76)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total Customers</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.76)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiUsers size={13} /> Total Customers</div>
                 <div style={{ fontSize: 22, fontWeight: 700 }}>{adminOverview.totalCustomers}</div>
               </div>
-              <div style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', borderRadius: 14, padding: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
-                <div style={{ color: 'rgba(255,255,255,0.82)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Orders Today</div>
+              <div style={{ background: 'linear-gradient(135deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', borderRadius: 14, padding: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.82)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiShoppingBag size={13} /> Orders Today</div>
                 <div style={{ fontSize: 22, fontWeight: 700 }}>{adminOverview.ordersToday}</div>
               </div>
               <div style={{ background: '#F1F5F9', borderRadius: 14, padding: 16, border: '1px solid #E2E8F0' }}>
-                <div style={{ color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Orders This Week</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiCalendar size={13} /> Orders This Week</div>
                 <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{adminOverview.ordersThisWeek}</div>
               </div>
               <div style={{ background: '#F1F5F9', borderRadius: 14, padding: 16, border: '1px solid #E2E8F0' }}>
-                <div style={{ color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue Today</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiDollarSign size={13} /> Revenue Today</div>
                 <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{formatMoney(adminOverview.revenueToday)}</div>
               </div>
               <div style={{ background: '#F1F5F9', borderRadius: 14, padding: 16, border: '1px solid #E2E8F0' }}>
-                <div style={{ color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue This Week</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiTrendingUp size={13} /> Revenue This Week</div>
                 <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{formatMoney(adminOverview.revenueThisWeek)}</div>
               </div>
               <div style={{ background: '#F1F5F9', borderRadius: 14, padding: 16, border: '1px solid #E2E8F0' }}>
-                <div style={{ color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Pending Orders</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiClock size={13} /> Pending Orders</div>
                 <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{adminOverview.pendingOrders}</div>
               </div>
             </div>
@@ -2210,7 +2255,7 @@ function App() {
         <section style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 20, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Inventory Alerts</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}><FiAlertTriangle size={13} /> Inventory Alerts</div>
               <h2 style={{ margin: '6px 0 0', fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 22 }}>Low stock watch</h2>
             </div>
             <div style={{ padding: '8px 12px', borderRadius: 999, background: lowStockProducts.length > 0 ? '#fef2f2' : '#f0fdf4', color: lowStockProducts.length > 0 ? '#b42318' : '#15803d', fontSize: 12, fontWeight: 700 }}>
@@ -2237,7 +2282,7 @@ function App() {
         <section style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 20, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Sales Dashboard</div>
+              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Sales Dashboard</div>
               <h2 style={{ margin: '6px 0 0', fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 22 }}>Performance overview</h2>
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -2254,19 +2299,19 @@ function App() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
             <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: '#FFFFFF', borderRadius: 14, padding: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ color: 'rgba(255,255,255,0.76)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Revenue</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.76)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiDollarSign size={13} /> Revenue</div>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{formatMoney(salesSummary.totalRevenue)}</div>
             </div>
-            <div style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', borderRadius: 14, padding: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ color: 'rgba(255,255,255,0.82)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Profit</div>
+            <div style={{ background: 'linear-gradient(135deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', borderRadius: 14, padding: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.82)', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiTrendingUp size={13} /> Profit</div>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{formatMoney(salesSummary.totalProfit)}</div>
             </div>
             <div style={{ background: '#F1F5F9', borderRadius: 14, padding: 16, border: '1px solid #E2E8F0' }}>
-              <div style={{ color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Sales</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiShoppingCart size={13} /> Sales</div>
               <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{salesSummary.salesCount}</div>
             </div>
             <div style={{ background: '#F1F5F9', borderRadius: 14, padding: 16, border: '1px solid #E2E8F0' }}>
-              <div style={{ color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Items Sold</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', marginBottom: 6, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}><FiPackage size={13} /> Items Sold</div>
               <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{salesSummary.totalItems}</div>
             </div>
           </div>
@@ -2289,7 +2334,7 @@ function App() {
                           style={{
                             height: '100%',
                             width: `${Math.min(100, (count / Math.max(1, salesSummary.salesCount)) * 100)}%`,
-                            background: 'linear-gradient(90deg, #2563EB 0%, #1E3A8A 100%)',
+                            background: 'linear-gradient(90deg, #F68B1E 0%, #C2670E 100%)',
                             borderRadius: 999,
                           }}
                         />
@@ -2309,7 +2354,7 @@ function App() {
                   {topProducts.map(([name, quantity]) => (
                     <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 10, background: '#F1F5F9' }}>
                       <span style={{ fontWeight: 700, color: '#0F172A' }}>{name}</span>
-                      <span style={{ color: '#2563EB', fontWeight: 700 }}>×{quantity}</span>
+                      <span style={{ color: '#F68B1E', fontWeight: 700 }}>×{quantity}</span>
                     </div>
                   ))}
                 </div>
@@ -2319,7 +2364,7 @@ function App() {
             <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                 <h3 style={{ margin: 0, fontSize: 16, fontFamily: "'Inter', sans-serif", fontWeight: 700, color: '#0F172A' }}>Supplier activity</h3>
-                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Procurement</div>
+                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Procurement</div>
               </div>
               {purchaseOrderSummary.length === 0 && receivingSupplierSummary.length === 0 ? (
                 <div style={{ color: '#64748B' }}>No supplier activity yet.</div>
@@ -2329,7 +2374,7 @@ function App() {
                     <div key={`${entry.supplier}-${index}`} style={{ padding: '10px 12px', borderRadius: 10, background: '#F1F5F9' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
                         <span style={{ fontWeight: 700, color: '#0F172A' }}>{entry.supplier}</span>
-                        <span style={{ fontWeight: 700, color: '#2563EB' }}>{formatMoney(entry.totalAmount || 0)}</span>
+                        <span style={{ fontWeight: 700, color: '#F68B1E' }}>{formatMoney(entry.totalAmount || 0)}</span>
                       </div>
                       <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>
                         {entry.ordersCount ? `${entry.ordersCount} purchase order${entry.ordersCount === 1 ? '' : 's'}` : `${entry.receiptsCount || 0} receipt${entry.receiptsCount === 1 ? '' : 's'}`}
@@ -2348,7 +2393,7 @@ function App() {
           <section style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 22, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16, borderBottom: '1px solid #E2E8F0', paddingBottom: 12 }}>
               <h2 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 26, color: '#0F172A' }}>Inventory</h2>
-              <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Stock & receiving</div>
+              <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Stock & receiving</div>
             </div>
 
             {cartAddedMessage && (
@@ -2357,15 +2402,15 @@ function App() {
 
             <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: 18 }}>
               <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Low stock</div>
+                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Low stock</div>
                 <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#b42318' }}>{inventorySummary.lowStockCount}</div>
               </div>
               <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Out of stock</div>
+                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Out of stock</div>
                 <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{inventorySummary.outOfStockCount}</div>
               </div>
               <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Healthy stock</div>
+                <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Healthy stock</div>
                 <div style={{ marginTop: 4, fontSize: 22, fontWeight: 700, color: '#15803d' }}>{inventorySummary.healthyCount}</div>
               </div>
             </div>
@@ -2402,8 +2447,8 @@ function App() {
                     onClick={() => setProductStatusFilter(status)}
                     style={{
                       borderRadius: 999,
-                      border: selected ? '1px solid #2563EB' : '1px solid #E2E8F0',
-                      background: selected ? '#2563EB' : '#FFFFFF',
+                      border: selected ? '1px solid #F68B1E' : '1px solid #E2E8F0',
+                      background: selected ? '#F68B1E' : '#FFFFFF',
                       color: selected ? '#FFFFFF' : '#0F172A',
                       padding: '8px 12px',
                       fontWeight: 700,
@@ -2423,7 +2468,7 @@ function App() {
                   <button
                     type="button"
                     onClick={() => setShowStockMovementHistory((current) => !current)}
-                    style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}
+                    style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#F68B1E', cursor: 'pointer', fontWeight: 700 }}
                   >
                     {showStockMovementHistory ? 'Hide History' : 'View History'}
                   </button>
@@ -2453,7 +2498,7 @@ function App() {
               <div style={{ background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 14, padding: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
                   <h3 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 18, color: '#0F172A' }}>Receiving history</h3>
-                  <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Supplier records</div>
+                  <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Supplier records</div>
                 </div>
                 <div style={{ display: 'grid', gap: 10, marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -2468,7 +2513,7 @@ function App() {
                   <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
                     {receivingSupplierSummary.map((summary) => (
                       <div key={summary.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFFFF', border: '1px solid #E2E8F0' }}>
-                        <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>{summary.supplier}</div>
+                        <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>{summary.supplier}</div>
                         <div style={{ marginTop: 6, fontWeight: 700, color: '#0F172A' }}>{formatMoney(summary.totalAmount)}</div>
                         <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{summary.receiptsCount} receipt{summary.receiptsCount === 1 ? '' : 's'} • {summary.totalItems} item{summary.totalItems === 1 ? '' : 's'}</div>
                       </div>
@@ -2482,7 +2527,7 @@ function App() {
                           <span style={{ fontWeight: 700 }}>{entry.share}%</span>
                         </div>
                         <div style={{ height: 10, background: '#E2E8F0', borderRadius: 999 }}>
-                          <div style={{ height: '100%', width: `${Math.max(8, entry.share)}%`, background: 'linear-gradient(90deg, #2563EB 0%, #1E3A8A 100%)', borderRadius: 999 }} />
+                          <div style={{ height: '100%', width: `${Math.max(8, entry.share)}%`, background: 'linear-gradient(90deg, #F68B1E 0%, #C2670E 100%)', borderRadius: 999 }} />
                         </div>
                       </div>
                     ))}
@@ -2677,10 +2722,10 @@ function App() {
             <div style={{ marginTop: 18, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 20, padding: 24, boxShadow: 'none' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
                 <div>
-                  <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Inventory Setup</div>
+                  <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Inventory Setup</div>
                   <h3 style={{ margin: '6px 0 0', fontSize: 20, color: '#0F172A', fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>Register New Item</h3>
                 </div>
-                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFFFF', color: '#2563EB', border: '1px solid #E2E8F0', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFFFF', color: '#F68B1E', border: '1px solid #E2E8F0', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                   Product Details
                 </div>
               </div>
@@ -2734,7 +2779,7 @@ function App() {
                   <button type="button" onClick={addReceivingItem} style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Add to Receipt
                   </button>
-                  <button type="submit" style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="submit" style={{ background: 'linear-gradient(135deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                     Save Item
                   </button>
                   <button type="button" onClick={() => { setEditingProductId(null); setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' }); }} style={{ background: '#FFFFFF', color: '#0F172A', border: '1px solid #E2E8F0', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
@@ -2776,12 +2821,12 @@ function App() {
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 18, padding: 18, boxShadow: 'none' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
                     <h3 style={{ margin: 0, fontSize: 18, color: '#0F172A' }}>Receiving Receipt</h3>
-                    <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700, padding: '6px 10px', borderRadius: 999, background: '#FFFFFF', border: '1px solid #E2E8F0' }}>Draft</div>
+                    <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700, padding: '6px 10px', borderRadius: 999, background: '#FFFFFF', border: '1px solid #E2E8F0' }}>Draft</div>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 12, padding: '12px 14px', borderRadius: 12, background: '#FFFFFF', border: '1px solid #E2E8F0' }}>
                     <div>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', fontWeight: 700 }}>Draft summary</div>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', fontWeight: 700 }}>Draft summary</div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginTop: 4 }}>{receivingItems.length} item{receivingItems.length === 1 ? '' : 's'} • {receivingItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0)} unit{receivingItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0) === 1 ? '' : 's'}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
@@ -2855,7 +2900,7 @@ function App() {
                     <button type="button" onClick={completeReceiving} style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                       Complete Receiving
                     </button>
-                    <button type="button" onClick={addPurchaseOrder} style={{ background: 'linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
+                    <button type="button" onClick={addPurchaseOrder} style={{ background: 'linear-gradient(135deg, #F68B1E 0%, #C2670E 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
                       Save Purchase Order
                     </button>
                     <button type="button" onClick={() => setReceivingItems([])} style={{ background: '#FFFFFF', color: '#0F172A', border: '1px solid #E2E8F0', borderRadius: 999, padding: '10px 14px', cursor: 'pointer', fontWeight: 700 }}>
@@ -2881,7 +2926,7 @@ function App() {
                         <div style={{ fontSize: 12, color: '#64748B', marginTop: 6 }}>{entry.ordersCount} order{entry.ordersCount === 1 ? '' : 's'} • {entry.itemCount} item{entry.itemCount === 1 ? '' : 's'}</div>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
                           <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#fef3c7', color: '#92400e', fontWeight: 700 }}>Pending {entry.pendingCount}</span>
-                          <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#E2E8F0', color: '#2563EB', fontWeight: 700 }}>Approved {entry.approvedCount}</span>
+                          <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#FFF3E0', color: '#F68B1E', fontWeight: 700 }}>Approved {entry.approvedCount}</span>
                           <span style={{ fontSize: 11, padding: '3px 7px', borderRadius: 999, background: '#dcfce7', color: '#166534', fontWeight: 700 }}>Completed {entry.completedCount}</span>
                         </div>
                       </div>
@@ -2958,7 +3003,7 @@ function App() {
                                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{new Date(order.createdAt || order.date).toLocaleString()}</div>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <span style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, textTransform: 'capitalize', background: order.status === 'completed' ? '#dcfce7' : order.status === 'approved' ? '#E2E8F0' : '#fef3c7', color: order.status === 'completed' ? '#166534' : order.status === 'approved' ? '#2563EB' : '#92400e', fontWeight: 700 }}>
+                                <span style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, textTransform: 'capitalize', background: order.status === 'completed' ? '#dcfce7' : order.status === 'approved' ? '#FFF3E0' : '#fef3c7', color: order.status === 'completed' ? '#166534' : order.status === 'approved' ? '#F68B1E' : '#92400e', fontWeight: 700 }}>
                                   {order.status || 'pending'}
                                 </span>
                                 <div style={{ fontWeight: 700 }}>{formatMoney(order.totalAmount || 0)}</div>
@@ -2979,7 +3024,7 @@ function App() {
                             <div style={{ borderTop: '1px solid #E2E8F0', padding: '10px 14px', display: 'grid', gap: 6 }}>
                               <div style={{ fontSize: 12, color: '#64748B' }}>Store account: {order.storeAccount || 'Main Store'}</div>
                               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                <button type="button" onClick={() => updatePurchaseOrderStatus(order.id, 'approved')} style={{ background: '#E2E8F0', color: '#2563EB', border: '1px solid #E2E8F0', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Approve</button>
+                                <button type="button" onClick={() => updatePurchaseOrderStatus(order.id, 'approved')} style={{ background: '#FFF3E0', color: '#F68B1E', border: '1px solid #FED7AA', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Approve</button>
                                 <button type="button" onClick={() => updatePurchaseOrderStatus(order.id, 'completed')} style={{ background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Complete</button>
                                 {order.status === 'approved' && (
                                   <button type="button" onClick={() => handleReceivePurchaseOrder(order)} style={{ background: '#0F172A', color: '#FFFFFF', border: '1px solid #0F172A', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', fontWeight: 700 }}>Receive</button>
@@ -2988,7 +3033,7 @@ function App() {
                               {timeline.length > 0 && (
                                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                                   {timeline.map((entry) => (
-                                    <span key={`${order.id}-${entry.label}`} style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, background: entry.tone === 'completed' ? '#dcfce7' : entry.tone === 'approved' ? '#E2E8F0' : '#F1F5F9', color: entry.tone === 'completed' ? '#166534' : entry.tone === 'approved' ? '#2563EB' : '#64748B', fontWeight: 700 }}>
+                                    <span key={`${order.id}-${entry.label}`} style={{ padding: '4px 8px', borderRadius: 999, fontSize: 11, background: entry.tone === 'completed' ? '#dcfce7' : entry.tone === 'approved' ? '#FFF3E0' : '#F1F5F9', color: entry.tone === 'completed' ? '#166534' : entry.tone === 'approved' ? '#F68B1E' : '#64748B', fontWeight: 700 }}>
                                       {entry.label} • {new Date(entry.date).toLocaleString()}
                                     </span>
                                   ))}
@@ -3000,7 +3045,7 @@ function App() {
                                   <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>{progress.percent}%</span>
                                 </div>
                                 <div style={{ height: 8, borderRadius: 999, background: '#E2E8F0', overflow: 'hidden' }}>
-                                  <div style={{ height: '100%', width: `${progress.percent}%`, background: progress.isComplete ? '#166534' : '#2563EB', borderRadius: 999 }} />
+                                  <div style={{ height: '100%', width: `${progress.percent}%`, background: progress.isComplete ? '#166534' : '#F68B1E', borderRadius: 999 }} />
                                 </div>
                                 <div style={{ fontSize: 12, color: '#64748B' }}>{formatMoney(progress.receivedAmount)} received of {formatMoney(progress.orderedAmount)}</div>
                               </div>
@@ -3087,7 +3132,7 @@ function App() {
             </div>
 
             <div style={{ marginBottom: 16, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: 12 }}>
-              <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700, marginBottom: 8 }}>Available items</div>
+              <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700, marginBottom: 8 }}>Available items</div>
               <div style={{ display: 'grid', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
                 {salesSearchResults.length === 0 ? (
                   <div style={{ color: '#64748B', padding: 8 }}>No item matches your search.</div>
@@ -3116,7 +3161,7 @@ function App() {
                         <div style={{ fontWeight: 700 }}>{product.name}</div>
                         <div style={{ fontSize: 12, color: '#64748B' }}>{product.sku}</div>
                       </div>
-                      <div style={{ fontWeight: 700, color: '#2563EB' }}>{formatMoney(product.price)}</div>
+                      <div style={{ fontWeight: 700, color: '#F68B1E' }}>{formatMoney(product.price)}</div>
                     </button>
                   ))
                 )}
@@ -3127,7 +3172,7 @@ function App() {
             ) : (
               <div style={{ border: '1px solid #E2E8F0', borderRadius: 16, overflow: 'hidden' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: '#F1F5F9', borderBottom: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Cart</div>
+                  <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Cart</div>
                   <button type="button" onClick={clearCart} style={{ background: 'transparent', color: '#0F172A', border: '1px solid #E2E8F0', borderRadius: 999, padding: '7px 10px', cursor: 'pointer', fontWeight: 700 }}>
                     Clear cart
                   </button>
@@ -3238,7 +3283,7 @@ function App() {
             <div style={{ marginBottom: 16, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <strong>Checkout review</strong>
-                <button type="button" onClick={() => setShowCheckoutReview((current) => !current)} style={{ background: 'transparent', border: 'none', color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}>
+                <button type="button" onClick={() => setShowCheckoutReview((current) => !current)} style={{ background: 'transparent', border: 'none', color: '#F68B1E', cursor: 'pointer', fontWeight: 700 }}>
                   {showCheckoutReview ? 'Hide' : 'Preview'}
                 </button>
               </div>
@@ -3280,7 +3325,7 @@ function App() {
         <section style={{ marginTop: 24, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 20, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Sales History</div>
+              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Sales History</div>
               <h2 style={{ margin: '6px 0 0', fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 22 }}>Sales reports</h2>
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -3296,13 +3341,13 @@ function App() {
                 Reset
               </button>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-                <button type="button" onClick={() => setShowSalesHistory((current) => !current)} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}>
+                <button type="button" onClick={() => setShowSalesHistory((current) => !current)} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#F68B1E', cursor: 'pointer', fontWeight: 700 }}>
                   {showSalesHistory ? 'Hide Sales History' : 'Show Sales History'}
                 </button>
-                <button type="button" onClick={handleExportReport} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}>
+                <button type="button" onClick={handleExportReport} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#F68B1E', cursor: 'pointer', fontWeight: 700 }}>
                   Export PDF
                 </button>
-                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFFFF', border: '1px solid #E2E8F0', color: '#2563EB', fontWeight: 700, fontSize: 13 }}>
+                <div style={{ padding: '8px 12px', borderRadius: 999, background: '#FFFFFF', border: '1px solid #E2E8F0', color: '#F68B1E', fontWeight: 700, fontSize: 13 }}>
                   {filteredReportSales.length} transaction{filteredReportSales.length === 1 ? '' : 's'}
                 </div>
               </div>
@@ -3315,25 +3360,25 @@ function App() {
             <div style={{ display: 'grid', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 6 }}>Revenue</div>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 6 }}>Revenue</div>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#0F172A' }}>{formatMoney(salesSummary.totalRevenue)}</div>
                 </div>
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 6 }}>Net profit</div>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 6 }}>Net profit</div>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#0F172A' }}>{formatMoney(salesSummary.totalProfit)}</div>
                 </div>
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 6 }}>Items sold</div>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 6 }}>Items sold</div>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#0F172A' }}>{salesSummary.totalItems}</div>
                 </div>
               </div>
 
               {Object.entries(salesSummary.paymentMethods).length > 0 && (
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Payment methods</div>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Payment methods</div>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {Object.entries(salesSummary.paymentMethods).map(([method, count]) => (
-                      <span key={method} style={{ padding: '6px 10px', borderRadius: 999, background: '#E2E8F0', color: '#2563EB', fontSize: 12, fontWeight: 700 }}>
+                      <span key={method} style={{ padding: '6px 10px', borderRadius: 999, background: '#FFF3E0', color: '#F68B1E', fontSize: 12, fontWeight: 700 }}>
                         {method}: {count}
                       </span>
                     ))}
@@ -3343,7 +3388,7 @@ function App() {
 
               {topProducts.length > 0 && (
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Top products</div>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Top products</div>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {topProducts.map(([name, quantity]) => (
                       <span key={name} style={{ padding: '6px 10px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 12, fontWeight: 700 }}>
@@ -3357,7 +3402,7 @@ function App() {
               {showSalesHistory && (
                 <div style={{ display: 'grid', gap: 16 }}>
                   <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Stock movement</div>
+                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Stock movement</div>
                     <div style={{ display: 'grid', gap: 8 }}>
                       {stockMovements.length === 0 ? (
                         <div style={{ color: '#64748B' }}>No stock movements recorded yet.</div>
@@ -3379,7 +3424,7 @@ function App() {
                   </div>
 
                   <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Receiving history</div>
+                    <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Receiving history</div>
                     <div style={{ display: 'grid', gap: 10, marginBottom: 12 }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <button
@@ -3393,7 +3438,7 @@ function App() {
                       <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
                         {receivingSupplierSummary.map((summary) => (
                           <div key={summary.supplier} style={{ padding: '10px 12px', borderRadius: 10, background: '#FFFFFF', border: '1px solid #E2E8F0' }}>
-                            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>{summary.supplier}</div>
+                            <div style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>{summary.supplier}</div>
                             <div style={{ marginTop: 6, fontWeight: 700, color: '#0F172A' }}>{formatMoney(summary.totalAmount)}</div>
                             <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{summary.receiptsCount} receipt{summary.receiptsCount === 1 ? '' : 's'} • {summary.totalItems} item{summary.totalItems === 1 ? '' : 's'}</div>
                           </div>
@@ -3455,7 +3500,7 @@ function App() {
 
                   {cashierPerformance.length > 0 && (
                     <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 14 }}>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Cashier performance</div>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Cashier performance</div>
                       <div style={{ display: 'grid', gap: 12 }}>
                         {cashierPerformance.map((staff) => (
                           <div key={staff.cashierName} style={{ padding: 12, borderRadius: 12, border: '1px solid #E2E8F0', background: '#FFFFFF' }}>
@@ -3465,7 +3510,7 @@ function App() {
                                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{staff.salesCount} sale{staff.salesCount === 1 ? '' : 's'}</div>
                               </div>
                               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                                <span style={{ padding: '6px 10px', borderRadius: 999, background: '#E2E8F0', color: '#2563EB', fontSize: 12, fontWeight: 700 }}>Revenue {formatMoney(staff.totalRevenue)}</span>
+                                <span style={{ padding: '6px 10px', borderRadius: 999, background: '#FFF3E0', color: '#F68B1E', fontSize: 12, fontWeight: 700 }}>Revenue {formatMoney(staff.totalRevenue)}</span>
                                 <span style={{ padding: '6px 10px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 12, fontWeight: 700 }}>Profit {formatMoney(staff.totalProfit)}</span>
                               </div>
                             </div>
@@ -3479,14 +3524,14 @@ function App() {
                               </div>
                             )}
                             <div style={{ marginTop: 10, borderTop: '1px solid #E2E8F0', paddingTop: 10 }}>
-                              <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Sales history</div>
+                              <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Sales history</div>
                               <div style={{ display: 'grid', gap: 8 }}>
                                 {staff.salesHistory.map((sale) => (
                                   <div key={`${staff.cashierName}-${sale.id}`} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: 10 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
                                       <div style={{ fontWeight: 700, color: '#0F172A' }}>{new Date(sale.datetime).toLocaleString()}</div>
                                       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                        <span style={{ padding: '4px 8px', borderRadius: 999, background: '#E2E8F0', color: '#2563EB', fontSize: 11, fontWeight: 700 }}>{sale.paymentMethod}</span>
+                                        <span style={{ padding: '4px 8px', borderRadius: 999, background: '#FFF3E0', color: '#F68B1E', fontSize: 11, fontWeight: 700 }}>{sale.paymentMethod}</span>
                                         <span style={{ padding: '4px 8px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 11, fontWeight: 700 }}>Profit {formatMoney(sale.profit)}</span>
                                       </div>
                                     </div>
@@ -3519,11 +3564,11 @@ function App() {
                       <div key={sale.id} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, padding: 16 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
                           <div>
-                            <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 4 }}>Sale</div>
+                            <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 4 }}>Sale</div>
                             <div style={{ fontWeight: 700, color: '#0F172A' }}>{new Date(sale.datetime).toLocaleString()}</div>
                           </div>
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                            <span style={{ padding: '6px 10px', borderRadius: 999, background: '#E2E8F0', color: '#2563EB', fontSize: 12, fontWeight: 700 }}>{sale.paymentMethod}</span>
+                            <span style={{ padding: '6px 10px', borderRadius: 999, background: '#FFF3E0', color: '#F68B1E', fontSize: 12, fontWeight: 700 }}>{sale.paymentMethod}</span>
                             <span style={{ padding: '6px 10px', borderRadius: 999, background: '#e8f7ee', color: '#15803d', fontSize: 12, fontWeight: 700 }}>Profit {formatMoney(actualProfit)}</span>
                           </div>
                         </div>
@@ -3534,14 +3579,14 @@ function App() {
                         </div>
 
                         <div style={{ marginTop: 12 }}>
-                          <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB', marginBottom: 8 }}>Items</div>
+                          <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E', marginBottom: 8 }}>Items</div>
                           <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 8 }}>
                             {sale.items.map((item) => {
                               const itemProfit = ((Number(item.price) || 0) - (Number(item.costPrice) || 0)) * (Number(item.quantity) || 0);
                               return (
                                 <li key={item.id} style={{ color: '#334155' }}>
                                   <span style={{ fontWeight: 700 }}>{item.quantity} × {item.name}</span>
-                                  <span style={{ color: '#2563EB' }}> • {formatMoney(itemProfit)} profit</span>
+                                  <span style={{ color: '#F68B1E' }}> • {formatMoney(itemProfit)} profit</span>
                                 </li>
                               );
                             })}
@@ -3561,7 +3606,7 @@ function App() {
         <section style={{ marginTop: 24, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 20, padding: 24, boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#2563EB', fontWeight: 700 }}>Procurement</div>
+              <div style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F68B1E', fontWeight: 700 }}>Procurement</div>
               <h2 style={{ margin: '6px 0 0', fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#0F172A', fontSize: 22 }}>Supplier reports</h2>
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -3580,7 +3625,7 @@ function App() {
               <button type="button" onClick={() => { setSupplierReportSupplierFilter(''); setSupplierReportStartDate(''); setSupplierReportEndDate(''); }} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#64748B', cursor: 'pointer' }}>
                 Reset
               </button>
-              <button type="button" onClick={handleExportSupplierReport} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}>
+              <button type="button" onClick={handleExportSupplierReport} style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 12px', background: '#FFFFFF', color: '#F68B1E', cursor: 'pointer', fontWeight: 700 }}>
                 Export PDF
               </button>
             </div>
@@ -3597,16 +3642,16 @@ function App() {
                       <div style={{ fontWeight: 700, color: '#0F172A' }}>{entry.supplier}</div>
                       <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>Purchase orders and receiving activity</div>
                     </div>
-                    <div style={{ fontWeight: 700, color: '#2563EB' }}>{formatMoney(entry.purchaseOrderAmount + entry.receivingAmount)}</div>
+                    <div style={{ fontWeight: 700, color: '#F68B1E' }}>{formatMoney(entry.purchaseOrderAmount + entry.receivingAmount)}</div>
                   </div>
                   <div style={{ marginTop: 12, display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
                     <div style={{ padding: '10px 12px', borderRadius: 12, background: '#F1F5F9' }}>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB' }}>Purchase orders</div>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E' }}>Purchase orders</div>
                       <div style={{ fontWeight: 700, color: '#0F172A', marginTop: 4 }}>{entry.purchaseOrderCount} order{entry.purchaseOrderCount === 1 ? '' : 's'}</div>
                       <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{formatMoney(entry.purchaseOrderAmount)}</div>
                     </div>
                     <div style={{ padding: '10px 12px', borderRadius: 12, background: '#F1F5F9' }}>
-                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563EB' }}>Receiving</div>
+                      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F68B1E' }}>Receiving</div>
                       <div style={{ fontWeight: 700, color: '#0F172A', marginTop: 4 }}>{entry.receivingCount} receipt{entry.receivingCount === 1 ? '' : 's'}</div>
                       <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{formatMoney(entry.receivingAmount)} • {entry.receivingItems} item{entry.receivingItems === 1 ? '' : 's'}</div>
                     </div>
