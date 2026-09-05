@@ -215,11 +215,38 @@ const server = http.createServer(async (req, res) => {
       });
       const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       const now = new Date().toISOString();
-      const result = await pool.query(
-        'INSERT INTO customer_orders ("customerName", phone, address, notes, "itemsJson", "totalAmount", status, "createdAt", "updatedAt", "customerId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
-        [String(customerName).trim(), String(phone).trim(), String(address || '').trim(), String(notes || '').trim(), JSON.stringify(items), totalAmount, 'pending', now, now, customer ? customer.id : null]
-      );
-      return sendJson(res, 201, { id: result.rows[0].id, customerName: String(customerName).trim(), phone: String(phone).trim(), address: String(address || '').trim(), notes: String(notes || '').trim(), items, totalAmount, status: 'pending', createdAt: now, updatedAt: now, customerId: customer ? customer.id : null });
+
+      // Stock is deducted immediately when the customer places the order, so quantities stay accurate for other shoppers.
+      const client = await pool.connect();
+      let orderId;
+      try {
+        await client.query('BEGIN');
+        for (const item of items) {
+          const stockResult = await client.query('SELECT stock FROM products WHERE id = $1', [item.productId]);
+          const available = Number(stockResult.rows[0]?.stock) || 0;
+          if (item.quantity > available) {
+            throw new Error(`Not enough stock for ${item.name}`);
+          }
+          await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [item.quantity, item.productId]);
+          await client.query(
+            'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
+            [item.productId, item.name, 'sale', -Math.abs(item.quantity), now, 'Customer order placed']
+          );
+        }
+        const insertResult = await client.query(
+          'INSERT INTO customer_orders ("customerName", phone, address, notes, "itemsJson", "totalAmount", status, "createdAt", "updatedAt", "customerId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
+          [String(customerName).trim(), String(phone).trim(), String(address || '').trim(), String(notes || '').trim(), JSON.stringify(items), totalAmount, 'pending', now, now, customer ? customer.id : null]
+        );
+        orderId = insertResult.rows[0].id;
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK');
+        return sendJson(res, 400, { error: error.message });
+      } finally {
+        client.release();
+      }
+
+      return sendJson(res, 201, { id: orderId, customerName: String(customerName).trim(), phone: String(phone).trim(), address: String(address || '').trim(), notes: String(notes || '').trim(), items, totalAmount, status: 'pending', createdAt: now, updatedAt: now, customerId: customer ? customer.id : null });
     }
 
     if (req.method === 'GET' && pathname === '/api/orders') {
@@ -245,13 +272,22 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 400, { error: `Order is already ${order.status}` });
       }
 
-      let items = JSON.parse(order.itemsJson);
+      // Stock for this order's current items is already reserved (deducted) from the moment it was placed.
+      const previousItems = JSON.parse(order.itemsJson);
+      let items = previousItems;
       let totalAmount = Number(order.totalAmount);
       const now = new Date().toISOString();
+      let itemsChanged = false;
 
       if (Array.isArray(editedItems) && editedItems.length) {
+        // A product's true available stock (for this edit) is its current stock plus whatever this order already reserved.
         const productRowsResult = await pool.query('SELECT * FROM products');
-        const validation = validateCustomerOrderPayload({ customerName: order.customerName, phone: order.phone, items: editedItems }, productRowsResult.rows);
+        const previousQtyMap = new Map(previousItems.map((item) => [item.productId, item.quantity]));
+        const productsForValidation = productRowsResult.rows.map((product) => ({
+          ...product,
+          stock: Number(product.stock) + (Number(previousQtyMap.get(product.id)) || 0),
+        }));
+        const validation = validateCustomerOrderPayload({ customerName: order.customerName, phone: order.phone, items: editedItems }, productsForValidation);
         if (!validation.ok) {
           return sendJson(res, 400, { error: validation.error });
         }
@@ -262,16 +298,48 @@ const server = http.createServer(async (req, res) => {
           return { productId: product.id, name: product.name, price: Number(product.price) || 0, quantity };
         });
         totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        itemsChanged = true;
       }
 
       const nextAddress = editedAddress !== undefined ? String(editedAddress).trim() : order.address;
       const nextNotes = editedNotes !== undefined ? String(editedNotes).trim() : order.notes;
 
+      // Reconciles reserved stock with any quantity changes made while the order is still pending/confirmed.
+      const applyItemStockDelta = async (client) => {
+        if (!itemsChanged) return;
+        const previousQtyMap = new Map(previousItems.map((item) => [item.productId, item.quantity]));
+        const nextQtyMap = new Map(items.map((item) => [item.productId, item.quantity]));
+        const productIds = new Set([...previousQtyMap.keys(), ...nextQtyMap.keys()]);
+        for (const productId of productIds) {
+          const previousQty = previousQtyMap.get(productId) || 0;
+          const nextQty = nextQtyMap.get(productId) || 0;
+          const delta = nextQty - previousQty;
+          if (delta === 0) continue;
+          await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [delta, productId]);
+          const item = items.find((entry) => entry.productId === productId) || previousItems.find((entry) => entry.productId === productId);
+          await client.query(
+            'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
+            [productId, item?.name || 'Product', 'sale', -delta, now, `Order #${order.id} items updated`]
+          );
+        }
+      };
+
       if (!status) {
-        await pool.query(
-          'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, "updatedAt" = $5 WHERE id = $6',
-          [JSON.stringify(items), totalAmount, nextAddress, nextNotes, now, id]
-        );
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          await applyItemStockDelta(client);
+          await client.query(
+            'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, "updatedAt" = $5 WHERE id = $6',
+            [JSON.stringify(items), totalAmount, nextAddress, nextNotes, now, id]
+          );
+          await client.query('COMMIT');
+        } catch (error) {
+          await client.query('ROLLBACK');
+          return sendJson(res, 400, { error: error.message });
+        } finally {
+          client.release();
+        }
         const refreshed = await pool.query('SELECT * FROM customer_orders WHERE id = $1', [id]);
         return sendJson(res, 200, refreshed.rows[0]);
       }
@@ -282,19 +350,15 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (status === 'completed') {
+        // Stock was already deducted when the order was placed (and reconciled above for edits), so just record the sale for reporting.
         const productIds = items.map((item) => item.productId);
-        const productRowsResult = await pool.query('SELECT id, stock, "costPrice" FROM products WHERE id = ANY($1)', [productIds]);
+        const productRowsResult = await pool.query('SELECT id, "costPrice" FROM products WHERE id = ANY($1)', [productIds]);
         const productMap = new Map(productRowsResult.rows.map((product) => [product.id, product]));
-        for (const item of items) {
-          const available = Number(productMap.get(item.productId)?.stock) || 0;
-          if (item.quantity > available) {
-            return sendJson(res, 400, { error: `Not enough stock for ${item.name} to complete this order` });
-          }
-        }
 
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
+          await applyItemStockDelta(client);
           const totalCost = items.reduce((sum, item) => sum + (Number(productMap.get(item.productId)?.costPrice) || 0) * item.quantity, 0);
           const profit = totalAmount - totalCost;
           const saleResult = await client.query(
@@ -308,11 +372,6 @@ const server = http.createServer(async (req, res) => {
               'INSERT INTO sale_items ("saleId", "productId", quantity, price, "costPrice") VALUES ($1, $2, $3, $4, $5)',
               [saleId, item.productId, item.quantity, item.price, costPrice]
             );
-            await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [item.quantity, item.productId]);
-            await client.query(
-              'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
-              [item.productId, item.name, 'sale', -Math.abs(Number(item.quantity) || 0), now, `Online order #${order.id}`]
-            );
           }
           await client.query(
             'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, status = $5, "updatedAt" = $6 WHERE id = $7',
@@ -325,11 +384,46 @@ const server = http.createServer(async (req, res) => {
         } finally {
           client.release();
         }
+      } else if (status === 'cancelled') {
+        // Restore the stock that was reserved for this order back to inventory.
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          await applyItemStockDelta(client);
+          for (const item of items) {
+            await client.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [item.quantity, item.productId]);
+            await client.query(
+              'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
+              [item.productId, item.name, 'return', Math.abs(Number(item.quantity) || 0), now, `Order #${order.id} cancelled - stock restored`]
+            );
+          }
+          await client.query(
+            'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, status = $5, "updatedAt" = $6 WHERE id = $7',
+            [JSON.stringify(items), totalAmount, nextAddress, nextNotes, 'cancelled', now, id]
+          );
+          await client.query('COMMIT');
+        } catch (error) {
+          await client.query('ROLLBACK');
+          return sendJson(res, 400, { error: error.message });
+        } finally {
+          client.release();
+        }
       } else {
-        await pool.query(
-          'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, status = $5, "updatedAt" = $6 WHERE id = $7',
-          [JSON.stringify(items), totalAmount, nextAddress, nextNotes, status, now, id]
-        );
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          await applyItemStockDelta(client);
+          await client.query(
+            'UPDATE customer_orders SET "itemsJson" = $1, "totalAmount" = $2, address = $3, notes = $4, status = $5, "updatedAt" = $6 WHERE id = $7',
+            [JSON.stringify(items), totalAmount, nextAddress, nextNotes, status, now, id]
+          );
+          await client.query('COMMIT');
+        } catch (error) {
+          await client.query('ROLLBACK');
+          return sendJson(res, 400, { error: error.message });
+        } finally {
+          client.release();
+        }
       }
 
       const updatedResult = await pool.query('SELECT * FROM customer_orders WHERE id = $1', [id]);
