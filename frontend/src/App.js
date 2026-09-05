@@ -19,6 +19,7 @@ import {
   FiTrendingUp,
   FiPackage,
   FiAlertTriangle,
+  FiCamera,
 } from 'react-icons/fi';
 import { buildStaffUpdatePayload } from './staffUtils';
 import { buildCashierPerformance, buildPurchaseOrderAuditSummary, buildPurchaseOrderCompletionPayload, buildPurchaseOrderProgress, buildPurchaseOrderReceivingHistory, buildPurchaseOrderSummary, buildPurchaseOrderTimeline, buildReceivingItemsFromPurchaseOrder, buildReceivingSpendTrend, buildReceivingSupplierSummary, buildSalesSummary, buildSupplierContactSummary, buildSupplierOrderHistory, buildSupplierPerformanceSummary, buildSupplierReportSummary, calculateActualProfit, exportPurchaseOrdersToCsv, exportReceivingHistoryToCsv, exportSalesToCsv, exportSupplierReportToCsv, filterReceivingHistory, filterSalesByDateRange, parsePurchaseOrderItems } from './reportUtils';
@@ -681,6 +682,34 @@ function App() {
   const cancelEditProduct = () => {
     setEditingProductId(null);
     setForm({ sku: '', name: '', price: '', costPrice: '', stock: '', imageUrl: '', category: '' });
+  };
+
+  const handleProductPhotoSelect = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setProductFormMessage('Please choose an image file.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 640;
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+        setForm((current) => ({ ...current, imageUrl: dataUrl }));
+        setProductFormMessage('');
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
   };
 
   const saveProduct = async (event) => {
@@ -2680,6 +2709,15 @@ function App() {
                             <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#334155', fontWeight: 600 }}>
                               Image URL
                               <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} style={{ padding: '9px 11px', borderRadius: 10, border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A' }} placeholder="https://example.com/photo.jpg" />
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#F68B1E', border: '1px dashed #FED7AA', borderRadius: 8, padding: '7px 10px', cursor: 'pointer', background: '#FFF3E0' }}>
+                                  <FiCamera size={14} /> Upload photo
+                                  <input type="file" accept="image/*" onChange={handleProductPhotoSelect} style={{ display: 'none' }} />
+                                </label>
+                                {form.imageUrl && (
+                                  <img src={form.imageUrl} alt="Preview" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid #E2E8F0' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                                )}
+                              </div>
                             </label>
                           </div>
                           {productFormMessage && (
@@ -2774,6 +2812,15 @@ function App() {
                 <label style={{ display: 'grid', gap: 6, fontSize: 13, color: '#334155', fontWeight: 600 }}>
                   Image URL (shown to customers on the shop website)
                   <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A' }} placeholder="https://example.com/photo.jpg" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#F68B1E', border: '1px dashed #FED7AA', borderRadius: 8, padding: '8px 12px', cursor: 'pointer', background: '#FFF3E0' }}>
+                      <FiCamera size={14} /> Upload photo from device
+                      <input type="file" accept="image/*" onChange={handleProductPhotoSelect} style={{ display: 'none' }} />
+                    </label>
+                    {form.imageUrl && (
+                      <img src={form.imageUrl} alt="Preview" style={{ width: 44, height: 44, borderRadius: 10, objectFit: 'cover', border: '1px solid #E2E8F0' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                    )}
+                  </div>
                 </label>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 2 }}>
                   <button type="button" onClick={addReceivingItem} style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', color: '#FFFFFF', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>
