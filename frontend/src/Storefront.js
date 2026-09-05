@@ -13,11 +13,12 @@ const COLORS = {
   green: '#0C8A3E',
 };
 
-function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customerAuth, onCustomerSignup, onCustomerLogin, onCustomerLogout, myOrders, onRefreshMyOrders }) {
+function Storefront({ products, shopName, currencySymbol, bankName, bankAccountName, bankAccountNumber, onPlaceOrder, customerAuth, onCustomerSignup, onCustomerLogin, onCustomerLogout, myOrders, onRefreshMyOrders }) {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [form, setForm] = useState({ customerName: '', phone: '', address: '', notes: '' });
+  const [paymentMethod, setPaymentMethod] = useState('delivery');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successOrder, setSuccessOrder] = useState(null);
@@ -55,6 +56,7 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
     () => cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 0), 0),
     [cart]
   );
+  const hasBankDetails = Boolean((bankAccountNumber || '').trim());
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -102,11 +104,13 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
         address: form.address.trim(),
         notes: form.notes.trim(),
         items: cart.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+        paymentMethod: paymentMethod === 'transfer' ? 'Bank Transfer' : 'Pay on Pickup/Delivery',
       });
       setSuccessOrder(order);
       setCart([]);
       setCartOpen(false);
       setForm({ customerName: '', phone: '', address: '', notes: '' });
+      setPaymentMethod('delivery');
     } catch (err) {
       setError(err.message || 'Could not place order. Please try again.');
     } finally {
@@ -166,8 +170,20 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
             Order #{successOrder.id} · {currencySymbol}{Number(successOrder.totalAmount).toLocaleString()}
           </div>
           <div style={{ color: COLORS.text, fontSize: 14, marginTop: 16, lineHeight: 1.6 }}>
-            Thank you, {successOrder.customerName}! Please come in or wait for us to reach out to arrange pickup/delivery and payment.
+            {successOrder.paymentMethod === 'Bank Transfer'
+              ? `Thank you, ${successOrder.customerName}! Your order is pending — please send payment to the account below and keep your receipt. We'll confirm as soon as we receive it.`
+              : `Thank you, ${successOrder.customerName}! Please come in or wait for us to reach out to arrange pickup/delivery and payment.`}
           </div>
+          {successOrder.paymentMethod === 'Bank Transfer' && (
+            <div style={{ marginTop: 16, background: '#FFF3E0', border: '1px solid #FED7AA', borderRadius: 14, padding: 16, textAlign: 'left' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#C2670E', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Send Money To</div>
+              <div style={{ display: 'grid', gap: 4, fontSize: 14, color: COLORS.text }}>
+                <div><strong>Bank:</strong> {bankName || 'Not set'}</div>
+                <div><strong>Account Name:</strong> {bankAccountName || 'Not set'}</div>
+                <div><strong>Account Number:</strong> {bankAccountNumber || 'Not set'}</div>
+              </div>
+            </div>
+          )}
           <button
             type="button"
             onClick={() => setSuccessOrder(null)}
@@ -380,6 +396,63 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
                 </div>
               )}
 
+              {!!cart.length && (
+                <div style={{ marginTop: 14, display: 'grid', gap: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.text }}>How will you pay?</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('delivery')}
+                      style={{
+                        padding: '10px 8px',
+                        borderRadius: 10,
+                        border: paymentMethod === 'delivery' ? `2px solid ${COLORS.sale}` : `1px solid ${COLORS.border}`,
+                        background: paymentMethod === 'delivery' ? '#FFF1EC' : COLORS.card,
+                        color: COLORS.text,
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      💵 Pay on Pickup/Delivery
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('transfer')}
+                      style={{
+                        padding: '10px 8px',
+                        borderRadius: 10,
+                        border: paymentMethod === 'transfer' ? `2px solid ${COLORS.sale}` : `1px solid ${COLORS.border}`,
+                        background: paymentMethod === 'transfer' ? '#FFF1EC' : COLORS.card,
+                        color: COLORS.text,
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      🏦 Bank Transfer
+                    </button>
+                  </div>
+                  {paymentMethod === 'transfer' && (
+                    <div style={{ background: '#FFF3E0', border: '1px solid #FED7AA', borderRadius: 10, padding: 12 }}>
+                      {hasBankDetails ? (
+                        <>
+                          <div style={{ fontSize: 11, fontWeight: 800, color: '#C2670E', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Send Money To</div>
+                          <div style={{ display: 'grid', gap: 3, fontSize: 13, color: COLORS.text }}>
+                            <div><strong>Bank:</strong> {bankName || 'Not set'}</div>
+                            <div><strong>Account Name:</strong> {bankAccountName || 'Not set'}</div>
+                            <div><strong>Account Number:</strong> {bankAccountNumber || 'Not set'}</div>
+                          </div>
+                          <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 6 }}>Your order stays pending until we confirm your payment.</div>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 12, color: COLORS.muted }}>Bank details are not set up yet. Please choose "Pay on Pickup/Delivery" or contact us directly.</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <form onSubmit={submitOrder} style={{ display: 'grid', gap: 10, marginTop: 16 }}>
                 <label style={{ display: 'grid', gap: 6, fontSize: 12, color: COLORS.text, fontWeight: 700 }}>
                   Full Name
@@ -425,10 +498,10 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
 
                 <button
                   type="submit"
-                  disabled={submitting || !cart.length}
+                  disabled={submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails)}
                   style={{
                     marginTop: 4,
-                    background: submitting || !cart.length ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                    background: submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails) ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
                     color: '#fff',
                     border: 'none',
                     borderRadius: 999,
@@ -436,10 +509,10 @@ function Storefront({ products, shopName, currencySymbol, onPlaceOrder, customer
                     fontWeight: 800,
                     fontSize: 14,
                     letterSpacing: '0.02em',
-                    cursor: submitting || !cart.length ? 'not-allowed' : 'pointer',
+                    cursor: submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails) ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {submitting ? 'Placing Order…' : 'Place Order (Pay on Pickup/Delivery)'}
+                  {submitting ? 'Placing Order…' : paymentMethod === 'transfer' ? 'Place Order (Bank Transfer)' : 'Place Order (Pay on Pickup/Delivery)'}
                 </button>
                 <div style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.04em', color: COLORS.muted, fontWeight: 700 }}>
                   POWERD BY PRO CREATIVES | 08147621844

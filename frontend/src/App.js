@@ -104,6 +104,9 @@ function App() {
     defaultStoreAccount: 'Main Store',
     receiptFooter: 'Thank you for shopping with us!',
     autoPrintReceipts: false,
+    bankName: '',
+    bankAccountName: '',
+    bankAccountNumber: '',
   });
   const [settingsMessage, setSettingsMessage] = useState('');
   const [productFormMessage, setProductFormMessage] = useState('');
@@ -192,6 +195,9 @@ function App() {
       defaultStoreAccount: 'Main Store',
       receiptFooter: 'Thank you for shopping with us!',
       autoPrintReceipts: false,
+      bankName: '',
+      bankAccountName: '',
+      bankAccountNumber: '',
       ...starterSettings,
     };
     setSettings(nextSettings);
@@ -272,6 +278,9 @@ function App() {
       currencySymbol: (settings.currencySymbol || '').trim() || '₦',
       defaultStoreAccount: (settings.defaultStoreAccount || '').trim() || 'Main Store',
       receiptFooter: (settings.receiptFooter || '').trim() || 'Thank you for shopping with us!',
+      bankName: (settings.bankName || '').trim(),
+      bankAccountName: (settings.bankAccountName || '').trim(),
+      bankAccountNumber: (settings.bankAccountNumber || '').trim(),
     };
     setSettings(cleanedSettings);
     localStorage.setItem('posSettings', JSON.stringify(cleanedSettings));
@@ -1491,6 +1500,9 @@ function App() {
         products={products}
         shopName={settings.shopName}
         currencySymbol={settings.currencySymbol}
+        bankName={settings.bankName}
+        bankAccountName={settings.bankAccountName}
+        bankAccountNumber={settings.bankAccountNumber}
         onPlaceOrder={placeGuestOrder}
         customerAuth={customerAuth}
         onCustomerSignup={customerSignup}
@@ -1797,6 +1809,40 @@ function App() {
                 <input
                   value={settings.receiptFooter}
                   onChange={(e) => updateSetting('receiptFooter', e.target.value)}
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A' }}
+                />
+              </label>
+            </div>
+
+            <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 16, display: 'grid', gap: 4 }}>
+              <div style={{ fontWeight: 800, color: '#0F172A', fontSize: 15 }}>Bank Transfer Details</div>
+              <div style={{ fontSize: 12, color: '#64748B', marginBottom: 8 }}>Shown to customers on the shop page so they know where to send money when they choose "Bank Transfer" at checkout.</div>
+            </div>
+            <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#334155', fontWeight: 600 }}>
+                Bank name
+                <input
+                  value={settings.bankName}
+                  onChange={(e) => updateSetting('bankName', e.target.value)}
+                  placeholder="e.g. Access Bank"
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A' }}
+                />
+              </label>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#334155', fontWeight: 600 }}>
+                Account name
+                <input
+                  value={settings.bankAccountName}
+                  onChange={(e) => updateSetting('bankAccountName', e.target.value)}
+                  placeholder="e.g. NOOR COLLECTION"
+                  style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A' }}
+                />
+              </label>
+              <label style={{ display: 'grid', gap: 8, fontSize: 13, color: '#334155', fontWeight: 600 }}>
+                Account number
+                <input
+                  value={settings.bankAccountNumber}
+                  onChange={(e) => updateSetting('bankAccountNumber', e.target.value)}
+                  placeholder="e.g. 0123456789"
                   style={{ width: '100%', padding: '11px 12px', borderRadius: 10, border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A' }}
                 />
               </label>
@@ -2114,6 +2160,9 @@ function App() {
                       <div>
                         <div style={{ fontWeight: 700, fontSize: 16, color: '#0F172A' }}>Order #{order.id} — {order.customerName}</div>
                         <div style={{ color: '#64748B', fontSize: 13, marginTop: 2 }}>{order.phone}{order.address ? ` · ${order.address}` : ''}</div>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6, padding: '3px 9px', borderRadius: 999, background: order.paymentMethod === 'Bank Transfer' ? '#FFF3E0' : '#F1F5F9', border: `1px solid ${order.paymentMethod === 'Bank Transfer' ? '#FED7AA' : '#E2E8F0'}`, color: order.paymentMethod === 'Bank Transfer' ? '#C2670E' : '#334155', fontSize: 11, fontWeight: 700 }}>
+                          {order.paymentMethod === 'Bank Transfer' ? '🏦 Bank Transfer' : '💵 Pay on Pickup/Delivery'}
+                        </div>
                         {order.notes && <div style={{ color: '#64748B', fontSize: 12, marginTop: 4, fontStyle: 'italic' }}>“{order.notes}”</div>}
                       </div>
                       <div style={{ padding: '6px 12px', borderRadius: 999, background: statusColors.bg, border: `1px solid ${statusColors.border}`, color: statusColors.text, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>

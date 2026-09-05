@@ -200,7 +200,8 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'POST' && pathname === '/api/orders') {
       const body = await readJsonBody(req);
-      const { customerName, phone, address, notes, items: rawItems } = body;
+      const { customerName, phone, address, notes, items: rawItems, paymentMethod: rawPaymentMethod } = body;
+      const paymentMethod = String(rawPaymentMethod || '').trim() === 'Bank Transfer' ? 'Bank Transfer' : 'Pay on Pickup/Delivery';
       const customer = tryGetCustomerFromAuth(req);
       const productRowsResult = await pool.query('SELECT * FROM products');
       const validation = validateCustomerOrderPayload({ customerName, phone, items: rawItems }, productRowsResult.rows);
@@ -222,20 +223,20 @@ const server = http.createServer(async (req, res) => {
       try {
         await client.query('BEGIN');
         for (const item of items) {
-          const stockResult = await client.query('SELECT stock FROM products WHERE id = $1', [item.productId]);
+          const stockResult = await client.query('SELECT stock FROM products WHERE id = $1', [Number(item.productId)]);
           const available = Number(stockResult.rows[0]?.stock) || 0;
           if (item.quantity > available) {
             throw new Error(`Not enough stock for ${item.name}`);
           }
-          await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [item.quantity, item.productId]);
+          await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [item.quantity, Number(item.productId)]);
           await client.query(
             'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
-            [item.productId, item.name, 'sale', -Math.abs(item.quantity), now, 'Customer order placed']
+            [Number(item.productId), item.name, 'sale', -Math.abs(item.quantity), now, 'Customer order placed']
           );
         }
         const insertResult = await client.query(
-          'INSERT INTO customer_orders ("customerName", phone, address, notes, "itemsJson", "totalAmount", status, "createdAt", "updatedAt", "customerId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
-          [String(customerName).trim(), String(phone).trim(), String(address || '').trim(), String(notes || '').trim(), JSON.stringify(items), totalAmount, 'pending', now, now, customer ? customer.id : null]
+          'INSERT INTO customer_orders ("customerName", phone, address, notes, "itemsJson", "totalAmount", status, "createdAt", "updatedAt", "customerId", "paymentMethod") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id',
+          [String(customerName).trim(), String(phone).trim(), String(address || '').trim(), String(notes || '').trim(), JSON.stringify(items), totalAmount, 'pending', now, now, customer ? customer.id : null, paymentMethod]
         );
         orderId = insertResult.rows[0].id;
         await client.query('COMMIT');
@@ -246,7 +247,7 @@ const server = http.createServer(async (req, res) => {
         client.release();
       }
 
-      return sendJson(res, 201, { id: orderId, customerName: String(customerName).trim(), phone: String(phone).trim(), address: String(address || '').trim(), notes: String(notes || '').trim(), items, totalAmount, status: 'pending', createdAt: now, updatedAt: now, customerId: customer ? customer.id : null });
+      return sendJson(res, 201, { id: orderId, customerName: String(customerName).trim(), phone: String(phone).trim(), address: String(address || '').trim(), notes: String(notes || '').trim(), items, totalAmount, status: 'pending', createdAt: now, updatedAt: now, customerId: customer ? customer.id : null, paymentMethod });
     }
 
     if (req.method === 'GET' && pathname === '/api/orders') {
@@ -307,8 +308,8 @@ const server = http.createServer(async (req, res) => {
       // Reconciles reserved stock with any quantity changes made while the order is still pending/confirmed.
       const applyItemStockDelta = async (client) => {
         if (!itemsChanged) return;
-        const previousQtyMap = new Map(previousItems.map((item) => [item.productId, item.quantity]));
-        const nextQtyMap = new Map(items.map((item) => [item.productId, item.quantity]));
+        const previousQtyMap = new Map(previousItems.map((item) => [Number(item.productId), item.quantity]));
+        const nextQtyMap = new Map(items.map((item) => [Number(item.productId), item.quantity]));
         const productIds = new Set([...previousQtyMap.keys(), ...nextQtyMap.keys()]);
         for (const productId of productIds) {
           const previousQty = previousQtyMap.get(productId) || 0;
@@ -316,7 +317,7 @@ const server = http.createServer(async (req, res) => {
           const delta = nextQty - previousQty;
           if (delta === 0) continue;
           await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [delta, productId]);
-          const item = items.find((entry) => entry.productId === productId) || previousItems.find((entry) => entry.productId === productId);
+          const item = items.find((entry) => Number(entry.productId) === productId) || previousItems.find((entry) => Number(entry.productId) === productId);
           await client.query(
             'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
             [productId, item?.name || 'Product', 'sale', -delta, now, `Order #${order.id} items updated`]
@@ -351,15 +352,15 @@ const server = http.createServer(async (req, res) => {
 
       if (status === 'completed') {
         // Stock was already deducted when the order was placed (and reconciled above for edits), so just record the sale for reporting.
-        const productIds = items.map((item) => item.productId);
-        const productRowsResult = await pool.query('SELECT id, "costPrice" FROM products WHERE id = ANY($1)', [productIds]);
+        const productIds = items.map((item) => Number(item.productId));
+        const productRowsResult = await pool.query('SELECT id, "costPrice" FROM products WHERE id = ANY($1::int[])', [productIds]);
         const productMap = new Map(productRowsResult.rows.map((product) => [product.id, product]));
 
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
           await applyItemStockDelta(client);
-          const totalCost = items.reduce((sum, item) => sum + (Number(productMap.get(item.productId)?.costPrice) || 0) * item.quantity, 0);
+          const totalCost = items.reduce((sum, item) => sum + (Number(productMap.get(Number(item.productId))?.costPrice) || 0) * item.quantity, 0);
           const profit = totalAmount - totalCost;
           const saleResult = await client.query(
             'INSERT INTO sales (datetime, total, profit, "paymentMethod", "cashierName") VALUES ($1, $2, $3, $4, $5) RETURNING id',
@@ -367,10 +368,10 @@ const server = http.createServer(async (req, res) => {
           );
           const saleId = saleResult.rows[0].id;
           for (const item of items) {
-            const costPrice = Number(productMap.get(item.productId)?.costPrice) || 0;
+            const costPrice = Number(productMap.get(Number(item.productId))?.costPrice) || 0;
             await client.query(
               'INSERT INTO sale_items ("saleId", "productId", quantity, price, "costPrice") VALUES ($1, $2, $3, $4, $5)',
-              [saleId, item.productId, item.quantity, item.price, costPrice]
+              [saleId, Number(item.productId), item.quantity, item.price, costPrice]
             );
           }
           await client.query(
@@ -391,10 +392,10 @@ const server = http.createServer(async (req, res) => {
           await client.query('BEGIN');
           await applyItemStockDelta(client);
           for (const item of items) {
-            await client.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [item.quantity, item.productId]);
+            await client.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [item.quantity, Number(item.productId)]);
             await client.query(
               'INSERT INTO stock_movements ("productId", "productName", "movementType", quantity, "createdAt", note) VALUES ($1, $2, $3, $4, $5, $6)',
-              [item.productId, item.name, 'return', Math.abs(Number(item.quantity) || 0), now, `Order #${order.id} cancelled - stock restored`]
+              [Number(item.productId), item.name, 'return', Math.abs(Number(item.quantity) || 0), now, `Order #${order.id} cancelled - stock restored`]
             );
           }
           await client.query(
@@ -836,6 +837,7 @@ async function initDatabase() {
   )`);
 
   await pool.query('ALTER TABLE customer_orders ADD COLUMN IF NOT EXISTS "customerId" INTEGER');
+  await pool.query('ALTER TABLE customer_orders ADD COLUMN IF NOT EXISTS "paymentMethod" TEXT NOT NULL DEFAULT \'Pay on Pickup/Delivery\'');
 
   await pool.query(`CREATE TABLE IF NOT EXISTS customers (
     id SERIAL PRIMARY KEY,
