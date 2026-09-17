@@ -14,12 +14,13 @@ test('ensureStarterProducts seeds basic inventory when the products table is emp
     name TEXT NOT NULL,
     price DOUBLE PRECISION NOT NULL,
     "costPrice" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    stock INTEGER NOT NULL DEFAULT 0
+    stock INTEGER NOT NULL DEFAULT 0,
+    "category" TEXT NOT NULL DEFAULT ''
   )`);
 
   await ensureStarterProducts(pool);
 
-  const { rows } = await pool.query('SELECT sku, name, price, "costPrice", stock FROM products ORDER BY id');
+  const { rows } = await pool.query('SELECT sku, name, price, "costPrice", stock, "category" FROM products ORDER BY id');
   assert.equal(rows.length, 3);
   assert.deepEqual(rows[0], {
     sku: 'SKU-001',
@@ -27,6 +28,7 @@ test('ensureStarterProducts seeds basic inventory when the products table is emp
     price: 6000,
     costPrice: 5000,
     stock: 20,
+    category: 'Grains & Rice',
   });
 });
 
