@@ -46,7 +46,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
     const q = search.trim().toLowerCase();
     return availableProducts.filter((product) => {
       const matchesCategory = activeCategory === 'All' || (product.category || '').trim() === activeCategory;
-      const matchesSearch = !q || product.name.toLowerCase().includes(q);
+      const matchesSearch = !q || product.name.toLowerCase().includes(q) || (product.category || '').toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
   }, [availableProducts, search, activeCategory]);
@@ -220,10 +220,16 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
+              placeholder="Search products or categories..."
               className="storefront-search-input"
+              list="storefront-category-suggestions"
               style={{ width: '100%', padding: '11px 36px 11px 38px', borderRadius: 999, fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff', color: COLORS.text, transition: 'box-shadow 0.15s ease, border-color 0.15s ease' }}
             />
+            <datalist id="storefront-category-suggestions">
+              {categories.filter((cat) => cat !== 'All').map((cat) => (
+                <option key={cat} value={cat} />
+              ))}
+            </datalist>
             {!!search && (
               <button
                 type="button"
