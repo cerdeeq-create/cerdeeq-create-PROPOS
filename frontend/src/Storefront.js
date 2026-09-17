@@ -171,8 +171,8 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
 
   const orderStatusColors = {
     pending: { bg: '#FFF8E5', text: '#8A6A00' },
-    confirmed: { bg: '#E9F3FF', text: '#0B5FB8' },
-    completed: { bg: '#EAF7EE', text: '#1E7A3B' },
+    confirmed: { bg: '#E9F3FF', text: '#1E5A8A' },
+    completed: { bg: '#EAF7EE', text: COLORS.green },
     cancelled: { bg: '#FDECEC', text: COLORS.sale },
   };
 
@@ -810,31 +810,39 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
               <button type="button" onClick={() => setMyOrdersOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
             </div>
 
-            <div style={{ padding: 16, flex: 1, display: 'grid', gap: 10, alignContent: 'start' }}>
+            <div style={{ padding: 18, flex: 1, display: 'grid', gap: 12, alignContent: 'start' }}>
               {!(myOrders || []).length && (
-                <div style={{ color: COLORS.muted, fontSize: 13, textAlign: 'center', marginTop: 30 }}>You haven't placed any orders yet.</div>
+                <div style={{ textAlign: 'center', marginTop: 50 }}>
+                  <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: COLORS.border, marginBottom: 10 }}>&mdash;</div>
+                  <div style={{ color: COLORS.muted, fontSize: 13, fontStyle: 'italic' }}>You haven't placed any orders yet.</div>
+                </div>
               )}
               {(myOrders || []).map((order) => {
                 const items = typeof order.itemsJson === 'string' ? JSON.parse(order.itemsJson) : (order.itemsJson || []);
                 const statusStyle = orderStatusColors[order.status] || { bg: COLORS.border, text: COLORS.text };
+                const orderDate = order.createdAt || order.date ? new Date(order.createdAt || order.date) : null;
                 return (
-                  <div key={order.id} style={{ background: COLORS.card, borderRadius: 4, padding: 12, border: `1px solid ${COLORS.border}` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontWeight: 700, fontSize: 13, color: COLORS.ink }}>Order #{order.id}</span>
-                      <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: statusStyle.text, background: statusStyle.bg, borderRadius: 999, padding: '4px 8px' }}>
+                  <div key={order.id} style={{ background: COLORS.card, borderRadius: 4, padding: 14, border: `1px solid ${COLORS.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 15, color: COLORS.ink }}>Order #{order.id}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: statusStyle.text, border: `1px solid ${statusStyle.text}`, borderRadius: 2, padding: '3px 8px' }}>
                         {order.status}
                       </span>
                     </div>
-                    <div style={{ display: 'grid', gap: 2, marginBottom: 6 }}>
+                    {orderDate && (
+                      <div style={{ fontSize: 11, color: COLORS.muted, fontStyle: 'italic', marginTop: 2 }}>{orderDate.toLocaleString()}</div>
+                    )}
+                    <div style={{ display: 'grid', gap: 3, margin: '10px 0', paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
                       {items.map((item, idx) => (
-                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: COLORS.muted }}>
-                          <span>{item.quantity} × {item.name}</span>
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: COLORS.text }}>
+                          <span>{item.name}</span>
+                          <span style={{ color: COLORS.muted }}>× {item.quantity}</span>
                         </div>
                       ))}
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 13, color: COLORS.text }}>
-                      <span>Total</span>
-                      <span style={{ color: COLORS.sale }}>{currencySymbol}{Number(order.totalAmount).toLocaleString()}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total</span>
+                      <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 16, color: COLORS.sale }}>{currencySymbol}{Number(order.totalAmount).toLocaleString()}</span>
                     </div>
                   </div>
                 );
