@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 const COLORS = {
-  primary: '#FF6B00',
-  primaryDark: '#E85D04',
-  primaryDarker: '#C24A00',
-  sale: '#FF3B30',
-  bg: '#F5F5F5',
+  primary: '#9C7A32',
+  primaryDark: '#7C5F26',
+  primaryDarker: '#5E481D',
+  sale: '#7A2E2E',
+  bg: '#FAF6EE',
   card: '#FFFFFF',
-  text: '#1A1A1A',
-  muted: '#767676',
-  border: '#ECECEC',
-  green: '#0C8A3E',
+  text: '#241F1A',
+  muted: '#867C6D',
+  border: '#E4DAC5',
+  green: '#3F6B4A',
+  ink: '#1E1A16',
 };
 
 function Storefront({ products, shopName, currencySymbol, bankName, bankAccountName, bankAccountNumber, onPlaceOrder, customerAuth, onCustomerSignup, onCustomerLogin, onCustomerLogout, myOrders, onRefreshMyOrders }) {
@@ -177,21 +178,21 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
 
   if (successOrder) {
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: COLORS.bg, padding: 20 }}>
-        <div style={{ width: '100%', maxWidth: 420, background: COLORS.card, borderRadius: 20, boxShadow: '0 20px 50px rgba(0,0,0,0.12)', padding: 32, textAlign: 'center' }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: COLORS.green, color: '#fff', display: 'grid', placeItems: 'center', fontSize: 32, margin: '0 auto 12px' }}>✓</div>
-          <div style={{ fontWeight: 800, fontSize: 22, color: COLORS.text }}>Order Placed!</div>
-          <div style={{ color: COLORS.muted, fontSize: 14, marginTop: 8 }}>
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: COLORS.bg, padding: 20, fontFamily: "'Lora', Georgia, serif" }}>
+        <div style={{ width: '100%', maxWidth: 420, background: COLORS.card, borderRadius: 6, border: `1px solid ${COLORS.border}`, boxShadow: '0 20px 50px rgba(0,0,0,0.08)', padding: 36, textAlign: 'center' }}>
+          <div style={{ width: 60, height: 60, borderRadius: '50%', border: `2px solid ${COLORS.green}`, color: COLORS.green, display: 'grid', placeItems: 'center', fontSize: 26, margin: '0 auto 16px' }}>✓</div>
+          <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 24, color: COLORS.ink }}>Order Placed</div>
+          <div style={{ color: COLORS.muted, fontSize: 13, marginTop: 8, letterSpacing: '0.03em' }}>
             Order #{successOrder.id} · {currencySymbol}{Number(successOrder.totalAmount).toLocaleString()}
           </div>
-          <div style={{ color: COLORS.text, fontSize: 14, marginTop: 16, lineHeight: 1.6 }}>
+          <div style={{ color: COLORS.text, fontSize: 14, marginTop: 18, lineHeight: 1.7 }}>
             {successOrder.paymentMethod === 'Bank Transfer'
-              ? `Thank you, ${successOrder.customerName}! Your order is pending — please send payment to the account below and keep your receipt. We'll confirm as soon as we receive it.`
-              : `Thank you, ${successOrder.customerName}! Please come in or wait for us to reach out to arrange pickup/delivery and payment.`}
+              ? `Thank you, ${successOrder.customerName}. Your order is pending — please send payment to the account below and keep your receipt. We'll confirm as soon as we receive it.`
+              : `Thank you, ${successOrder.customerName}. Please come in or wait for us to reach out to arrange pickup/delivery and payment.`}
           </div>
           {successOrder.paymentMethod === 'Bank Transfer' && (
-            <div style={{ marginTop: 16, background: '#FFF3E0', border: '1px solid #FED7AA', borderRadius: 14, padding: 16, textAlign: 'left' }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: '#C2670E', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Send Money To</div>
+            <div style={{ marginTop: 18, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: 16, textAlign: 'left' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.primary, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Send Money To</div>
               <div style={{ display: 'grid', gap: 4, fontSize: 14, color: COLORS.text }}>
                 <div><strong>Bank:</strong> {bankName || 'Not set'}</div>
                 <div><strong>Account Name:</strong> {bankAccountName || 'Not set'}</div>
@@ -202,7 +203,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
           <button
             type="button"
             onClick={() => setSuccessOrder(null)}
-            style={{ marginTop: 20, width: '100%', background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`, color: '#fff', border: 'none', borderRadius: 999, padding: '14px 20px', fontWeight: 800, fontSize: 14, letterSpacing: '0.03em', cursor: 'pointer' }}
+            style={{ marginTop: 24, width: '100%', background: COLORS.ink, color: '#fff', border: 'none', borderRadius: 4, padding: '14px 20px', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
           >
             Place Another Order
           </button>
@@ -212,23 +213,30 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: COLORS.bg, fontFamily: "'Manrope', 'Segoe UI', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: COLORS.bg, fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
         @keyframes storefrontAuthPop {
           from { opacity: 0; transform: translateY(10px) scale(0.98); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .storefront-search-input {
-          border: 2px solid transparent;
+          border: 1px solid ${COLORS.border};
         }
         .storefront-search-input:focus {
-          border-color: rgba(255,255,255,0.85);
-          box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+          border-color: ${COLORS.primary};
+          box-shadow: 0 0 0 3px rgba(156,122,50,0.18);
+        }
+        input, textarea, select {
+          font-family: 'Lora', Georgia, serif;
+        }
+        input[type="text"], input[type="tel"], input[type="email"], input[type="password"], input[type="search"], textarea {
+          border-radius: 3px !important;
         }
       `}</style>
-      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)`, boxShadow: '0 2px 10px rgba(0,0,0,0.12)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ fontWeight: 900, fontSize: 22, color: '#fff', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>{shopName || 'NOOR'}</div>
+      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: COLORS.ink, borderBottom: `2px solid ${COLORS.primary}` }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 23, color: '#fff', letterSpacing: '0.04em', whiteSpace: 'nowrap', textTransform: 'uppercase' }}>{shopName || 'NOOR'}</div>
           <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center' }}>
             <span style={{ position: 'absolute', left: 14, fontSize: 14, opacity: 0.5, pointerEvents: 'none' }}>🔍</span>
             <input
@@ -238,7 +246,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
               placeholder="Search products or categories..."
               className="storefront-search-input"
               list="storefront-category-suggestions"
-              style={{ width: '100%', padding: '11px 36px 11px 38px', borderRadius: 999, fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff', color: COLORS.text, transition: 'box-shadow 0.15s ease, border-color 0.15s ease' }}
+              style={{ width: '100%', padding: '11px 36px 11px 38px', borderRadius: 4, fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff', color: COLORS.text, fontFamily: "'Lora', Georgia, serif", transition: 'box-shadow 0.15s ease, border-color 0.15s ease' }}
             />
             <datalist id="storefront-category-suggestions">
               {categories.filter((cat) => cat !== 'All').map((cat) => (
@@ -258,18 +266,18 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
           </div>
           {customerAuth ? (
             <>
-              <span style={{ color: '#fff', fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}>Hi, {customerAuth.name}</span>
+              <span style={{ color: '#fff', fontSize: 13, fontWeight: 500, fontStyle: 'italic', whiteSpace: 'nowrap' }}>Hi, {customerAuth.name}</span>
               <button
                 type="button"
                 onClick={openMyOrders}
-                style={{ background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.4)', borderRadius: 4, color: '#fff', padding: '9px 14px', fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', whiteSpace: 'nowrap' }}
               >
                 My Orders
               </button>
               <button
                 type="button"
                 onClick={onCustomerLogout}
-                style={{ background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.4)', borderRadius: 4, color: '#fff', padding: '9px 14px', fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', whiteSpace: 'nowrap' }}
               >
                 Logout
               </button>
@@ -278,7 +286,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
             <button
               type="button"
               onClick={() => { setAuthOpen(true); setAuthMode('login'); setAuthError(''); }}
-              style={{ background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.4)', borderRadius: 4, color: '#fff', padding: '9px 14px', fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               Login / Sign Up
             </button>
@@ -286,11 +294,11 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
           <button
             type="button"
             onClick={() => setCartOpen(true)}
-            style={{ position: 'relative', background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 999, color: '#fff', padding: '10px 16px', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+            style={{ position: 'relative', background: COLORS.primary, border: 'none', borderRadius: 4, color: '#fff', padding: '10px 18px', fontWeight: 600, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}
           >
-            🛒 Cart
+            Cart
             {cartCount > 0 && (
-              <span style={{ background: '#fff', color: COLORS.sale, borderRadius: '50%', minWidth: 20, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900, padding: '0 4px' }}>
+              <span style={{ background: '#fff', color: COLORS.ink, borderRadius: '50%', minWidth: 20, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, padding: '0 4px' }}>
                 {cartCount}
               </span>
             )}
@@ -298,32 +306,32 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
         </div>
       </header>
 
-      <div style={{ background: `linear-gradient(120deg, ${COLORS.sale} 0%, ${COLORS.primary} 60%, ${COLORS.primaryDark} 100%)`, color: '#fff', padding: '22px 16px', textAlign: 'center' }}>
-        <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: '-0.01em' }}>🔥 Shop Now, Pay on Pickup or Delivery</div>
-        <div style={{ fontSize: 13, opacity: 0.92, marginTop: 4, fontWeight: 600 }}>No account needed — order in seconds</div>
+      <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, color: COLORS.ink, padding: '26px 16px', textAlign: 'center' }}>
+        <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 22, letterSpacing: '0.01em', fontStyle: 'italic' }}>Shop Now · Pay on Pickup or Delivery</div>
+        <div style={{ fontSize: 12, opacity: 0.75, marginTop: 6, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>No account needed — order in seconds</div>
       </div>
 
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 16px 90px' }}>
         {activeCategory === 'All' && !search.trim() && categoryTiles.length > 0 && (
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12 }}>Shop by Category</div>
+            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 19, color: COLORS.ink, marginBottom: 14, letterSpacing: '0.01em' }}>Shop by Category</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 10 }}>
               {categoryTiles.map((tile) => (
                 <button
                   key={tile.name}
                   type="button"
                   onClick={() => goToCategory(tile.name)}
-                  style={{ display: 'grid', gap: 6, border: `1px solid ${COLORS.border}`, background: COLORS.card, borderRadius: 12, padding: 10, cursor: 'pointer', textAlign: 'center' }}
+                  style={{ display: 'grid', gap: 6, border: `1px solid ${COLORS.border}`, background: COLORS.card, borderRadius: 4, padding: 10, cursor: 'pointer', textAlign: 'center' }}
                 >
-                  <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 2, background: COLORS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
                     {tile.imageUrl ? (
                       <img src={tile.imageUrl} alt={tile.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
                     ) : (
-                      <span style={{ fontSize: 22 }}>🏷️</span>
+                      <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, color: COLORS.primary }}>{tile.name.charAt(0).toUpperCase()}</span>
                     )}
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: 12, color: COLORS.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tile.name}</div>
-                  <div style={{ fontSize: 11, color: COLORS.muted }}>{tile.count} item{tile.count === 1 ? '' : 's'}</div>
+                  <div style={{ fontWeight: 600, fontSize: 12, color: COLORS.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tile.name}</div>
+                  <div style={{ fontSize: 11, color: COLORS.muted, letterSpacing: '0.04em' }}>{tile.count} item{tile.count === 1 ? '' : 's'}</div>
                 </button>
               ))}
             </div>
@@ -339,15 +347,17 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
                 style={{
                   flexShrink: 0,
                   padding: '8px 16px',
-                  borderRadius: 999,
-                  border: activeCategory === cat ? 'none' : `1px solid ${COLORS.border}`,
-                  background: activeCategory === cat ? `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)` : COLORS.card,
+                  borderRadius: 2,
+                  border: activeCategory === cat ? `1px solid ${COLORS.primary}` : `1px solid ${COLORS.border}`,
+                  borderBottom: activeCategory === cat ? `2px solid ${COLORS.primary}` : `1px solid ${COLORS.border}`,
+                  background: activeCategory === cat ? COLORS.ink : COLORS.card,
                   color: activeCategory === cat ? '#fff' : COLORS.text,
-                  fontWeight: 800,
-                  fontSize: 13,
+                  fontWeight: 600,
+                  fontSize: 12,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
-                  boxShadow: activeCategory === cat ? '0 4px 10px rgba(255,59,48,0.3)' : 'none',
                 }}
               >
                 {cat}
@@ -355,7 +365,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
             ))}
           </div>
         )}
-        <div ref={productGridRef} style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12, scrollMarginTop: 70 }}>
+        <div ref={productGridRef} style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 19, color: COLORS.ink, marginBottom: 14, scrollMarginTop: 70 }}>
           {search.trim() ? `Results for "${search.trim()}"` : activeCategory === 'All' ? 'All Products' : activeCategory}
         </div>
         {!visibleProducts.length && (
@@ -369,41 +379,43 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
             const maxedOut = inCart ? inCart.quantity >= product.stock : false;
             const lowStock = product.stock > 0 && product.stock <= 5;
             return (
-              <div key={product.id} style={{ background: COLORS.card, borderRadius: 12, overflow: 'hidden', display: 'grid', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: `1px solid ${COLORS.border}` }}>
-                <div style={{ width: '100%', aspectRatio: '1 / 1', background: '#FAFAFA', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div key={product.id} style={{ background: COLORS.card, borderRadius: 4, overflow: 'hidden', display: 'grid', border: `1px solid ${COLORS.border}` }}>
+                <div style={{ width: '100%', aspectRatio: '1 / 1', background: COLORS.bg, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {product.imageUrl ? (
                     <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
                   ) : (
-                    <span style={{ color: COLORS.muted, fontSize: 12 }}>No Image</span>
+                    <span style={{ color: COLORS.muted, fontSize: 12, fontStyle: 'italic' }}>No Image</span>
                   )}
                   {lowStock && (
-                    <span style={{ position: 'absolute', top: 6, left: 6, background: COLORS.sale, color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 6 }}>
-                      LOW STOCK
+                    <span style={{ position: 'absolute', top: 6, left: 6, background: COLORS.ink, color: '#fff', fontSize: 9, fontWeight: 600, letterSpacing: '0.06em', padding: '3px 8px', borderRadius: 2, textTransform: 'uppercase' }}>
+                      Low Stock
                     </span>
                   )}
                 </div>
-                <div style={{ padding: 10, display: 'grid', gap: 6 }}>
-                  <div style={{ fontWeight: 600, color: COLORS.text, fontSize: 13, lineHeight: 1.3, minHeight: 34, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                <div style={{ padding: 12, display: 'grid', gap: 6 }}>
+                  <div style={{ fontWeight: 500, color: COLORS.text, fontSize: 13, lineHeight: 1.3, minHeight: 34, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                     {product.name}
                   </div>
-                  <div style={{ color: COLORS.sale, fontWeight: 900, fontSize: 17 }}>{currencySymbol}{Number(product.price).toLocaleString()}</div>
-                  <div style={{ color: lowStock ? COLORS.sale : COLORS.green, fontSize: 11, fontWeight: 700 }}>{product.stock} in stock</div>
+                  <div style={{ color: COLORS.sale, fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 17 }}>{currencySymbol}{Number(product.price).toLocaleString()}</div>
+                  <div style={{ color: lowStock ? COLORS.sale : COLORS.green, fontSize: 11, fontWeight: 600, letterSpacing: '0.02em' }}>{product.stock} in stock</div>
                   <button
                     type="button"
                     onClick={() => addToCart(product)}
                     disabled={maxedOut}
                     style={{
                       padding: '9px 10px',
-                      borderRadius: 999,
-                      border: 'none',
-                      background: maxedOut ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                      borderRadius: 2,
+                      border: `1px solid ${maxedOut ? '#DDD' : COLORS.ink}`,
+                      background: maxedOut ? '#DDD' : COLORS.ink,
                       color: '#fff',
-                      fontWeight: 800,
-                      fontSize: 12,
+                      fontWeight: 600,
+                      fontSize: 11,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
                       cursor: maxedOut ? 'not-allowed' : 'pointer',
                     }}
                   >
-                    {inCart ? `In Cart (${inCart.quantity})` : '+ Add to Cart'}
+                    {inCart ? `In Cart (${inCart.quantity})` : 'Add to Cart'}
                   </button>
                 </div>
               </div>
@@ -416,9 +428,9 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
         <button
           type="button"
           onClick={() => setCartOpen(true)}
-          style={{ position: 'fixed', left: 16, right: 16, bottom: 16, zIndex: 25, background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`, color: '#fff', border: 'none', borderRadius: 999, padding: '14px 20px', fontWeight: 800, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 6px 20px rgba(0,0,0,0.2)', cursor: 'pointer', maxWidth: 1200, margin: '0 auto' }}
+          style={{ position: 'fixed', left: 16, right: 16, bottom: 16, zIndex: 25, background: COLORS.ink, color: '#fff', border: 'none', borderRadius: 4, padding: '14px 20px', fontWeight: 600, fontSize: 13, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 6px 20px rgba(0,0,0,0.25)', cursor: 'pointer', maxWidth: 1200, margin: '0 auto' }}
         >
-          <span>🛒 {cartCount} item{cartCount > 1 ? 's' : ''}</span>
+          <span>{cartCount} item{cartCount > 1 ? 's' : ''} in cart</span>
           <span>View Cart · {currencySymbol}{cartTotal.toLocaleString()}</span>
         </button>
       )}
@@ -430,85 +442,85 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
             style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }}
           />
           <div style={{ position: 'relative', width: '100%', maxWidth: 420, background: COLORS.bg, height: '100%', overflowY: 'auto', boxShadow: '-8px 0 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ background: COLORS.card, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
-              <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text }}>Your Cart</div>
+            <div style={{ background: COLORS.card, padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
+              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 18, color: COLORS.ink }}>Your Cart</div>
               <button type="button" onClick={() => setCartOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
             </div>
 
-            <div style={{ padding: 16, flex: 1 }}>
-              {!cart.length && <div style={{ color: COLORS.muted, fontSize: 13, textAlign: 'center', marginTop: 30 }}>Your cart is empty.</div>}
+            <div style={{ padding: 18, flex: 1 }}>
+              {!cart.length && <div style={{ color: COLORS.muted, fontSize: 13, textAlign: 'center', marginTop: 30, fontStyle: 'italic' }}>Your cart is empty.</div>}
               <div style={{ display: 'grid', gap: 10 }}>
                 {cart.map((item) => (
-                  <div key={item.productId} style={{ background: COLORS.card, borderRadius: 10, padding: 12, display: 'grid', gridTemplateColumns: '1fr auto', gap: 6, alignItems: 'center' }}>
+                  <div key={item.productId} style={{ background: COLORS.card, borderRadius: 4, border: `1px solid ${COLORS.border}`, padding: 12, display: 'grid', gridTemplateColumns: '1fr auto', gap: 6, alignItems: 'center' }}>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text }}>{item.name}</div>
-                      <div style={{ fontSize: 12, color: COLORS.sale, fontWeight: 700 }}>{currencySymbol}{item.price.toLocaleString()} each</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text }}>{item.name}</div>
+                      <div style={{ fontSize: 12, color: COLORS.sale, fontWeight: 600 }}>{currencySymbol}{item.price.toLocaleString()} each</div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity - 1)} style={{ width: 26, height: 26, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.bg, cursor: 'pointer', fontWeight: 700 }}>-</button>
+                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity - 1)} style={{ width: 26, height: 26, borderRadius: 2, border: `1px solid ${COLORS.border}`, background: COLORS.bg, cursor: 'pointer', fontWeight: 700 }}>-</button>
                       <span style={{ minWidth: 18, textAlign: 'center', fontSize: 13, fontWeight: 700 }}>{item.quantity}</span>
-                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity + 1)} style={{ width: 26, height: 26, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.bg, cursor: 'pointer', fontWeight: 700 }}>+</button>
-                      <button type="button" onClick={() => removeFromCart(item.productId)} style={{ marginLeft: 4, border: 'none', background: 'transparent', color: COLORS.sale, cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>Remove</button>
+                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity + 1)} style={{ width: 26, height: 26, borderRadius: 2, border: `1px solid ${COLORS.border}`, background: COLORS.bg, cursor: 'pointer', fontWeight: 700 }}>+</button>
+                      <button type="button" onClick={() => removeFromCart(item.productId)} style={{ marginLeft: 4, border: 'none', background: 'transparent', color: COLORS.sale, cursor: 'pointer', fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Remove</button>
                     </div>
                   </div>
                 ))}
               </div>
 
               {!!cart.length && (
-                <div style={{ marginTop: 14, background: COLORS.card, borderRadius: 10, padding: 12, display: 'flex', justifyContent: 'space-between', fontWeight: 800, color: COLORS.text, fontSize: 15 }}>
-                  <span>Total</span>
-                  <span style={{ color: COLORS.sale }}>{currencySymbol}{cartTotal.toLocaleString()}</span>
+                <div style={{ marginTop: 14, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: 14, display: 'flex', justifyContent: 'space-between', fontWeight: 700, color: COLORS.ink, fontSize: 15 }}>
+                  <span style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Total</span>
+                  <span style={{ color: COLORS.sale, fontFamily: "'Playfair Display', Georgia, serif" }}>{currencySymbol}{cartTotal.toLocaleString()}</span>
                 </div>
               )}
 
               {!!cart.length && (
                 <div style={{ marginTop: 14, display: 'grid', gap: 8 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.text }}>How will you pay?</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: COLORS.ink, textTransform: 'uppercase', letterSpacing: '0.06em' }}>How will you pay?</div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('delivery')}
                       style={{
                         padding: '10px 8px',
-                        borderRadius: 10,
-                        border: paymentMethod === 'delivery' ? `2px solid ${COLORS.sale}` : `1px solid ${COLORS.border}`,
-                        background: paymentMethod === 'delivery' ? '#FFF1EC' : COLORS.card,
+                        borderRadius: 2,
+                        border: paymentMethod === 'delivery' ? `1.5px solid ${COLORS.primary}` : `1px solid ${COLORS.border}`,
+                        background: paymentMethod === 'delivery' ? COLORS.bg : COLORS.card,
                         color: COLORS.text,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         fontSize: 12,
                         cursor: 'pointer',
                       }}
                     >
-                      💵 Pay on Pickup/Delivery
+                      Pay on Pickup/Delivery
                     </button>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('transfer')}
                       style={{
                         padding: '10px 8px',
-                        borderRadius: 10,
-                        border: paymentMethod === 'transfer' ? `2px solid ${COLORS.sale}` : `1px solid ${COLORS.border}`,
-                        background: paymentMethod === 'transfer' ? '#FFF1EC' : COLORS.card,
+                        borderRadius: 2,
+                        border: paymentMethod === 'transfer' ? `1.5px solid ${COLORS.primary}` : `1px solid ${COLORS.border}`,
+                        background: paymentMethod === 'transfer' ? COLORS.bg : COLORS.card,
                         color: COLORS.text,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         fontSize: 12,
                         cursor: 'pointer',
                       }}
                     >
-                      🏦 Bank Transfer
+                      Bank Transfer
                     </button>
                   </div>
                   {paymentMethod === 'transfer' && (
-                    <div style={{ background: '#FFF3E0', border: '1px solid #FED7AA', borderRadius: 10, padding: 12 }}>
+                    <div style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 2, padding: 12 }}>
                       {hasBankDetails ? (
                         <>
-                          <div style={{ fontSize: 11, fontWeight: 800, color: '#C2670E', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Send Money To</div>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.primary, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Send Money To</div>
                           <div style={{ display: 'grid', gap: 3, fontSize: 13, color: COLORS.text }}>
                             <div><strong>Bank:</strong> {bankName || 'Not set'}</div>
                             <div><strong>Account Name:</strong> {bankAccountName || 'Not set'}</div>
                             <div><strong>Account Number:</strong> {bankAccountNumber || 'Not set'}</div>
                           </div>
-                          <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 6 }}>Your order stays pending until we confirm your payment.</div>
+                          <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 6, fontStyle: 'italic' }}>Your order stays pending until we confirm your payment.</div>
                         </>
                       ) : (
                         <div style={{ fontSize: 12, color: COLORS.muted }}>Bank details are not set up yet. Please choose "Pay on Pickup/Delivery" or contact us directly.</div>
@@ -566,21 +578,22 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
                   disabled={submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails)}
                   style={{
                     marginTop: 4,
-                    background: submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails) ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                    background: submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails) ? '#DDD' : COLORS.ink,
                     color: '#fff',
                     border: 'none',
-                    borderRadius: 999,
+                    borderRadius: 3,
                     padding: '15px 16px',
-                    fontWeight: 800,
-                    fontSize: 14,
-                    letterSpacing: '0.02em',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
                     cursor: submitting || !cart.length || (paymentMethod === 'transfer' && !hasBankDetails) ? 'not-allowed' : 'pointer',
                   }}
                 >
                   {submitting ? 'Placing Order…' : paymentMethod === 'transfer' ? 'Place Order (Bank Transfer)' : 'Place Order (Pay on Pickup/Delivery)'}
                 </button>
-                <div style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.04em', color: COLORS.muted, fontWeight: 700 }}>
-                  POWERD BY PRO CREATIVES | 08147621844
+                <div style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.04em', color: COLORS.muted, fontWeight: 500, fontStyle: 'italic' }}>
+                  Powered by Pro Creatives | 08147621844
                 </div>
               </form>
             </div>
@@ -623,19 +636,20 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
                   height: 56,
                   margin: '0 auto 14px',
                   borderRadius: '50%',
-                  background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                  background: COLORS.ink,
+                  border: `2px solid ${COLORS.primary}`,
                   color: '#fff',
-                  fontWeight: 900,
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontWeight: 700,
                   fontSize: 22,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: `0 8px 18px rgba(255,59,48,0.35)`,
                 }}
               >
                 {(shopName || 'N').trim().charAt(0).toUpperCase()}
               </div>
-              <div style={{ fontWeight: 900, fontSize: 21, color: COLORS.text, letterSpacing: '-0.01em' }}>
+              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 21, color: COLORS.ink, letterSpacing: '0.01em' }}>
                 {authMode === 'login' ? 'Welcome back' : 'Create your account'}
               </div>
               <div style={{ color: COLORS.muted, fontSize: 13, marginTop: 6 }}>
@@ -644,18 +658,18 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
             </div>
 
             <div style={{ padding: '24px 32px 32px' }}>
-              <div style={{ display: 'flex', gap: 4, marginBottom: 22, background: COLORS.bg, borderRadius: 999, padding: 4 }}>
+              <div style={{ display: 'flex', gap: 0, marginBottom: 22, borderBottom: `1px solid ${COLORS.border}` }}>
                 <button
                   type="button"
                   onClick={() => { setAuthMode('login'); setAuthError(''); }}
-                  style={{ flex: 1, padding: '9px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'background 0.15s, color 0.15s', background: authMode === 'login' ? COLORS.card : 'transparent', color: authMode === 'login' ? COLORS.text : COLORS.muted, boxShadow: authMode === 'login' ? '0 1px 4px rgba(0,0,0,0.12)' : 'none' }}
+                  style={{ flex: 1, padding: '10px 12px', border: 'none', borderBottom: authMode === 'login' ? `2px solid ${COLORS.primary}` : '2px solid transparent', cursor: 'pointer', fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', transition: 'color 0.15s', background: 'transparent', color: authMode === 'login' ? COLORS.ink : COLORS.muted }}
                 >
                   Log In
                 </button>
                 <button
                   type="button"
                   onClick={() => { setAuthMode('signup'); setAuthError(''); }}
-                  style={{ flex: 1, padding: '9px 12px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'background 0.15s, color 0.15s', background: authMode === 'signup' ? COLORS.card : 'transparent', color: authMode === 'signup' ? COLORS.text : COLORS.muted, boxShadow: authMode === 'signup' ? '0 1px 4px rgba(0,0,0,0.12)' : 'none' }}
+                  style={{ flex: 1, padding: '10px 12px', border: 'none', borderBottom: authMode === 'signup' ? `2px solid ${COLORS.primary}` : '2px solid transparent', cursor: 'pointer', fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', transition: 'color 0.15s', background: 'transparent', color: authMode === 'signup' ? COLORS.ink : COLORS.muted }}
                 >
                   Sign Up
                 </button>
@@ -746,16 +760,16 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
                   disabled={authSubmitting}
                   style={{
                     marginTop: 4,
-                    background: authSubmitting ? '#DDD' : `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.sale} 100%)`,
+                    background: authSubmitting ? '#DDD' : COLORS.ink,
                     color: '#fff',
                     border: 'none',
-                    borderRadius: 12,
+                    borderRadius: 3,
                     padding: '14px 16px',
-                    fontWeight: 800,
-                    fontSize: 14,
-                    letterSpacing: '0.02em',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
                     cursor: authSubmitting ? 'not-allowed' : 'pointer',
-                    boxShadow: authSubmitting ? 'none' : '0 10px 20px rgba(255,59,48,0.28)',
                   }}
                 >
                   {authSubmitting ? 'Please wait…' : authMode === 'login' ? 'Log In' : 'Create Account'}
@@ -792,7 +806,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
           />
           <div style={{ position: 'relative', width: '100%', maxWidth: 420, background: COLORS.bg, height: '100%', overflowY: 'auto', boxShadow: '-8px 0 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
             <div style={{ background: COLORS.card, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0 }}>
-              <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text }}>My Orders</div>
+              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 18, color: COLORS.ink }}>My Orders</div>
               <button type="button" onClick={() => setMyOrdersOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 20, cursor: 'pointer', color: COLORS.muted, lineHeight: 1 }}>×</button>
             </div>
 
@@ -804,9 +818,9 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
                 const items = typeof order.itemsJson === 'string' ? JSON.parse(order.itemsJson) : (order.itemsJson || []);
                 const statusStyle = orderStatusColors[order.status] || { bg: COLORS.border, text: COLORS.text };
                 return (
-                  <div key={order.id} style={{ background: COLORS.card, borderRadius: 10, padding: 12, border: `1px solid ${COLORS.border}` }}>
+                  <div key={order.id} style={{ background: COLORS.card, borderRadius: 4, padding: 12, border: `1px solid ${COLORS.border}` }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontWeight: 800, fontSize: 13, color: COLORS.text }}>Order #{order.id}</span>
+                      <span style={{ fontWeight: 700, fontSize: 13, color: COLORS.ink }}>Order #{order.id}</span>
                       <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: statusStyle.text, background: statusStyle.bg, borderRadius: 999, padding: '4px 8px' }}>
                         {order.status}
                       </span>
