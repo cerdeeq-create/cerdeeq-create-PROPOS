@@ -30,6 +30,13 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
   const [showAuthPassword, setShowAuthPassword] = useState(false);
   const [myOrdersOpen, setMyOrdersOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
+  const productGridRef = React.useRef(null);
+
+  const goToCategory = (cat) => {
+    setActiveCategory(cat);
+    setSearch('');
+    productGridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   useEffect(() => {
     if (customerAuth) {
@@ -42,6 +49,14 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
     const unique = [...new Set(availableProducts.map((product) => (product.category || '').trim()).filter(Boolean))];
     return ['All', ...unique.sort((a, b) => a.localeCompare(b))];
   }, [availableProducts]);
+  const categoryTiles = useMemo(() => {
+    return categories
+      .filter((cat) => cat !== 'All')
+      .map((cat) => {
+        const items = availableProducts.filter((product) => (product.category || '').trim() === cat);
+        return { name: cat, count: items.length, imageUrl: items.find((item) => item.imageUrl)?.imageUrl || '' };
+      });
+  }, [categories, availableProducts]);
   const visibleProducts = useMemo(() => {
     const q = search.trim().toLowerCase();
     return availableProducts.filter((product) => {
@@ -289,13 +304,38 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
       </div>
 
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 16px 90px' }}>
+        {activeCategory === 'All' && !search.trim() && categoryTiles.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12 }}>Shop by Category</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 10 }}>
+              {categoryTiles.map((tile) => (
+                <button
+                  key={tile.name}
+                  type="button"
+                  onClick={() => goToCategory(tile.name)}
+                  style={{ display: 'grid', gap: 6, border: `1px solid ${COLORS.border}`, background: COLORS.card, borderRadius: 12, padding: 10, cursor: 'pointer', textAlign: 'center' }}
+                >
+                  <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {tile.imageUrl ? (
+                      <img src={tile.imageUrl} alt={tile.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                    ) : (
+                      <span style={{ fontSize: 22 }}>🏷️</span>
+                    )}
+                  </div>
+                  <div style={{ fontWeight: 700, fontSize: 12, color: COLORS.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tile.name}</div>
+                  <div style={{ fontSize: 11, color: COLORS.muted }}>{tile.count} item{tile.count === 1 ? '' : 's'}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {categories.length > 1 && (
           <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 10, marginBottom: 14, WebkitOverflowScrolling: 'touch' }}>
             {categories.map((cat) => (
               <button
                 key={cat}
                 type="button"
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => goToCategory(cat)}
                 style={{
                   flexShrink: 0,
                   padding: '8px 16px',
@@ -315,7 +355,7 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
             ))}
           </div>
         )}
-        <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12 }}>
+        <div ref={productGridRef} style={{ fontWeight: 800, fontSize: 16, color: COLORS.text, marginBottom: 12, scrollMarginTop: 70 }}>
           {search.trim() ? `Results for "${search.trim()}"` : activeCategory === 'All' ? 'All Products' : activeCategory}
         </div>
         {!visibleProducts.length && (
