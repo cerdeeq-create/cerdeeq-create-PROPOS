@@ -203,18 +203,37 @@ function Storefront({ products, shopName, currencySymbol, bankName, bankAccountN
           from { opacity: 0; transform: translateY(10px) scale(0.98); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
+        .storefront-search-input {
+          border: 2px solid transparent;
+        }
+        .storefront-search-input:focus {
+          border-color: rgba(255,255,255,0.85);
+          box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+        }
       `}</style>
       <header style={{ position: 'sticky', top: 0, zIndex: 20, background: `linear-gradient(90deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)`, boxShadow: '0 2px 10px rgba(0,0,0,0.12)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ fontWeight: 900, fontSize: 22, color: '#fff', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>{shopName || 'NOOR'}</div>
-          <div style={{ flex: 1, position: 'relative' }}>
+          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <span style={{ position: 'absolute', left: 14, fontSize: 14, opacity: 0.5, pointerEvents: 'none' }}>🔍</span>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
-              style={{ width: '100%', padding: '10px 14px', borderRadius: 999, border: 'none', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+              className="storefront-search-input"
+              style={{ width: '100%', padding: '11px 36px 11px 38px', borderRadius: 999, fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff', color: COLORS.text, transition: 'box-shadow 0.15s ease, border-color 0.15s ease' }}
             />
+            {!!search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                style={{ position: 'absolute', right: 8, width: 22, height: 22, borderRadius: '50%', border: 'none', background: '#EDEDED', color: '#767676', fontSize: 14, lineHeight: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+              >
+                ×
+              </button>
+            )}
           </div>
           {customerAuth ? (
             <>
